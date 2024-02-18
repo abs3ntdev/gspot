@@ -7,6 +7,8 @@ import (
 
 	"github.com/zmb3/spotify/v2"
 	"go.uber.org/fx"
+
+	"git.asdf.cafe/abs3nt/gospt-ng/src/components/cache"
 )
 
 type CommanderResult struct {
@@ -21,6 +23,7 @@ type CommanderParams struct {
 	Context context.Context
 	Client  *spotify.Client
 	Log     *slog.Logger
+	Cache   *cache.Cache
 }
 
 type Commander struct {
@@ -28,6 +31,7 @@ type Commander struct {
 	Client  *spotify.Client
 	User    *spotify.PrivateUser
 	Log     *slog.Logger
+	Cache   *cache.Cache
 }
 
 func NewCommander(p CommanderParams) CommanderResult {
@@ -41,6 +45,7 @@ func NewCommander(p CommanderParams) CommanderResult {
 		Client:  p.Client,
 		User:    currentUser,
 		Log:     p.Log,
+		Cache:   p.Cache,
 	}
 	return CommanderResult{
 		Commander: c,

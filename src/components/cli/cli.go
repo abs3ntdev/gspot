@@ -205,6 +205,13 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				},
 			},
 			{
+				Name:  "status",
+				Usage: "Prints the current status",
+				Action: func(ctx *cli.Context) error {
+					return c.Status()
+				},
+			},
+			{
 				Name:    "devices",
 				Usage:   "Lists available devices",
 				Aliases: []string{"d"},
