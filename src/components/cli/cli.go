@@ -25,6 +25,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 	app := &cli.App{
 		EnableBashCompletion: true,
 		Version:              Version,
+		Action: func(ctx *cli.Context) error {
+			return tui.StartTea(c, "main")
+		},
 		Commands: []*cli.Command{
 			{
 				Name:    "play",
