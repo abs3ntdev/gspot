@@ -1,7 +1,7 @@
 build: gospt-ng
 
 gospt-ng: $(shell find . -name '*.go')
-	go build -o gospt-ng .
+	go build -ldflags="-X 'git.asdf.cafe/abs3nt/gospt-ng/src/components/cli.Version=$(shell git rev-parse --short HEAD)'" .
 
 run:
 	go run main.go
