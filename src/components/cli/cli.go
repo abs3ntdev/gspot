@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"strconv"
@@ -213,9 +214,14 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				},
 			},
 			{
-				Name:  "setdevice",
-				Usage: "Set the active device",
+				Name:      "setdevice",
+				Usage:     "Set the active device",
+				Args:      true,
+				ArgsUsage: "<device_id>",
 				Action: func(cCtx *cli.Context) error {
+					if cCtx.NArg() == 0 {
+						return fmt.Errorf("no device id provided")
+					}
 					return c.SetDevice(spotify.ID(cCtx.Args().First()))
 				},
 			},
