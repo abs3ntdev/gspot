@@ -40,10 +40,7 @@ func (fn roundTripperFunc) RoundTrip(req *http.Request) (*http.Response, error) 
 
 func NewSpotifyClient(conf *config.Config) (c SpotifyClientResult, err error) {
 	if conf.ClientId == "" || (conf.ClientSecret == "" && conf.ClientSecretCmd == "") || conf.Port == "" {
-		fmt.Println("PLEASE WRITE YOUR CONFIG FILE IN", filepath.Join(configDir, "gospt/gospt.yml"))
-		fmt.Println("GO HERE TO AND MAKE AN APPLICATION: https://developer.spotify.com/dashboard/applications")
-		fmt.Print("\nclient_id: \"idgoesherelikethis\"\nclient_secret: \"secretgoesherelikethis\"\nport:\"8888\"\n\n")
-		return SpotifyClientResult{}, fmt.Errorf("\nINVALID CONFIG")
+		return SpotifyClientResult{}, fmt.Errorf("INVALID CONFIG")
 	}
 	if conf.ClientSecretCmd != "" {
 		args := strings.Fields(conf.ClientSecretCmd)
@@ -129,7 +126,7 @@ func NewSpotifyClient(conf *config.Config) (c SpotifyClientResult, err error) {
 		_ = server.ListenAndServe()
 	}()
 	url := auth.AuthURL(state)
-	fmt.Println(url)
+	slog.Info("AUTH", "url", url)
 	cmd := exec.Command("xdg-open", url)
 	_ = cmd.Start()
 	// wait for auth to complete
@@ -141,7 +138,7 @@ func NewSpotifyClient(conf *config.Config) (c SpotifyClientResult, err error) {
 	if err != nil {
 		return SpotifyClientResult{}, err
 	}
-	fmt.Println("You are logged in as:", user.ID)
+	slog.Info("AUTH", "You are logged in as:", user.ID)
 	return SpotifyClientResult{Client: client}, nil
 }
 

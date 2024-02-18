@@ -1,9 +1,5 @@
 package commands
 
-import (
-	"fmt"
-)
-
 func (c *Commander) Repeat() error {
 	state, err := c.Client.PlayerState(c.Context)
 	if err != nil {
@@ -18,6 +14,6 @@ func (c *Commander) Repeat() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Repeat set to", newState)
+	c.Log.Info("COMMANDER", "Repeat set to", newState)
 	return nil
 }

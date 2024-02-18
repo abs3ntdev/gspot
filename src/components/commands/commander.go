@@ -20,12 +20,14 @@ type CommanderParams struct {
 
 	Context context.Context
 	Client  *spotify.Client
+	Log     *slog.Logger
 }
 
 type Commander struct {
 	Context context.Context
 	Client  *spotify.Client
 	User    *spotify.PrivateUser
+	Log     *slog.Logger
 }
 
 func NewCommander(p CommanderParams) CommanderResult {
@@ -38,6 +40,7 @@ func NewCommander(p CommanderParams) CommanderResult {
 		Context: p.Context,
 		Client:  p.Client,
 		User:    currentUser,
+		Log:     p.Log,
 	}
 	return CommanderResult{
 		Commander: c,

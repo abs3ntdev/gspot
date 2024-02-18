@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -33,7 +32,7 @@ func (c *Commander) activateDevice(ctx context.Context) (spotify.ID, error) {
 			return "", err
 		}
 	} else {
-		slog.Error("COMMANDER", "failed to activated device", "YOU MUST RUN gospt setdevice FIRST")
+		c.Log.Error("COMMANDER", "failed to activated device", "YOU MUST RUN gospt setdevice FIRST")
 	}
 	return device.ID, nil
 }

@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
 	"strconv"
 
@@ -19,7 +18,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 	defer func() {
 		err := s.Shutdown()
 		if err != nil {
-			slog.Error("SHUTDOWN", "error shutting down", err)
+			c.Log.Error("SHUTDOWN", "error shutting down", err)
 		}
 	}()
 	app := &cli.App{
@@ -233,6 +232,13 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				},
 			},
 			{
+				Name:  "shuffle",
+				Usage: "Toggle shuffle mode",
+				Action: func(cCtx *cli.Context) error {
+					return c.Shuffle()
+				},
+			},
+			{
 				Name:    "seek",
 				Usage:   "Seek to a position in the song",
 				Aliases: []string{"sk"},
@@ -265,7 +271,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
-		slog.Error("COMMANDER", "run error", err)
+		c.Log.Error("COMMANDER", "run error", err)
 		os.Exit(1)
 	}
 }

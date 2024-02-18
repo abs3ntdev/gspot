@@ -18,8 +18,8 @@ var Services = fx.Options(
 	fx.Provide(
 		func() *slog.Logger {
 			return slog.New(tint.NewHandler(os.Stdout, &tint.Options{
-				AddSource: true,
-				Level:     slog.LevelDebug.Level(),
+				Level:      slog.LevelDebug.Level(),
+				TimeFormat: "[15:04:05.000]",
 			}))
 		},
 		services.NewSpotifyClient,
