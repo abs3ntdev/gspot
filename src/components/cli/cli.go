@@ -3,6 +3,7 @@ package cli
 import (
 	"log/slog"
 	"os"
+	"strconv"
 
 	"github.com/urfave/cli/v2"
 	"go.uber.org/fx"
@@ -56,6 +57,14 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				},
 			},
 			{
+				Name:    "linkcontext",
+				Aliases: []string{"lc"},
+				Usage:   "Prints the current album or playlist",
+				Action: func(cCtx *cli.Context) error {
+					return c.PrintLinkContext()
+				},
+			},
+			{
 				Name:    "next",
 				Aliases: []string{"n", "skip"},
 				Usage:   "Skips to the next song",
@@ -96,19 +105,76 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				},
 			},
 			{
-				Name:    "download_cover",
-				Usage:   "Downloads the cover of the current song",
-				Aliases: []string{"dl"},
-				Flags: []cli.Flag{
-					&cli.PathFlag{
-						Name:        "path",
-						Aliases:     []string{"p"},
-						Usage:       "Path to save the cover",
-						DefaultText: "./cover.png",
+				Name:    "volume",
+				Aliases: []string{"v"},
+				Usage:   "Control the volume",
+				Subcommands: []*cli.Command{
+					{
+						Name:      "up",
+						Usage:     "Increase the volume",
+						Args:      true,
+						ArgsUsage: "percent",
+						Action: func(cCtx *cli.Context) error {
+							amt, err := strconv.Atoi(cCtx.Args().First())
+							if err != nil {
+								return err
+							}
+							return c.ChangeVolume(amt)
+						},
+					},
+					{
+						Name:      "down",
+						Aliases:   []string{"dn"},
+						Usage:     "Decrease the volume",
+						Args:      true,
+						ArgsUsage: "percent",
+						Action: func(cCtx *cli.Context) error {
+							amt, err := strconv.Atoi(cCtx.Args().First())
+							if err != nil {
+								return err
+							}
+							return c.ChangeVolume(-amt)
+						},
+					},
+					{
+						Name:    "mute",
+						Aliases: []string{"m"},
+						Usage:   "Mute",
+						Action: func(cCtx *cli.Context) error {
+							return c.Mute()
+						},
+					},
+					{
+						Name:    "unmute",
+						Aliases: []string{"um"},
+						Usage:   "Unmute",
+						Action: func(cCtx *cli.Context) error {
+							return c.UnMute()
+						},
+					},
+					{
+						Name:    "togglemute",
+						Aliases: []string{"tm"},
+						Usage:   "Toggle mute",
+						Action: func(cCtx *cli.Context) error {
+							return c.ToggleMute()
+						},
 					},
 				},
+			},
+			{
+				Name:      "download_cover",
+				Usage:     "Downloads the cover of the current song",
+				Aliases:   []string{"dl"},
+				Args:      true,
+				ArgsUsage: "path",
+				BashComplete: func(cCtx *cli.Context) {
+					if cCtx.NArg() > 0 {
+						return
+					}
+				},
 				Action: func(cCtx *cli.Context) error {
-					return c.DownloadCover(cCtx.Path("path"))
+					return c.DownloadCover(cCtx.Args().First())
 				},
 			},
 			{
@@ -119,9 +185,24 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					return c.Radio()
 				},
 			},
+			{
+				Name:    "clearradio",
+				Usage:   "Clears the radio queue",
+				Aliases: []string{"cr"},
+				Action: func(ctx *cli.Context) error {
+					return c.ClearRadio()
+				},
+			},
+			{
+				Name:    "devices",
+				Usage:   "Lists available devices",
+				Aliases: []string{"d"},
+				Action: func(ctx *cli.Context) error {
+					return c.ListDevices()
+				},
+			},
 		},
 	}
-	app.Suggest = true
 	if err := app.Run(os.Args); err != nil {
 		slog.Error("COMMANDER", "run error", err)
 		os.Exit(1)
