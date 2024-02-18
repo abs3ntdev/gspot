@@ -6,6 +6,9 @@ import (
 )
 
 func (c *Commander) DownloadCover(path string) error {
+	if path == "" {
+		path = "cover.png"
+	}
 	destinationPath := filepath.Clean(path)
 	state, err := c.Client.PlayerState(c.Context)
 	if err != nil {

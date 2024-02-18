@@ -96,13 +96,19 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				},
 			},
 			{
-				Name:      "download_cover",
-				Usage:     "Downloads the cover of the current song",
-				Aliases:   []string{"dl"},
-				Args:      true,
-				ArgsUsage: "download_cover <path>",
+				Name:    "download_cover",
+				Usage:   "Downloads the cover of the current song",
+				Aliases: []string{"dl"},
+				Flags: []cli.Flag{
+					&cli.PathFlag{
+						Name:        "path",
+						Aliases:     []string{"p"},
+						Usage:       "Path to save the cover",
+						DefaultText: "./cover.png",
+					},
+				},
 				Action: func(cCtx *cli.Context) error {
-					return c.DownloadCover(cCtx.Args().First())
+					return c.DownloadCover(cCtx.Path("path"))
 				},
 			},
 			{
@@ -115,6 +121,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 			},
 		},
 	}
+	app.Suggest = true
 	if err := app.Run(os.Args); err != nil {
 		slog.Error("COMMANDER", "run error", err)
 		os.Exit(1)
