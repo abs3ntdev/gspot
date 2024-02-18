@@ -32,6 +32,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.Play()
 				},
+				Category: "Playback",
 			},
 			{
 				Name:      "playurl",
@@ -42,6 +43,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(ctx *cli.Context) error {
 					return c.PlayUrl(ctx.Args().First())
 				},
+				Category: "Playback",
 			},
 			{
 				Name:    "pause",
@@ -50,6 +52,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.Pause()
 				},
+				Category: "Playback",
 			},
 			{
 				Name:    "toggleplay",
@@ -58,6 +61,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.TogglePlay()
 				},
+				Category: "Playback",
 			},
 			{
 				Name:    "link",
@@ -66,6 +70,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.PrintLink()
 				},
+				Category: "Sharing",
 			},
 			{
 				Name:    "linkcontext",
@@ -74,6 +79,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.PrintLinkContext()
 				},
+				Category: "Sharing",
 			},
 			{
 				Name:    "next",
@@ -82,6 +88,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.Next()
 				},
+				Category: "Playback",
 			},
 			{
 				Name:    "previous",
@@ -90,6 +97,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.Previous()
 				},
+				Category: "Playback",
 			},
 			{
 				Name:    "like",
@@ -98,6 +106,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.Like()
 				},
+				Category: "Library Management",
 			},
 			{
 				Name:    "unlike",
@@ -106,6 +115,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.UnLike()
 				},
+				Category: "Library Management",
 			},
 			{
 				Name:    "nowplaying",
@@ -121,11 +131,13 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.NowPlaying(cCtx.Bool("force"))
 				},
+				Category: "Info",
 			},
 			{
-				Name:    "volume",
-				Aliases: []string{"v"},
-				Usage:   "Control the volume",
+				Name:     "volume",
+				Aliases:  []string{"v"},
+				Usage:    "Control the volume",
+				Category: "Playback",
 				Subcommands: []*cli.Command{
 					{
 						Name:      "up",
@@ -194,6 +206,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.DownloadCover(cCtx.Args().First())
 				},
+				Category: "Info",
 			},
 			{
 				Name:    "radio",
@@ -202,6 +215,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.Radio()
 				},
+				Category: "Radio",
 			},
 			{
 				Name:    "clearradio",
@@ -210,6 +224,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.ClearRadio()
 				},
+				Category: "Radio",
 			},
 			{
 				Name:  "status",
@@ -217,6 +232,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(ctx *cli.Context) error {
 					return c.Status()
 				},
+				Category: "Info",
 			},
 			{
 				Name:    "devices",
@@ -225,6 +241,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.ListDevices()
 				},
+				Category: "Info",
 			},
 			{
 				Name:      "setdevice",
@@ -237,6 +254,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					}
 					return c.SetDevice(spotify.ID(cCtx.Args().First()))
 				},
+				Category: "Playback",
 			},
 			{
 				Name:  "repeat",
@@ -244,6 +262,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.Repeat()
 				},
+				Category: "Playback",
 			},
 			{
 				Name:  "shuffle",
@@ -251,11 +270,13 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Action: func(cCtx *cli.Context) error {
 					return c.Shuffle()
 				},
+				Category: "Playback",
 			},
 			{
-				Name:    "seek",
-				Usage:   "Seek to a position in the song",
-				Aliases: []string{"sk"},
+				Name:     "seek",
+				Usage:    "Seek to a position in the song",
+				Aliases:  []string{"sk"},
+				Category: "Playback",
 				Action: func(cCtx *cli.Context) error {
 					pos, err := strconv.Atoi(cCtx.Args().First())
 					if err != nil {
