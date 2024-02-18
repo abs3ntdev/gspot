@@ -11,18 +11,23 @@ require (
 	github.com/zmb3/spotify/v2 v2.4.1
 	go.uber.org/fx v1.20.1
 	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a
+	golang.org/x/net v0.17.0
 	golang.org/x/oauth2 v0.0.0-20210810183815-faf39c7919d5
+	google.golang.org/api v0.30.0
 	modernc.org/sqlite v1.29.1
 )
 
 require (
+	cloud.google.com/go v0.65.0 // indirect
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/cristalhq/aconfig v0.18.5 // indirect
 	github.com/cristalhq/aconfig/aconfigdotenv v0.17.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
@@ -31,13 +36,16 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
+	go.opencensus.io v0.22.4 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/dig v1.17.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.23.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
+	google.golang.org/genproto v0.0.0-20200825200019-8632dd797987 // indirect
+	google.golang.org/grpc v1.31.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	modernc.org/gc/v3 v3.0.0-20240107210532-573471604cb6 // indirect
 	modernc.org/libc v1.41.0 // indirect

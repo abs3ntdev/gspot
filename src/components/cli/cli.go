@@ -82,6 +82,15 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Category: "Sharing",
 			},
 			{
+				Name:    "youtube-link",
+				Aliases: []string{"yl"},
+				Usage:   "Prints the current song's youtube link",
+				Action: func(cCtx *cli.Context) error {
+					return c.PrintYoutubeLink()
+				},
+				Category: "Sharing",
+			},
+			{
 				Name:    "next",
 				Aliases: []string{"n", "skip"},
 				Usage:   "Skips to the next song",
