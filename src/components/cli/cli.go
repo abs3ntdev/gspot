@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/urfave/cli/v2"
+	"github.com/zmb3/spotify/v2"
 	"go.uber.org/fx"
 
 	"git.asdf.cafe/abs3nt/gospt-ng/src/components/commands"
@@ -199,7 +200,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Name:    "clearradio",
 				Usage:   "Clears the radio queue",
 				Aliases: []string{"cr"},
-				Action: func(ctx *cli.Context) error {
+				Action: func(cCtx *cli.Context) error {
 					return c.ClearRadio()
 				},
 			},
@@ -207,8 +208,52 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Name:    "devices",
 				Usage:   "Lists available devices",
 				Aliases: []string{"d"},
-				Action: func(ctx *cli.Context) error {
+				Action: func(cCtx *cli.Context) error {
 					return c.ListDevices()
+				},
+			},
+			{
+				Name:  "setdevice",
+				Usage: "Set the active device",
+				Action: func(cCtx *cli.Context) error {
+					return c.SetDevice(spotify.ID(cCtx.Args().First()))
+				},
+			},
+			{
+				Name:  "repeat",
+				Usage: "Toggle repeat mode",
+				Action: func(cCtx *cli.Context) error {
+					return c.Repeat()
+				},
+			},
+			{
+				Name:    "seek",
+				Usage:   "Seek to a position in the song",
+				Aliases: []string{"sk"},
+				Action: func(cCtx *cli.Context) error {
+					pos, err := strconv.Atoi(cCtx.Args().First())
+					if err != nil {
+						return err
+					}
+					return c.SetPosition(pos)
+				},
+				Subcommands: []*cli.Command{
+					{
+						Name:    "forward",
+						Aliases: []string{"f"},
+						Usage:   "Seek forward",
+						Action: func(cCtx *cli.Context) error {
+							return c.Seek(true)
+						},
+					},
+					{
+						Name:    "backward",
+						Aliases: []string{"b"},
+						Usage:   "Seek backward",
+						Action: func(cCtx *cli.Context) error {
+							return c.Seek(false)
+						},
+					},
 				},
 			},
 		},
