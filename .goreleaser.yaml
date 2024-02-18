@@ -34,7 +34,6 @@ archives:
       format: zip
     files:
       - completions/*
-    rlcp: true
 checksum:
   name_template: 'checksums.txt'
 snapshot:
