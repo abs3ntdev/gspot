@@ -132,9 +132,10 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Usage:   "Prints the current song",
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
-						Name:    "force",
-						Aliases: []string{"f"},
-						Usage:   "bypass cache",
+						Name:        "force",
+						Aliases:     []string{"f"},
+						DefaultText: "false",
+						Usage:       "bypass cache",
 					},
 				},
 				Action: func(cCtx *cli.Context) error {
