@@ -33,6 +33,16 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				},
 			},
 			{
+				Name:      "playurl",
+				Aliases:   []string{"plu"},
+				Usage:     "Plays a spotify url",
+				Args:      true,
+				ArgsUsage: "url",
+				Action: func(ctx *cli.Context) error {
+					return c.PlayUrl(ctx.Args().First())
+				},
+			},
+			{
 				Name:    "pause",
 				Aliases: []string{"pa"},
 				Usage:   "Pauses spotify",
