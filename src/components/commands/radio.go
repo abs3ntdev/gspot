@@ -23,7 +23,7 @@ func (c *Commander) Radio() error {
 	if current_song.Item != nil {
 		return c.RadioGivenSong(current_song.Item.SimpleTrack, current_song.Progress)
 	}
-	_, err = c.activateDevice(c.Context)
+	_, err = c.activateDevice()
 	if err != nil {
 		return err
 	}
@@ -32,6 +32,146 @@ func (c *Commander) Radio() error {
 		return err
 	}
 	return c.RadioGivenSong(tracks.Tracks[frand.Intn(len(tracks.Tracks))].SimpleTrack, 0)
+}
+
+func (c *Commander) RadioFromPlaylist(playlist spotify.SimplePlaylist) error {
+	total := playlist.Tracks.Total
+	if total == 0 {
+		return fmt.Errorf("this playlist is empty")
+	}
+	pages := int(math.Ceil(float64(total) / 50))
+	randomPage := 1
+	if pages > 1 {
+		randomPage = frand.Intn(pages-1) + 1
+	}
+	playlistPage, err := c.Client.GetPlaylistItems(c.Context, playlist.ID, spotify.Limit(50), spotify.Offset((randomPage-1)*50))
+	if err != nil {
+		return err
+	}
+	pageSongs := playlistPage.Items
+	frand.Shuffle(len(pageSongs), func(i, j int) { pageSongs[i], pageSongs[j] = pageSongs[j], pageSongs[i] })
+	seedCount := 5
+	if len(pageSongs) < seedCount {
+		seedCount = len(pageSongs)
+	}
+	seedIds := []spotify.ID{}
+	for idx, song := range pageSongs {
+		if idx >= seedCount {
+			break
+		}
+		seedIds = append(seedIds, song.Track.Track.ID)
+	}
+	return c.RadioGivenList(seedIds[:seedCount], playlist.Name)
+}
+
+func (c *Commander) RadioFromSavedTracks() error {
+	savedSongs, err := c.Client.CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset(0))
+	if err != nil {
+		return err
+	}
+	if savedSongs.Total == 0 {
+		return fmt.Errorf("you have no saved songs")
+	}
+	pages := int(math.Ceil(float64(savedSongs.Total) / 50))
+	randomPage := 1
+	if pages > 1 {
+		randomPage = frand.Intn(pages-1) + 1
+	}
+	trackPage, err := c.Client.CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset(randomPage*50))
+	if err != nil {
+		return err
+	}
+	pageSongs := trackPage.Tracks
+	frand.Shuffle(len(pageSongs), func(i, j int) { pageSongs[i], pageSongs[j] = pageSongs[j], pageSongs[i] })
+	seedCount := 4
+	seedIds := []spotify.ID{}
+	for idx, song := range pageSongs {
+		if idx >= seedCount {
+			break
+		}
+		seedIds = append(seedIds, song.ID)
+	}
+	seedIds = append(seedIds, savedSongs.Tracks[0].ID)
+	return c.RadioGivenList(seedIds, "Saved Tracks")
+}
+
+func (c *Commander) RadioGivenArtist(artist spotify.SimpleArtist) error {
+	seed := spotify.Seeds{
+		Artists: []spotify.ID{artist.ID},
+	}
+	recomendations, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+	if err != nil {
+		return err
+	}
+	recomendationIds := []spotify.ID{}
+	for _, song := range recomendations.Tracks {
+		recomendationIds = append(recomendationIds, song.ID)
+	}
+	err = c.ClearRadio()
+	if err != nil {
+		return err
+	}
+	radioPlaylist, db, err := c.GetRadioPlaylist(artist.Name)
+	if err != nil {
+		return err
+	}
+	queue := []spotify.ID{}
+	for _, rec := range recomendationIds {
+		exists, err := c.SongExists(db, rec)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			_, err := db.QueryContext(c.Context, fmt.Sprintf("INSERT INTO radio (id) VALUES('%s')", string(rec)))
+			if err != nil {
+				return err
+			}
+			queue = append(queue, rec)
+		}
+	}
+	_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, queue...)
+	if err != nil {
+		return err
+	}
+	err = c.Client.PlayOpt(c.Context, &spotify.PlayOptions{
+		PlaybackContext: &radioPlaylist.URI,
+	})
+	if err != nil {
+		return err
+	}
+	err = c.Client.Repeat(c.Context, "context")
+	if err != nil {
+		return err
+	}
+	for i := 0; i < 4; i++ {
+		id := frand.Intn(len(recomendationIds)-2) + 1
+		seed := spotify.Seeds{
+			Tracks: []spotify.ID{recomendationIds[id]},
+		}
+		additional_recs, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+		if err != nil {
+			return err
+		}
+		additionalRecsIds := []spotify.ID{}
+		for _, song := range additional_recs.Tracks {
+			exists, err := c.SongExists(db, song.ID)
+			if err != nil {
+				return err
+			}
+			if !exists {
+				_, err = db.QueryContext(c.Context, fmt.Sprintf("INSERT INTO radio (id) VALUES('%s')", string(song.ID)))
+				if err != nil {
+					return err
+				}
+				additionalRecsIds = append(additionalRecsIds, song.ID)
+			}
+		}
+		_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
@@ -87,7 +227,7 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
 	})
 	if err != nil {
 		if isNoActiveError(err) {
-			deviceID, err := c.activateDevice(c.Context)
+			deviceID, err := c.activateDevice()
 			if err != nil {
 				return err
 			}
@@ -364,6 +504,127 @@ func (c *Commander) RefillRadio() error {
 		_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
 		if err != nil {
 			return fmt.Errorf("add tracks to playlist: %w", err)
+		}
+	}
+	return nil
+}
+
+func (c *Commander) RadioFromAlbum(album spotify.SimpleAlbum) error {
+	tracks, err := c.AlbumTracks(album.ID, 1)
+	if err != nil {
+		return err
+	}
+	total := tracks.Total
+	if total == 0 {
+		return fmt.Errorf("this playlist is empty")
+	}
+	pages := int(math.Ceil(float64(total) / 50))
+	randomPage := 1
+	if pages > 1 {
+		randomPage = frand.Intn(pages-1) + 1
+	}
+	albumTrackPage, err := c.AlbumTracks(album.ID, randomPage)
+	if err != nil {
+		return err
+	}
+	pageSongs := albumTrackPage.Tracks
+	frand.Shuffle(len(pageSongs), func(i, j int) { pageSongs[i], pageSongs[j] = pageSongs[j], pageSongs[i] })
+	seedCount := 5
+	if len(pageSongs) < seedCount {
+		seedCount = len(pageSongs)
+	}
+	seedIds := []spotify.ID{}
+	for idx, song := range pageSongs {
+		if idx >= seedCount {
+			break
+		}
+		seedIds = append(seedIds, song.ID)
+	}
+	return c.RadioGivenList(seedIds[:seedCount], album.Name)
+}
+
+func (c *Commander) RadioGivenList(song_ids []spotify.ID, name string) error {
+	seed := spotify.Seeds{
+		Tracks: song_ids,
+	}
+	recomendations, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(99))
+	if err != nil {
+		return err
+	}
+	recomendationIds := []spotify.ID{}
+	for _, song := range recomendations.Tracks {
+		recomendationIds = append(recomendationIds, song.ID)
+	}
+	err = c.ClearRadio()
+	if err != nil {
+		return err
+	}
+	radioPlaylist, db, err := c.GetRadioPlaylist(name)
+	if err != nil {
+		return err
+	}
+	queue := []spotify.ID{song_ids[0]}
+	for _, rec := range recomendationIds {
+		exists, err := c.SongExists(db, rec)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			_, err := db.QueryContext(c.Context, fmt.Sprintf("INSERT INTO radio (id) VALUES('%s')", string(rec)))
+			if err != nil {
+				return err
+			}
+			queue = append(queue, rec)
+		}
+	}
+	_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, queue...)
+	if err != nil {
+		return err
+	}
+	err = c.Client.PlayOpt(c.Context, &spotify.PlayOptions{
+		PlaybackContext: &radioPlaylist.URI,
+	})
+	if err != nil {
+		if isNoActiveError(err) {
+			deviceId, err := c.activateDevice()
+			if err != nil {
+				return err
+			}
+			err = c.Client.PlayOpt(c.Context, &spotify.PlayOptions{
+				PlaybackContext: &radioPlaylist.URI,
+				DeviceID:        &deviceId,
+			})
+			if err != nil {
+				return err
+			}
+		}
+	}
+	for i := 0; i < 4; i++ {
+		id := frand.Intn(len(recomendationIds)-2) + 1
+		seed := spotify.Seeds{
+			Tracks: []spotify.ID{recomendationIds[id]},
+		}
+		additional_recs, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+		if err != nil {
+			return err
+		}
+		additionalRecsIds := []spotify.ID{}
+		for _, song := range additional_recs.Tracks {
+			exists, err := c.SongExists(db, song.ID)
+			if err != nil {
+				return err
+			}
+			if !exists {
+				_, err = db.QueryContext(c.Context, fmt.Sprintf("INSERT INTO radio (id) VALUES('%s')", string(song.ID)))
+				if err != nil {
+					return err
+				}
+				additionalRecsIds = append(additionalRecsIds, song.ID)
+			}
+		}
+		_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
+		if err != nil {
+			return err
 		}
 	}
 	return nil

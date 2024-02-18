@@ -10,6 +10,7 @@ import (
 	"go.uber.org/fx"
 
 	"git.asdf.cafe/abs3nt/gospt-ng/src/components/commands"
+	"git.asdf.cafe/abs3nt/gospt-ng/src/components/tui"
 )
 
 var Version = "dev"
@@ -290,6 +291,13 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					return c.Shuffle()
 				},
 				Category: "Playback",
+			},
+			{
+				Name:  "tui",
+				Usage: "Starts the TUI",
+				Action: func(ctx *cli.Context) error {
+					return tui.StartTea(c, "main")
+				},
 			},
 			{
 				Name:     "seek",

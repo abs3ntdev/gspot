@@ -8,7 +8,7 @@ func (c *Commander) Next() error {
 	err := c.Client.Next(c.Context)
 	if err != nil {
 		if isNoActiveError(err) {
-			deviceId, err := c.activateDevice(c.Context)
+			deviceId, err := c.activateDevice()
 			if err != nil {
 				return err
 			}
