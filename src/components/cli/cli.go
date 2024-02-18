@@ -105,6 +105,14 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					return c.DownloadCover(cCtx.Args().First())
 				},
 			},
+			{
+				Name:    "radio",
+				Usage:   "Starts a radio from the current song",
+				Aliases: []string{"r"},
+				Action: func(cCtx *cli.Context) error {
+					return c.Radio()
+				},
+			},
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
