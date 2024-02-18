@@ -236,6 +236,15 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Category: "Radio",
 			},
 			{
+				Name:    "refillradio",
+				Usage:   "Refills the radio queue with similar songs",
+				Aliases: []string{"rr"},
+				Action: func(cCtx *cli.Context) error {
+					return c.RefillRadio()
+				},
+				Category: "Radio",
+			},
+			{
 				Name:  "status",
 				Usage: "Prints the current status",
 				Action: func(ctx *cli.Context) error {
