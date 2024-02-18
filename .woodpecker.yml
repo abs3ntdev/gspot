@@ -1,0 +1,14 @@
+steps:
+  build:
+    image: golang:1.21
+    commands:
+      - go mod tidy
+      - go build -o gospt-ng
+
+  publish:
+    image: goreleaser/goreleaser
+    commands:
+      - goreleaser release --clean
+    secrets: [ gitea_token ]
+    when:
+      event: tag
