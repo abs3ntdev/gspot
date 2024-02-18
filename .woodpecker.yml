@@ -6,7 +6,7 @@ steps:
       - go build -o gospt-ng
 
   publish:
-    image: goreleaser/goreleaser
+    image: goreleaser/goreleaser:nightly
     commands:
       - goreleaser release --clean
     secrets: [ gitea_token ]
