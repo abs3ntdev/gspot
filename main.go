@@ -4,14 +4,21 @@ import (
 	"go.uber.org/fx"
 
 	"git.asdf.cafe/abs3nt/gospt-ng/src/app"
+	"git.asdf.cafe/abs3nt/gospt-ng/src/components/cli"
 	"git.asdf.cafe/abs3nt/gospt-ng/src/components/commands"
 )
 
 func main() {
-	fx.New(
+	var s fx.Shutdowner
+	app := fx.New(
+		fx.Populate(&s),
 		app.Config,
-		fx.Invoke(
+		fx.Provide(
 			commands.NewCommander,
 		),
-	).Run()
+		fx.Invoke(
+			cli.Run,
+		),
+	)
+	app.Run()
 }

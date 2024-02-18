@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"log/slog"
 
 	"github.com/zmb3/spotify/v2"
 	"go.uber.org/fx"
@@ -30,10 +29,6 @@ func NewCommander(p CommanderParams) CommanderResult {
 	c := &Commander{
 		Context: p.Context,
 		Client:  p.Client,
-	}
-	err := c.Play()
-	if err != nil {
-		slog.Error("Error playing", err)
 	}
 	return CommanderResult{
 		Commander: c,

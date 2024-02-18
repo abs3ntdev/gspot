@@ -14,7 +14,7 @@ import (
 )
 
 var Services = fx.Options(
-	fxplus.WithLogger,
+	fx.NopLogger,
 	fx.Provide(
 		func() *slog.Logger {
 			return slog.New(tint.NewHandler(os.Stdout, &tint.Options{
