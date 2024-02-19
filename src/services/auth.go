@@ -92,7 +92,7 @@ func GetClient(conf *config.Config) (c *spotify.Client, err error) {
 			}),
 		})
 		authClient := auth.Client(authCtx, tok)
-		client := spotify.New(authClient)
+		client := spotify.New(authClient, spotify.WithRetry(true))
 		new_token, err := client.Token()
 		if err != nil {
 			return nil, err
@@ -156,7 +156,7 @@ func completeAuth(w http.ResponseWriter, r *http.Request) {
 		slog.Error("AUTHENTICATOR", "failed to save auth", err)
 	}
 	// use the token to get an authenticated client
-	client := spotify.New(auth.Client(r.Context(), tok))
+	client := spotify.New(auth.Client(r.Context(), tok), spotify.WithRetry(true))
 	fmt.Fprintf(w, "Login Completed!")
 	ch <- client
 }
