@@ -267,34 +267,34 @@ func (m *mainModel) CopyToClipboard() error {
 	switch converted := item.(type) {
 	case spotify.SimplePlaylist:
 		go m.SendMessage("Copying link to "+m.list.SelectedItem().(mainItem).Title(), 2*time.Second)
-		clipboard.WriteAll(converted.ExternalURLs["spotify"])
+		return clipboard.WriteAll(converted.ExternalURLs["spotify"])
 	case *spotify.FullPlaylist:
 		go m.SendMessage("Copying link to "+m.list.SelectedItem().(mainItem).Title(), 2*time.Second)
-		clipboard.WriteAll(converted.ExternalURLs["spotify"])
+		return clipboard.WriteAll(converted.ExternalURLs["spotify"])
 	case spotify.SimpleAlbum:
 		go m.SendMessage("Copying link to "+m.list.SelectedItem().(mainItem).Title(), 2*time.Second)
-		clipboard.WriteAll(converted.ExternalURLs["spotify"])
+		return clipboard.WriteAll(converted.ExternalURLs["spotify"])
 	case *spotify.FullAlbum:
 		go m.SendMessage("Copying link to "+m.list.SelectedItem().(mainItem).Title(), 2*time.Second)
-		clipboard.WriteAll(converted.ExternalURLs["spotify"])
+		return clipboard.WriteAll(converted.ExternalURLs["spotify"])
 	case spotify.SimpleArtist:
 		go m.SendMessage("Copying link to "+m.list.SelectedItem().(mainItem).Title(), 2*time.Second)
-		clipboard.WriteAll(converted.ExternalURLs["spotify"])
+		return clipboard.WriteAll(converted.ExternalURLs["spotify"])
 	case *spotify.FullArtist:
 		go m.SendMessage("Copying link to "+m.list.SelectedItem().(mainItem).Title(), 2*time.Second)
-		clipboard.WriteAll(converted.ExternalURLs["spotify"])
+		return clipboard.WriteAll(converted.ExternalURLs["spotify"])
 	case spotify.SimpleTrack:
 		go m.SendMessage("Copying link to "+m.list.SelectedItem().(mainItem).Title(), 2*time.Second)
-		clipboard.WriteAll(converted.ExternalURLs["spotify"])
+		return clipboard.WriteAll(converted.ExternalURLs["spotify"])
 	case spotify.PlaylistTrack:
 		go m.SendMessage("Copying link to "+m.list.SelectedItem().(mainItem).Title(), 2*time.Second)
-		clipboard.WriteAll(converted.Track.ExternalURLs["spotify"])
+		return clipboard.WriteAll(converted.Track.ExternalURLs["spotify"])
 	case spotify.SavedTrack:
 		go m.SendMessage("Copying link to "+m.list.SelectedItem().(mainItem).Title(), 2*time.Second)
-		clipboard.WriteAll(converted.ExternalURLs["spotify"])
+		return clipboard.WriteAll(converted.ExternalURLs["spotify"])
 	case spotify.FullTrack:
 		go m.SendMessage("Copying link to "+m.list.SelectedItem().(mainItem).Title(), 2*time.Second)
-		clipboard.WriteAll(converted.ExternalURLs["spotify"])
+		return clipboard.WriteAll(converted.ExternalURLs["spotify"])
 	}
 	return nil
 }
@@ -746,7 +746,7 @@ func (m *mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.String() == "c" {
 			err := m.CopyToClipboard()
 			if err != nil {
-				return m, tea.Quit
+				go m.SendMessage(err.Error(), 5*time.Second)
 			}
 		}
 		if msg.String() == ">" {
@@ -837,12 +837,12 @@ func (m *mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	// handle mouse
-	case tea.MouseMsg:
-		if msg.Type == 5 {
+	case tea.MouseButton:
+		if msg == 5 {
 			m.list.CursorUp()
 		}
-		if msg.Type == 6 {
-			m.list.CursorDown()
+		if msg == 6 {
+			m.list.CursorUp()
 		}
 
 	// window size -1 to handle search bar

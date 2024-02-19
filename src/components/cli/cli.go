@@ -16,12 +16,6 @@ import (
 var Version = "dev"
 
 func Run(c *commands.Commander, s fx.Shutdowner) {
-	defer func() {
-		err := s.Shutdown()
-		if err != nil {
-			c.Log.Error("SHUTDOWN", "error shutting down", err)
-		}
-	}()
 	app := &cli.App{
 		Name:                 "gspot",
 		EnableBashCompletion: true,
@@ -347,6 +341,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 	}
 	if err := app.Run(os.Args); err != nil {
 		c.Log.Error("COMMANDER", "run error", err)
-		os.Exit(1)
+		s.Shutdown(fx.ExitCode(1))
 	}
+	s.Shutdown()
 }
