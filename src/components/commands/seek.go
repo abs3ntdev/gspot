@@ -1,7 +1,7 @@
 package commands
 
 func (c *Commander) Seek(fwd bool) error {
-	current, err := c.Client.PlayerCurrentlyPlaying(c.Context)
+	current, err := c.Client().PlayerCurrentlyPlaying(c.Context)
 	if err != nil {
 		return err
 	}
@@ -9,7 +9,7 @@ func (c *Commander) Seek(fwd bool) error {
 	if !fwd {
 		newPos = current.Progress - 5000
 	}
-	err = c.Client.Seek(c.Context, newPos)
+	err = c.Client().Seek(c.Context, newPos)
 	if err != nil {
 		return err
 	}
@@ -17,7 +17,7 @@ func (c *Commander) Seek(fwd bool) error {
 }
 
 func (c *Commander) SetPosition(pos int) error {
-	err := c.Client.Seek(c.Context, pos)
+	err := c.Client().Seek(c.Context, pos)
 	if err != nil {
 		return err
 	}

@@ -9,7 +9,7 @@ import (
 
 func (c *Commander) NowPlaying(force bool) error {
 	if force {
-		current, err := c.Client.PlayerCurrentlyPlaying(c.Context)
+		current, err := c.Client().PlayerCurrentlyPlaying(c.Context)
 		if err != nil {
 			return err
 		}
@@ -19,7 +19,7 @@ func (c *Commander) NowPlaying(force bool) error {
 		return err
 	}
 	song, err := c.Cache.GetOrDo("now_playing", func() (string, error) {
-		current, err := c.Client.PlayerCurrentlyPlaying(c.Context)
+		current, err := c.Client().PlayerCurrentlyPlaying(c.Context)
 		if err != nil {
 			return "", err
 		}

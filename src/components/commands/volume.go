@@ -1,7 +1,7 @@
 package commands
 
 func (c *Commander) ChangeVolume(amount int) error {
-	state, err := c.Client.PlayerState(c.Context)
+	state, err := c.Client().PlayerState(c.Context)
 	if err != nil {
 		return err
 	}
@@ -12,7 +12,7 @@ func (c *Commander) ChangeVolume(amount int) error {
 	if newVolume < 0 {
 		newVolume = 0
 	}
-	return c.Client.Volume(c.Context, newVolume)
+	return c.Client().Volume(c.Context, newVolume)
 }
 
 func (c *Commander) Mute() error {
@@ -24,7 +24,7 @@ func (c *Commander) UnMute() error {
 }
 
 func (c *Commander) ToggleMute() error {
-	state, err := c.Client.PlayerState(c.Context)
+	state, err := c.Client().PlayerState(c.Context)
 	if err != nil {
 		return err
 	}

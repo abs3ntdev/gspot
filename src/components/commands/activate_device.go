@@ -26,7 +26,7 @@ func (c *Commander) activateDevice() (spotify.ID, error) {
 		if err != nil {
 			return "", err
 		}
-		err = c.Client.TransferPlayback(c.Context, device.ID, true)
+		err = c.Client().TransferPlayback(c.Context, device.ID, true)
 		if err != nil {
 			return "", err
 		}

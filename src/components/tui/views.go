@@ -16,7 +16,7 @@ const regex = `<.*?>`
 
 func DeviceView(commands *commands.Commander) ([]list.Item, error) {
 	items := []list.Item{}
-	devices, err := commands.Client.PlayerDevices(commands.Context)
+	devices, err := commands.Client().PlayerDevices(commands.Context)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func DeviceView(commands *commands.Commander) ([]list.Item, error) {
 
 func QueueView(commands *commands.Commander) ([]list.Item, error) {
 	items := []list.Item{}
-	tracks, err := commands.Client.GetQueue(commands.Context)
+	tracks, err := commands.Client().GetQueue(commands.Context)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func QueueView(commands *commands.Commander) ([]list.Item, error) {
 
 func PlaylistView(commands *commands.Commander, playlist spotify.SimplePlaylist) ([]list.Item, error) {
 	items := []list.Item{}
-	playlistItems, err := commands.Client.GetPlaylistItems(
+	playlistItems, err := commands.Client().GetPlaylistItems(
 		commands.Context,
 		playlist.ID,
 		spotify.Limit(50),
@@ -89,7 +89,7 @@ func PlaylistView(commands *commands.Commander, playlist spotify.SimplePlaylist)
 
 func ArtistsView(commands *commands.Commander) ([]list.Item, error) {
 	items := []list.Item{}
-	artists, err := commands.Client.CurrentUsersFollowedArtists(commands.Context, spotify.Limit(50), spotify.Offset(0))
+	artists, err := commands.Client().CurrentUsersFollowedArtists(commands.Context, spotify.Limit(50), spotify.Offset(0))
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +145,7 @@ func SearchView(commands *commands.Commander, search string) ([]list.Item, *Sear
 
 func AlbumsView(commands *commands.Commander) ([]list.Item, error) {
 	items := []list.Item{}
-	albums, err := commands.Client.CurrentUsersAlbums(commands.Context, spotify.Limit(50), spotify.Offset((page-1)*50))
+	albums, err := commands.Client().CurrentUsersAlbums(commands.Context, spotify.Limit(50), spotify.Offset((page-1)*50))
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +249,7 @@ func SearchTracksView(tracks *spotify.FullTrackPage) ([]list.Item, error) {
 
 func SavedTracksView(commands *commands.Commander) ([]list.Item, error) {
 	items := []list.Item{}
-	tracks, err := commands.Client.CurrentUsersTracks(commands.Context, spotify.Limit(50), spotify.Offset((page-1)*50))
+	tracks, err := commands.Client().CurrentUsersTracks(commands.Context, spotify.Limit(50), spotify.Offset((page-1)*50))
 	if err != nil {
 		return nil, err
 	}
@@ -275,22 +275,22 @@ func MainView(c *commands.Commander) ([]list.Item, error) {
 	var albums *spotify.SavedAlbumPage
 
 	wg.Go(func() (err error) {
-		saved_items, err = c.Client.CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset(0))
+		saved_items, err = c.Client().CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset(0))
 		return
 	})
 
 	wg.Go(func() (err error) {
-		playlists, err = c.Client.CurrentUsersPlaylists(c.Context, spotify.Limit(50), spotify.Offset(0))
+		playlists, err = c.Client().CurrentUsersPlaylists(c.Context, spotify.Limit(50), spotify.Offset(0))
 		return
 	})
 
 	wg.Go(func() (err error) {
-		artists, err = c.Client.CurrentUsersFollowedArtists(c.Context, spotify.Limit(50), spotify.Offset(0))
+		artists, err = c.Client().CurrentUsersFollowedArtists(c.Context, spotify.Limit(50), spotify.Offset(0))
 		return
 	})
 
 	wg.Go(func() (err error) {
-		albums, err = c.Client.CurrentUsersAlbums(c.Context, spotify.Limit(50), spotify.Offset(0))
+		albums, err = c.Client().CurrentUsersAlbums(c.Context, spotify.Limit(50), spotify.Offset(0))
 		return
 	})
 

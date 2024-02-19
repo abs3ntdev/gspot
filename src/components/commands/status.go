@@ -10,7 +10,7 @@ import (
 
 func (c *Commander) Status() error {
 	state, err := c.Cache.GetOrDo("state", func() (string, error) {
-		state, err := c.Client.PlayerState(c.Context)
+		state, err := c.Client().PlayerState(c.Context)
 		if err != nil {
 			return "", err
 		}

@@ -7,7 +7,7 @@ import (
 )
 
 func (c *Commander) PrintYoutubeLink() error {
-	state, err := c.Client.PlayerState(c.Context)
+	state, err := c.Client().PlayerState(c.Context)
 	if err != nil {
 		return err
 	}

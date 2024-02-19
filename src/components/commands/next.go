@@ -9,7 +9,7 @@ import (
 func (c *Commander) Next(amt int, inqueue bool) error {
 	if inqueue {
 		for i := 0; i < amt; i++ {
-			err := c.Client.Next(c.Context)
+			err := c.Client().Next(c.Context)
 			if err != nil {
 				return err
 			}
@@ -17,14 +17,14 @@ func (c *Commander) Next(amt int, inqueue bool) error {
 		return nil
 	}
 	if amt == 1 {
-		err := c.Client.Next(c.Context)
+		err := c.Client().Next(c.Context)
 		if err != nil {
 			if isNoActiveError(err) {
 				deviceId, err := c.activateDevice()
 				if err != nil {
 					return err
 				}
-				err = c.Client.NextOpt(c.Context, &spotify.PlayOptions{
+				err = c.Client().NextOpt(c.Context, &spotify.PlayOptions{
 					DeviceID: &deviceId,
 				})
 				if err != nil {
@@ -37,7 +37,7 @@ func (c *Commander) Next(amt int, inqueue bool) error {
 	}
 	// found := false
 	// playingIndex := 0
-	current, err := c.Client.PlayerCurrentlyPlaying(c.Context)
+	current, err := c.Client().PlayerCurrentlyPlaying(c.Context)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func (c *Commander) Next(amt int, inqueue bool) error {
 		currentTrackIndex := 0
 		page := 1
 		for !found {
-			playlist, err := c.Client.
+			playlist, err := c.Client().
 				GetPlaylistItems(
 					c.Context,
 					spotify.ID(strings.Split(string(current.PlaybackContext.URI), ":")[2]),
@@ -68,7 +68,7 @@ func (c *Commander) Next(amt int, inqueue bool) error {
 			page++
 		}
 		pos := currentTrackIndex + amt
-		return c.Client.PlayOpt(c.Context, &spotify.PlayOptions{
+		return c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
 			PlaybackContext: &current.PlaybackContext.URI,
 			PlaybackOffset: &spotify.PlaybackOffset{
 				Position: &pos,
@@ -79,7 +79,7 @@ func (c *Commander) Next(amt int, inqueue bool) error {
 		currentTrackIndex := 0
 		page := 1
 		for !found {
-			playlist, err := c.Client.
+			playlist, err := c.Client().
 				GetAlbumTracks(
 					c.Context,
 					spotify.ID(strings.Split(string(current.PlaybackContext.URI), ":")[2]),
@@ -99,7 +99,7 @@ func (c *Commander) Next(amt int, inqueue bool) error {
 			page++
 		}
 		pos := currentTrackIndex + amt
-		return c.Client.PlayOpt(c.Context, &spotify.PlayOptions{
+		return c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
 			PlaybackContext: &current.PlaybackContext.URI,
 			PlaybackOffset: &spotify.PlaybackOffset{
 				Position: &pos,
@@ -107,7 +107,7 @@ func (c *Commander) Next(amt int, inqueue bool) error {
 		})
 	default:
 		for i := 0; i < amt; i++ {
-			err := c.Client.Next(c.Context)
+			err := c.Client().Next(c.Context)
 			if err != nil {
 				return err
 			}

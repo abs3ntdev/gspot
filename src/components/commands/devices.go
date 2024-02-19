@@ -10,7 +10,7 @@ import (
 )
 
 func (c *Commander) ListDevices() error {
-	devices, err := c.Client.PlayerDevices(c.Context)
+	devices, err := c.Client().PlayerDevices(c.Context)
 	if err != nil {
 		return err
 	}
@@ -27,11 +27,11 @@ func PrintDevices(devices []spotify.PlayerDevice) error {
 }
 
 func (c *Commander) SetDevice(device spotify.ID) error {
-	err := c.Client.TransferPlayback(c.Context, device, true)
+	err := c.Client().TransferPlayback(c.Context, device, true)
 	if err != nil {
 		return err
 	}
-	devices, err := c.Client.PlayerDevices(c.Context)
+	devices, err := c.Client().PlayerDevices(c.Context)
 	if err != nil {
 		return err
 	}

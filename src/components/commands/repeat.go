@@ -1,7 +1,7 @@
 package commands
 
 func (c *Commander) Repeat() error {
-	state, err := c.Client.PlayerState(c.Context)
+	state, err := c.Client().PlayerState(c.Context)
 	if err != nil {
 		return err
 	}
@@ -10,7 +10,7 @@ func (c *Commander) Repeat() error {
 		newState = "context"
 	}
 	// spotifyd only supports binary value for repeat, context or off, change when/if spotifyd is better
-	err = c.Client.Repeat(c.Context, newState)
+	err = c.Client().Repeat(c.Context, newState)
 	if err != nil {
 		return err
 	}

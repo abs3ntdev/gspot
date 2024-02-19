@@ -13,17 +13,11 @@ import (
 
 	"github.com/zmb3/spotify/v2"
 	spotifyauth "github.com/zmb3/spotify/v2/auth"
-	"go.uber.org/fx"
 	"golang.org/x/exp/slog"
 	"golang.org/x/oauth2"
 
 	"git.asdf.cafe/abs3nt/gspot/src/config"
 )
-
-type SpotifyClientResult struct {
-	fx.Out
-	Client *spotify.Client
-}
 
 var (
 	auth         *spotifyauth.Authenticator
@@ -38,9 +32,9 @@ func (fn roundTripperFunc) RoundTrip(req *http.Request) (*http.Response, error) 
 	return fn(req)
 }
 
-func NewSpotifyClient(conf *config.Config) (c SpotifyClientResult, err error) {
+func GetClient(conf *config.Config) (c *spotify.Client, err error) {
 	if conf.ClientId == "" || (conf.ClientSecret == "" && conf.ClientSecretCmd == "") || conf.Port == "" {
-		return SpotifyClientResult{}, fmt.Errorf("INVALID CONFIG")
+		return nil, fmt.Errorf("INVALID CONFIG")
 	}
 	if conf.ClientSecretCmd != "" {
 		args := strings.Fields(conf.ClientSecretCmd)
@@ -83,13 +77,13 @@ func NewSpotifyClient(conf *config.Config) (c SpotifyClientResult, err error) {
 		authFilePath := filepath.Join(configDir, "gspot/auth.json")
 		authFile, err := os.Open(authFilePath)
 		if err != nil {
-			return SpotifyClientResult{}, err
+			return nil, err
 		}
 		defer authFile.Close()
 		tok := &oauth2.Token{}
 		err = json.NewDecoder(authFile).Decode(tok)
 		if err != nil {
-			return SpotifyClientResult{}, err
+			return nil, err
 		}
 		authCtx := context.WithValue(context.Background(), oauth2.HTTPClient, &http.Client{
 			Transport: roundTripperFunc(func(r *http.Request) (*http.Response, error) {
@@ -101,17 +95,17 @@ func NewSpotifyClient(conf *config.Config) (c SpotifyClientResult, err error) {
 		client := spotify.New(authClient)
 		new_token, err := client.Token()
 		if err != nil {
-			return SpotifyClientResult{}, err
+			return nil, err
 		}
 		out, err := json.MarshalIndent(new_token, "", " ")
 		if err != nil {
-			return SpotifyClientResult{}, err
+			return nil, err
 		}
 		err = os.WriteFile(authFilePath, out, 0o600)
 		if err != nil {
-			return SpotifyClientResult{}, fmt.Errorf("failed to save auth")
+			return nil, fmt.Errorf("failed to save auth")
 		}
-		return SpotifyClientResult{Client: client}, nil
+		return client, nil
 	}
 	// first start an HTTP server
 	http.HandleFunc("/callback", completeAuth)
@@ -136,10 +130,10 @@ func NewSpotifyClient(conf *config.Config) (c SpotifyClientResult, err error) {
 	// use the client to make calls that require authorization
 	user, err := client.CurrentUser(context.Background())
 	if err != nil {
-		return SpotifyClientResult{}, err
+		return nil, err
 	}
 	slog.Info("AUTH", "You are logged in as:", user.ID)
-	return SpotifyClientResult{Client: client}, nil
+	return client, nil
 }
 
 func completeAuth(w http.ResponseWriter, r *http.Request) {

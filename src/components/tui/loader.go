@@ -35,7 +35,7 @@ func (m *mainModel) LoadMoreItems() {
 		main_updates <- m
 		return
 	case "artists":
-		artists, err := m.commands.Client.CurrentUsersFollowedArtists(
+		artists, err := m.commands.Client().CurrentUsersFollowedArtists(
 			m.commands.Context,
 			spotify.Limit(50),
 			spotify.Offset((page)*50),

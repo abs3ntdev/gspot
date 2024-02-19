@@ -3,7 +3,7 @@ package commands
 import "fmt"
 
 func (c *Commander) PrintLink() error {
-	state, err := c.Client.PlayerState(c.Context)
+	state, err := c.Client().PlayerState(c.Context)
 	if err != nil {
 		return err
 	}
@@ -12,7 +12,7 @@ func (c *Commander) PrintLink() error {
 }
 
 func (c *Commander) PrintLinkContext() error {
-	state, err := c.Client.PlayerState(c.Context)
+	state, err := c.Client().PlayerState(c.Context)
 	if err != nil {
 		return err
 	}

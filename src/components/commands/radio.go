@@ -16,7 +16,7 @@ import (
 )
 
 func (c *Commander) Radio() error {
-	current_song, err := c.Client.PlayerCurrentlyPlaying(c.Context)
+	current_song, err := c.Client().PlayerCurrentlyPlaying(c.Context)
 	if err != nil {
 		return err
 	}
@@ -27,7 +27,7 @@ func (c *Commander) Radio() error {
 	if err != nil {
 		return err
 	}
-	tracks, err := c.Client.CurrentUsersTracks(c.Context, spotify.Limit(10))
+	tracks, err := c.Client().CurrentUsersTracks(c.Context, spotify.Limit(10))
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (c *Commander) RadioFromPlaylist(playlist spotify.SimplePlaylist) error {
 	if pages > 1 {
 		randomPage = frand.Intn(pages-1) + 1
 	}
-	playlistPage, err := c.Client.GetPlaylistItems(
+	playlistPage, err := c.Client().GetPlaylistItems(
 		c.Context,
 		playlist.ID,
 		spotify.Limit(50),
@@ -70,7 +70,7 @@ func (c *Commander) RadioFromPlaylist(playlist spotify.SimplePlaylist) error {
 }
 
 func (c *Commander) RadioFromSavedTracks() error {
-	savedSongs, err := c.Client.CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset(0))
+	savedSongs, err := c.Client().CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset(0))
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ func (c *Commander) RadioFromSavedTracks() error {
 	if pages > 1 {
 		randomPage = frand.Intn(pages-1) + 1
 	}
-	trackPage, err := c.Client.CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset(randomPage*50))
+	trackPage, err := c.Client().CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset(randomPage*50))
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func (c *Commander) RadioGivenArtist(artist spotify.SimpleArtist) error {
 	seed := spotify.Seeds{
 		Artists: []spotify.ID{artist.ID},
 	}
-	recomendations, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+	recomendations, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
 	if err != nil {
 		return err
 	}
@@ -134,17 +134,17 @@ func (c *Commander) RadioGivenArtist(artist spotify.SimpleArtist) error {
 			queue = append(queue, rec)
 		}
 	}
-	_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, queue...)
+	_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, queue...)
 	if err != nil {
 		return err
 	}
-	err = c.Client.PlayOpt(c.Context, &spotify.PlayOptions{
+	err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
 		PlaybackContext: &radioPlaylist.URI,
 	})
 	if err != nil {
 		return err
 	}
-	err = c.Client.Repeat(c.Context, "context")
+	err = c.Client().Repeat(c.Context, "context")
 	if err != nil {
 		return err
 	}
@@ -153,7 +153,7 @@ func (c *Commander) RadioGivenArtist(artist spotify.SimpleArtist) error {
 		seed := spotify.Seeds{
 			Tracks: []spotify.ID{recomendationIds[id]},
 		}
-		additional_recs, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+		additional_recs, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
 		if err != nil {
 			return err
 		}
@@ -171,7 +171,7 @@ func (c *Commander) RadioGivenArtist(artist spotify.SimpleArtist) error {
 				additionalRecsIds = append(additionalRecsIds, song.ID)
 			}
 		}
-		_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
+		_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
 		if err != nil {
 			return err
 		}
@@ -184,7 +184,7 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
 	seed := spotify.Seeds{
 		Tracks: []spotify.ID{song.ID},
 	}
-	recomendations, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(99))
+	recomendations, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(99))
 	if err != nil {
 		return err
 	}
@@ -218,7 +218,7 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
 			queue = append(queue, rec)
 		}
 	}
-	_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, queue...)
+	_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, queue...)
 	if err != nil {
 		return err
 	}
@@ -226,7 +226,7 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
 	if pos != 0 {
 		pos = pos + int(delay)
 	}
-	err = c.Client.PlayOpt(c.Context, &spotify.PlayOptions{
+	err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
 		PlaybackContext: &radioPlaylist.URI,
 		PositionMs:      pos,
 	})
@@ -236,7 +236,7 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
 			if err != nil {
 				return err
 			}
-			err = c.Client.PlayOpt(c.Context, &spotify.PlayOptions{
+			err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
 				PlaybackContext: &radioPlaylist.URI,
 				DeviceID:        &deviceID,
 				PositionMs:      pos,
@@ -246,7 +246,7 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
 			}
 		}
 	}
-	err = c.Client.Repeat(c.Context, "context")
+	err = c.Client().Repeat(c.Context, "context")
 	if err != nil {
 		return err
 	}
@@ -255,7 +255,7 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
 		seed := spotify.Seeds{
 			Tracks: []spotify.ID{recomendationIds[id]},
 		}
-		additional_recs, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+		additional_recs, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
 		if err != nil {
 			return err
 		}
@@ -273,7 +273,7 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
 				additionalRecsIds = append(additionalRecsIds, song.ID)
 			}
 		}
-		_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
+		_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
 		if err != nil {
 			return err
 		}
@@ -286,14 +286,14 @@ func (c *Commander) ClearRadio() error {
 	if err != nil {
 		return err
 	}
-	err = c.Client.UnfollowPlaylist(c.Context, radioPlaylist.ID)
+	err = c.Client().UnfollowPlaylist(c.Context, radioPlaylist.ID)
 	if err != nil {
 		return err
 	}
 	_, _ = db.Query("DROP TABLE IF EXISTS radio")
 	configDir, _ := os.UserConfigDir()
 	os.Remove(filepath.Join(configDir, "gspot/radio.json"))
-	_ = c.Client.Pause(c.Context)
+	_ = c.Client().Pause(c.Context)
 	return nil
 }
 
@@ -321,7 +321,7 @@ func (c *Commander) GetRadioPlaylist(name string) (*spotify.FullPlaylist, *sql.D
 func (c *Commander) CreateRadioPlaylist(name string) (*spotify.FullPlaylist, *sql.DB, error) {
 	// private flag doesnt work
 	configDir, _ := os.UserConfigDir()
-	playlist, err := c.Client.
+	playlist, err := c.Client().
 		CreatePlaylistForUser(c.Context, c.User.ID, name+" - autoradio", "Automanaged radio playlist", false, false)
 	if err != nil {
 		return nil, nil, err
@@ -359,7 +359,7 @@ func (c *Commander) SongExists(db *sql.DB, song spotify.ID) (bool, error) {
 }
 
 func (c *Commander) RefillRadio() error {
-	status, err := c.Client.PlayerCurrentlyPlaying(c.Context)
+	status, err := c.Client().PlayerCurrentlyPlaying(c.Context)
 	if err != nil {
 		return err
 	}
@@ -376,14 +376,14 @@ func (c *Commander) RefillRadio() error {
 		return nil
 	}
 
-	playlistItems, err := c.Client.GetPlaylistItems(c.Context, radioPlaylist.ID)
+	playlistItems, err := c.Client().GetPlaylistItems(c.Context, radioPlaylist.ID)
 	if err != nil {
 		return fmt.Errorf("orig playlist items: %w", err)
 	}
 
 	page := 0
 	for {
-		tracks, err := c.Client.GetPlaylistItems(c.Context, radioPlaylist.ID, spotify.Limit(50), spotify.Offset(page*50))
+		tracks, err := c.Client().GetPlaylistItems(c.Context, radioPlaylist.ID, spotify.Limit(50), spotify.Offset(page*50))
 		if err != nil {
 			return fmt.Errorf("tracks: %w", err)
 		}
@@ -402,7 +402,7 @@ func (c *Commander) RefillRadio() error {
 		var trackGroups []spotify.ID
 		for idx, item := range to_remove {
 			if idx%100 == 0 {
-				_, err = c.Client.RemoveTracksFromPlaylist(c.Context, radioPlaylist.ID, trackGroups...)
+				_, err = c.Client().RemoveTracksFromPlaylist(c.Context, radioPlaylist.ID, trackGroups...)
 				trackGroups = []spotify.ID{}
 			}
 			trackGroups = append(trackGroups, item)
@@ -410,14 +410,14 @@ func (c *Commander) RefillRadio() error {
 				return fmt.Errorf("error clearing playlist: %w", err)
 			}
 		}
-		_, err := c.Client.RemoveTracksFromPlaylist(c.Context, radioPlaylist.ID, trackGroups...)
+		_, err := c.Client().RemoveTracksFromPlaylist(c.Context, radioPlaylist.ID, trackGroups...)
 		if err != nil {
 			return err
 		}
 	}
 
 	to_add := 500 - (playlistItems.Total - len(to_remove))
-	playlistItems, err = c.Client.GetPlaylistItems(c.Context, radioPlaylist.ID)
+	playlistItems, err = c.Client().GetPlaylistItems(c.Context, radioPlaylist.ID)
 	if err != nil {
 		return fmt.Errorf("playlist items: %w", err)
 	}
@@ -427,7 +427,7 @@ func (c *Commander) RefillRadio() error {
 	if pages > 1 {
 		randomPage = frand.Intn(pages-1) + 1
 	}
-	playlistPage, err := c.Client.
+	playlistPage, err := c.Client().
 		GetPlaylistItems(c.Context, radioPlaylist.ID, spotify.Limit(50), spotify.Offset((randomPage-1)*50))
 	if err != nil {
 		return fmt.Errorf("playlist page: %w", err)
@@ -448,7 +448,7 @@ func (c *Commander) RefillRadio() error {
 	seed := spotify.Seeds{
 		Tracks: seedIds,
 	}
-	recomendations, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(95))
+	recomendations, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(95))
 	if err != nil {
 		return err
 	}
@@ -474,11 +474,11 @@ func (c *Commander) RefillRadio() error {
 		queue = append(queue, rec)
 	}
 	to_add -= len(queue)
-	_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, queue...)
+	_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, queue...)
 	if err != nil {
 		return fmt.Errorf("add tracks: %w", err)
 	}
-	err = c.Client.Repeat(c.Context, "context")
+	err = c.Client().Repeat(c.Context, "context")
 	if err != nil {
 		return fmt.Errorf("repeat: %w", err)
 	}
@@ -487,7 +487,7 @@ func (c *Commander) RefillRadio() error {
 		seed := spotify.Seeds{
 			Tracks: []spotify.ID{recomendationIds[id]},
 		}
-		additional_recs, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+		additional_recs, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
 		if err != nil {
 			return fmt.Errorf("get recs: %w", err)
 		}
@@ -506,7 +506,7 @@ func (c *Commander) RefillRadio() error {
 			}
 		}
 		to_add -= len(queue)
-		_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
+		_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
 		if err != nil {
 			return fmt.Errorf("add tracks to playlist: %w", err)
 		}
@@ -552,7 +552,7 @@ func (c *Commander) RadioGivenList(song_ids []spotify.ID, name string) error {
 	seed := spotify.Seeds{
 		Tracks: song_ids,
 	}
-	recomendations, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(99))
+	recomendations, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(99))
 	if err != nil {
 		return err
 	}
@@ -582,11 +582,11 @@ func (c *Commander) RadioGivenList(song_ids []spotify.ID, name string) error {
 			queue = append(queue, rec)
 		}
 	}
-	_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, queue...)
+	_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, queue...)
 	if err != nil {
 		return err
 	}
-	err = c.Client.PlayOpt(c.Context, &spotify.PlayOptions{
+	err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
 		PlaybackContext: &radioPlaylist.URI,
 	})
 	if err != nil {
@@ -595,7 +595,7 @@ func (c *Commander) RadioGivenList(song_ids []spotify.ID, name string) error {
 			if err != nil {
 				return err
 			}
-			err = c.Client.PlayOpt(c.Context, &spotify.PlayOptions{
+			err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
 				PlaybackContext: &radioPlaylist.URI,
 				DeviceID:        &deviceId,
 			})
@@ -609,7 +609,7 @@ func (c *Commander) RadioGivenList(song_ids []spotify.ID, name string) error {
 		seed := spotify.Seeds{
 			Tracks: []spotify.ID{recomendationIds[id]},
 		}
-		additional_recs, err := c.Client.GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+		additional_recs, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
 		if err != nil {
 			return err
 		}
@@ -627,7 +627,7 @@ func (c *Commander) RadioGivenList(song_ids []spotify.ID, name string) error {
 				additionalRecsIds = append(additionalRecsIds, song.ID)
 			}
 		}
-		_, err = c.Client.AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
+		_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
 		if err != nil {
 			return err
 		}

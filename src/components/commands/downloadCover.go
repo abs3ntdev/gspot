@@ -10,7 +10,7 @@ func (c *Commander) DownloadCover(path string) error {
 		path = "cover.png"
 	}
 	destinationPath := filepath.Clean(path)
-	state, err := c.Client.PlayerState(c.Context)
+	state, err := c.Client().PlayerState(c.Context)
 	if err != nil {
 		return err
 	}

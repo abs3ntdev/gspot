@@ -21,7 +21,6 @@ func main() {
 			fxplus.Context,
 			cache.NewCache,
 			commands.NewCommander,
-			services.NewSpotifyClient,
 			logger.NewLogger,
 		),
 		fx.Invoke(
