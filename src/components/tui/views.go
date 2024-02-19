@@ -267,6 +267,7 @@ func SavedTracksView(commands *commands.Commander) ([]list.Item, error) {
 }
 
 func MainView(c *commands.Commander) ([]list.Item, error) {
+	c.Log.Debug("SWITCHING TO MAIN VIEW")
 	wg := errgroup.Group{}
 	var saved_items *spotify.SavedTrackPage
 	var playlists *spotify.SimplePlaylistPage

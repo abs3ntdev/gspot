@@ -29,6 +29,7 @@ func (c *Commander) Play() error {
 }
 
 func (c *Commander) PlayLikedSongs(position int) error {
+	c.Log.Debug("Playing liked songs")
 	err := c.ClearRadio()
 	if err != nil {
 		return err
@@ -37,6 +38,7 @@ func (c *Commander) PlayLikedSongs(position int) error {
 	if err != nil {
 		return err
 	}
+	c.Log.Debug("got playlist", "id", playlist.ID)
 	songs, err := c.Client.CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset(position))
 	if err != nil {
 		return err
@@ -49,11 +51,13 @@ func (c *Commander) PlayLikedSongs(position int) error {
 	if err != nil {
 		return err
 	}
+	c.Log.Debug("added songs to playlist")
 	err = c.Client.PlayOpt(c.Context, &spotify.PlayOptions{
 		PlaybackContext: &playlist.URI,
 	})
 	if err != nil {
 		if isNoActiveError(err) {
+			c.Log.Debug("need to activate device")
 			deviceID, err := c.activateDevice()
 			if err != nil {
 				return err
@@ -67,7 +71,9 @@ func (c *Commander) PlayLikedSongs(position int) error {
 			}
 		}
 	}
+	c.Log.Debug("starting loop")
 	for page := 2; page <= 5; page++ {
+		c.Log.Debug("doing loop", "page", page)
 		songs, err := c.Client.CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset((50*(page-1))+position))
 		if err != nil {
 			return err
@@ -81,7 +87,7 @@ func (c *Commander) PlayLikedSongs(position int) error {
 			return err
 		}
 	}
-
+	c.Log.Debug("done")
 	return err
 }
 

@@ -604,8 +604,11 @@ func Tick() tea.Cmd {
 func (m *mainModel) TickPlayback() {
 	playing, _ := m.commands.Client.PlayerCurrentlyPlaying(m.commands.Context)
 	if playing != nil && playing.Playing && playing.Item != nil {
+		if currentlyPlaying == nil || currentlyPlaying.Item == nil ||
+			currentlyPlaying.Item.ID != playing.Item.ID {
+			playbackContext, _ = m.getContext(playing)
+		}
 		currentlyPlaying = playing
-		playbackContext, _ = m.getContext(playing)
 	}
 	ticker := time.NewTicker(1 * time.Second)
 	quit := make(chan struct{})
@@ -613,10 +616,14 @@ func (m *mainModel) TickPlayback() {
 		for {
 			select {
 			case <-ticker.C:
+				m.commands.Log.Debug("TICKING PLAYBACK")
 				playing, _ := m.commands.Client.PlayerCurrentlyPlaying(m.commands.Context)
 				if playing != nil && playing.Playing && playing.Item != nil {
+					if currentlyPlaying == nil || currentlyPlaying.Item == nil ||
+						currentlyPlaying.Item.ID != playing.Item.ID {
+						playbackContext, _ = m.getContext(playing)
+					}
 					currentlyPlaying = playing
-					playbackContext, _ = m.getContext(playing)
 				}
 			case <-quit:
 				ticker.Stop()
@@ -665,18 +672,21 @@ func (m *mainModel) getContext(playing *spotify.CurrentlyPlaying) (string, error
 	id := strings.Split(string(context.URI), ":")[2]
 	switch context.Type {
 	case "album":
+		m.commands.Log.Debug("ALBUM CONTEXT")
 		album, err := m.commands.Client.GetAlbum(m.commands.Context, spotify.ID(id))
 		if err != nil {
 			return "", err
 		}
 		return album.Name, nil
 	case "playlist":
+		m.commands.Log.Debug("PLAYLIST CONTEXT")
 		playlist, err := m.commands.Client.GetPlaylist(m.commands.Context, spotify.ID(id))
 		if err != nil {
 			return "", err
 		}
 		return playlist.Name, nil
 	case "artist":
+		m.commands.Log.Debug("ARTIST CONTEXT")
 		artist, err := m.commands.Client.GetArtist(m.commands.Context, spotify.ID(id))
 		if err != nil {
 			return "", err
