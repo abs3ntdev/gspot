@@ -35,7 +35,7 @@ type CacheParams struct {
 
 func NewCache(p CacheParams) CacheResult {
 	c := &Cache{
-		Root: filepath.Join(os.TempDir(), "gospt.cache"),
+		Root: filepath.Join(os.TempDir(), "gspot.cache"),
 		Log:  p.Log,
 	}
 	return CacheResult{

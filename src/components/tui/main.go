@@ -14,7 +14,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/zmb3/spotify/v2"
 
-	"git.asdf.cafe/abs3nt/gospt-ng/src/components/commands"
+	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
 )
 
 var (
@@ -93,37 +93,92 @@ func (m *mainModel) PlayRadio() {
 	selectedItem := m.list.SelectedItem().(mainItem).SpotifyItem
 	switch item := selectedItem.(type) {
 	case spotify.SimplePlaylist:
-		go HandlePlaylistRadio(m.commands, item)
+		go func() {
+			err := m.commands.RadioFromPlaylist(item)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 		return
 	case *spotify.SavedTrackPage:
-		go HandleLibraryRadio(m.commands)
+		go func() {
+			err := m.commands.RadioFromSavedTracks()
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 		return
 	case spotify.SimpleAlbum:
-		go HandleAlbumRadio(m.commands, item)
+		go func() {
+			err := m.commands.RadioFromAlbum(item)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 		return
 	case spotify.FullAlbum:
-		go HandleAlbumRadio(m.commands, item.SimpleAlbum)
+		go func() {
+			err := m.commands.RadioFromAlbum(item.SimpleAlbum)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 		return
 	case spotify.SimpleArtist:
-		go HandleArtistRadio(m.commands, item)
+		go func() {
+			err := m.commands.RadioGivenArtist(item)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 		return
 	case spotify.FullArtist:
-		go HandleArtistRadio(m.commands, item.SimpleArtist)
+		go func() {
+			err := m.commands.RadioGivenArtist(item.SimpleArtist)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 		return
 	case spotify.SimpleTrack:
-		go HandleRadio(m.commands, item)
+		go func() {
+			err := m.commands.RadioGivenSong(item, 0)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 		return
 	case spotify.FullTrack:
-		go HandleRadio(m.commands, item.SimpleTrack)
+		go func() {
+			err := m.commands.RadioGivenSong(item.SimpleTrack, 0)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 		return
 	case spotify.PlaylistTrack:
-		go HandleRadio(m.commands, item.Track.SimpleTrack)
+		go func() {
+			err := m.commands.RadioGivenSong(item.Track.SimpleTrack, 0)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 		return
 	case spotify.PlaylistItem:
-		go HandleRadio(m.commands, item.Track.Track.SimpleTrack)
+		go func() {
+			err := m.commands.RadioGivenSong(item.Track.Track.SimpleTrack, 0)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 		return
 	case spotify.SavedTrack:
-		go HandleRadio(m.commands, item.SimpleTrack)
+		go func() {
+			err := m.commands.RadioGivenSong(item.SimpleTrack, 0)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 		return
 	}
 }
@@ -254,29 +309,38 @@ func (m *mainModel) SendMessage(msg string, duration time.Duration) {
 }
 
 func (m *mainModel) QueueItem() error {
+	var id spotify.ID
+	var name string
 	switch item := m.list.SelectedItem().(mainItem).SpotifyItem.(type) {
 	case spotify.PlaylistTrack:
-		go m.SendMessage("Adding "+item.Track.Name+" to queue", 2*time.Second)
-		go HandleQueueItem(m.commands, item.Track.ID)
+		name = item.Track.Name
+		id = item.Track.ID
 	case spotify.SavedTrack:
-		go m.SendMessage("Adding "+item.Name+" to queue", 2*time.Second)
-		go HandleQueueItem(m.commands, item.ID)
+		name = item.Name
+		id = item.ID
 	case spotify.SimpleTrack:
-		go m.SendMessage("Adding "+item.Name+" to queue", 2*time.Second)
-		go HandleQueueItem(m.commands, item.ID)
+		name = item.Name
+		id = item.ID
 	case spotify.FullTrack:
-		go m.SendMessage("Adding "+item.Name+" to queue", 2*time.Second)
-		go HandleQueueItem(m.commands, item.ID)
+		name = item.Name
+		id = item.ID
 	case *spotify.FullTrack:
-		go m.SendMessage("Adding "+item.Name+" to queue", 2*time.Second)
-		go HandleQueueItem(m.commands, item.ID)
+		name = item.Name
+		id = item.ID
 	case *spotify.SimpleTrack:
-		go m.SendMessage("Adding "+item.Name+" to queue", 2*time.Second)
-		go HandleQueueItem(m.commands, item.ID)
+		name = item.Name
+		id = item.ID
 	case *spotify.SimplePlaylist:
-		go m.SendMessage("Adding "+item.Name+" to queue", 2*time.Second)
-		go HandleQueueItem(m.commands, item.ID)
+		name = item.Name
+		id = item.ID
 	}
+	go m.SendMessage("Adding "+name+" to queue", 2*time.Second)
+	go func() {
+		err := m.commands.QueueSong(id)
+		if err != nil {
+			m.SendMessage(err.Error(), 5*time.Second)
+		}
+	}()
 	if m.mode == Queue {
 		go func() {
 			new_items, err := QueueView(m.commands)
@@ -296,10 +360,13 @@ func (m *mainModel) DeleteTrackFromPlaylist() error {
 	track := m.list.SelectedItem().(mainItem).SpotifyItem.(spotify.PlaylistTrack).Track
 	go m.SendMessage("Deleteing "+track.Name+" from "+m.playlist.Name, 2*time.Second)
 	go func() {
-		HandleDeleteTrackFromPlaylist(m.commands, track.ID, m.playlist.ID)
+		err := m.commands.DeleteTracksFromPlaylist([]spotify.ID{track.ID}, m.playlist.ID)
+		if err != nil {
+			m.SendMessage(err.Error(), 5*time.Second)
+		}
 		new_items, err := PlaylistView(m.commands, m.playlist)
 		if err != nil {
-			return
+			m.SendMessage(err.Error(), 5*time.Second)
 		}
 		m.list.SetItems(new_items)
 	}()
@@ -311,10 +378,13 @@ func (m *mainModel) SelectItem() error {
 	case Queue:
 		page = 1
 		go func() {
-			HandleNextInQueue(m.commands, m.list.Index())
+			err := m.commands.Next(m.list.Index(), true)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
 			new_items, err := QueueView(m.commands)
 			if err != nil {
-				return
+				m.SendMessage(err.Error(), 5*time.Second)
 			}
 			m.list.SetItems(new_items)
 			m.list.ResetSelected()
@@ -471,17 +541,43 @@ func (m *mainModel) SelectItem() error {
 		m.list.ResetSelected()
 	case Album, ArtistAlbum, SearchArtistAlbum, SearchAlbum:
 		pos := m.list.Cursor() + (m.list.Paginator.Page * m.list.Paginator.TotalPages)
-		go HandlePlayWithContext(m.commands, &m.album.URI, &pos)
+		go func() {
+			_ = m.commands.PlaySongInPlaylist(&m.album.URI, &pos)
+		}()
 	case Playlist, SearchPlaylist:
 		pos := m.list.Cursor() + (m.list.Paginator.Page * m.list.Paginator.PerPage)
-		go HandlePlayWithContext(m.commands, &m.playlist.URI, &pos)
+		go func() {
+			_ = m.commands.PlaySongInPlaylist(&m.playlist.URI, &pos)
+		}()
 	case Tracks:
-		go HandlePlayLikedSong(m.commands, m.list.Cursor()+(m.list.Paginator.Page*m.list.Paginator.PerPage))
+		go func() {
+			err := m.commands.PlayLikedSongs(m.list.Cursor() + (m.list.Paginator.Page * m.list.Paginator.PerPage))
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			}
+		}()
 	case SearchTracks:
-		go HandlePlayTrack(m.commands, m.list.SelectedItem().(mainItem).SpotifyItem.(spotify.FullTrack).ID)
+		go func() {
+			err := m.commands.QueueSong(m.list.SelectedItem().(mainItem).SpotifyItem.(spotify.FullTrack).ID)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+				return
+			}
+			err = m.commands.Next(1, false)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+				return
+			}
+		}()
 	case Devices:
-		go HandleSetDevice(m.commands, m.list.SelectedItem().(mainItem).SpotifyItem.(spotify.PlayerDevice))
-		go m.SendMessage("Setting device to "+m.list.SelectedItem().FilterValue(), 2*time.Second)
+		go func() {
+			err := m.commands.SetDevice(m.list.SelectedItem().(mainItem).SpotifyItem.(spotify.PlayerDevice).ID)
+			if err != nil {
+				m.SendMessage(err.Error(), 5*time.Second)
+			} else {
+				m.SendMessage("Setting device to "+m.list.SelectedItem().FilterValue(), 2*time.Second)
+			}
+		}()
 		m.mode = "main"
 		new_items, err := MainView(m.commands)
 		if err != nil {
@@ -654,16 +750,36 @@ func (m *mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 		if msg.String() == ">" {
-			go HandleSeek(m.commands, true)
+			go func() {
+				err := m.commands.Seek(true)
+				if err != nil {
+					m.SendMessage(err.Error(), 5*time.Second)
+				}
+			}()
 		}
 		if msg.String() == "<" {
-			go HandleSeek(m.commands, false)
+			go func() {
+				err := m.commands.Seek(false)
+				if err != nil {
+					m.SendMessage(err.Error(), 5*time.Second)
+				}
+			}()
 		}
 		if msg.String() == "+" {
-			go HandleVolume(m.commands, true)
+			go func() {
+				err := m.commands.ChangeVolume(10)
+				if err != nil {
+					m.SendMessage(err.Error(), 5*time.Second)
+				}
+			}()
 		}
 		if msg.String() == "-" {
-			go HandleVolume(m.commands, false)
+			go func() {
+				err := m.commands.ChangeVolume(-10)
+				if err != nil {
+					m.SendMessage(err.Error(), 5*time.Second)
+				}
+			}()
 		}
 		// search input
 		if m.input.Focused() {
@@ -769,7 +885,7 @@ func InitMain(c *commands.Commander, mode Mode) (tea.Model, error) {
 		mode:     mode,
 		progress: prog,
 	}
-	m.list.Title = "GOSPT"
+	m.list.Title = "GSPOT"
 	go m.TickPlayback()
 	Tick()
 	m.list.DisableQuitKeybindings()

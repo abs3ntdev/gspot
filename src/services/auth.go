@@ -17,7 +17,7 @@ import (
 	"golang.org/x/exp/slog"
 	"golang.org/x/oauth2"
 
-	"git.asdf.cafe/abs3nt/gospt-ng/src/config"
+	"git.asdf.cafe/abs3nt/gspot/src/config"
 )
 
 type SpotifyClientResult struct {
@@ -79,8 +79,8 @@ func NewSpotifyClient(conf *config.Config) (c SpotifyClientResult, err error) {
 			spotifyauth.ScopeStreaming,
 		),
 	)
-	if _, err := os.Stat(filepath.Join(configDir, "gospt/auth.json")); err == nil {
-		authFilePath := filepath.Join(configDir, "gospt/auth.json")
+	if _, err := os.Stat(filepath.Join(configDir, "gspot/auth.json")); err == nil {
+		authFilePath := filepath.Join(configDir, "gspot/auth.json")
 		authFile, err := os.Open(authFilePath)
 		if err != nil {
 			return SpotifyClientResult{}, err
@@ -157,7 +157,7 @@ func completeAuth(w http.ResponseWriter, r *http.Request) {
 		slog.Error("AUTHENTICATOR", "failed to unmarshal", err)
 		os.Exit(1)
 	}
-	err = os.WriteFile(filepath.Join(configDir, "gospt/auth.json"), out, 0o600)
+	err = os.WriteFile(filepath.Join(configDir, "gspot/auth.json"), out, 0o600)
 	if err != nil {
 		slog.Error("AUTHENTICATOR", "failed to save auth", err)
 	}

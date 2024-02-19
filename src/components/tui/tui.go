@@ -3,7 +3,7 @@ package tui
 import (
 	tea "github.com/charmbracelet/bubbletea"
 
-	"git.asdf.cafe/abs3nt/gospt-ng/src/components/commands"
+	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
 )
 
 // StartTea the entry point for the UI. Initializes the model.

@@ -8,7 +8,7 @@ import (
 	"github.com/zmb3/spotify/v2"
 	"go.uber.org/fx"
 
-	"git.asdf.cafe/abs3nt/gospt-ng/src/components/cache"
+	"git.asdf.cafe/abs3nt/gspot/src/components/cache"
 )
 
 type CommanderResult struct {

@@ -9,8 +9,8 @@ import (
 	"github.com/lmittmann/tint"
 	"go.uber.org/fx"
 
-	"git.asdf.cafe/abs3nt/gospt-ng/src/config"
-	"git.asdf.cafe/abs3nt/gospt-ng/src/services"
+	"git.asdf.cafe/abs3nt/gspot/src/config"
+	"git.asdf.cafe/abs3nt/gspot/src/services"
 )
 
 var Services = fx.Options(
@@ -31,7 +31,7 @@ var Config = fx.Options(
 	fx.Provide(
 		func() *config.Config {
 			c := &config.Config{}
-			gunner.LoadApp(c, "gospt")
+			gunner.LoadApp(c, "gspot")
 			return c
 		},
 	),

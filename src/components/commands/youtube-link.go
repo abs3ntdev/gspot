@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"git.asdf.cafe/abs3nt/gospt-ng/src/components/youtube"
+	"git.asdf.cafe/abs3nt/gspot/src/components/youtube"
 )
 
 func (c *Commander) PrintYoutubeLink() error {

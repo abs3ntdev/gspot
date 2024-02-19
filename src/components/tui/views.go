@@ -9,7 +9,7 @@ import (
 	"github.com/zmb3/spotify/v2"
 	"golang.org/x/sync/errgroup"
 
-	"git.asdf.cafe/abs3nt/gospt-ng/src/components/commands"
+	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
 )
 
 const regex = `<.*?>`

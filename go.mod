@@ -1,4 +1,4 @@
-module git.asdf.cafe/abs3nt/gospt-ng
+module git.asdf.cafe/abs3nt/gspot
 
 go 1.22.0
 

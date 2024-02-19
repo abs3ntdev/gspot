@@ -12,8 +12,8 @@ import (
 func (c *Commander) activateDevice() (spotify.ID, error) {
 	var device *spotify.PlayerDevice
 	configDir, _ := os.UserConfigDir()
-	if _, err := os.Stat(filepath.Join(configDir, "gospt/device.json")); err == nil {
-		deviceFile, err := os.Open(filepath.Join(configDir, "gospt/device.json"))
+	if _, err := os.Stat(filepath.Join(configDir, "gspot/device.json")); err == nil {
+		deviceFile, err := os.Open(filepath.Join(configDir, "gspot/device.json"))
 		if err != nil {
 			return "", err
 		}
@@ -31,7 +31,7 @@ func (c *Commander) activateDevice() (spotify.ID, error) {
 			return "", err
 		}
 	} else {
-		c.Log.Error("COMMANDER", "failed to activated device", "YOU MUST RUN gospt setdevice FIRST")
+		c.Log.Error("COMMANDER", "failed to activated device", "YOU MUST RUN gspot setdevice FIRST")
 	}
 	return device.ID, nil
 }

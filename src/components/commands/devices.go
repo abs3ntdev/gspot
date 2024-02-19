@@ -42,7 +42,7 @@ func (c *Commander) SetDevice(device spotify.ID) error {
 				return err
 			}
 			configDir, _ := os.UserConfigDir()
-			err = os.WriteFile(filepath.Join(configDir, "gospt/device.json"), out, 0o600)
+			err = os.WriteFile(filepath.Join(configDir, "gspot/device.json"), out, 0o600)
 			if err != nil {
 				return err
 			}

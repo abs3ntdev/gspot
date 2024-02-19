@@ -9,8 +9,8 @@ import (
 	"github.com/zmb3/spotify/v2"
 	"go.uber.org/fx"
 
-	"git.asdf.cafe/abs3nt/gospt-ng/src/components/commands"
-	"git.asdf.cafe/abs3nt/gospt-ng/src/components/tui"
+	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
+	"git.asdf.cafe/abs3nt/gspot/src/components/tui"
 )
 
 var Version = "dev"
@@ -23,6 +23,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 		}
 	}()
 	app := &cli.App{
+		Name:                 "gspot",
 		EnableBashCompletion: true,
 		Version:              Version,
 		Action: func(ctx *cli.Context) error {
@@ -95,11 +96,20 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Category: "Sharing",
 			},
 			{
-				Name:    "next",
-				Aliases: []string{"n", "skip"},
-				Usage:   "Skips to the next song",
+				Name:      "next",
+				Aliases:   []string{"n", "skip"},
+				Usage:     "Skips to the next song",
+				Args:      true,
+				ArgsUsage: "amount",
 				Action: func(cCtx *cli.Context) error {
-					return c.Next()
+					if cCtx.NArg() > 0 {
+						amt, err := strconv.Atoi(cCtx.Args().First())
+						if err != nil {
+							return err
+						}
+						return c.Next(amt, false)
+					}
+					return c.Next(1, false)
 				},
 				Category: "Playback",
 			},

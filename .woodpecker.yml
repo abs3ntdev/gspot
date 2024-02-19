@@ -3,7 +3,7 @@ steps:
     image: golang:1.22
     commands:
       - go mod tidy
-      - go build -o gospt-ng
+      - go build -o gspot
 
   publish:
     image: goreleaser/goreleaser:nightly

@@ -44,7 +44,12 @@ func (c *Commander) RadioFromPlaylist(playlist spotify.SimplePlaylist) error {
 	if pages > 1 {
 		randomPage = frand.Intn(pages-1) + 1
 	}
-	playlistPage, err := c.Client.GetPlaylistItems(c.Context, playlist.ID, spotify.Limit(50), spotify.Offset((randomPage-1)*50))
+	playlistPage, err := c.Client.GetPlaylistItems(
+		c.Context,
+		playlist.ID,
+		spotify.Limit(50),
+		spotify.Offset((randomPage-1)*50),
+	)
 	if err != nil {
 		return err
 	}
@@ -287,14 +292,14 @@ func (c *Commander) ClearRadio() error {
 	}
 	_, _ = db.Query("DROP TABLE IF EXISTS radio")
 	configDir, _ := os.UserConfigDir()
-	os.Remove(filepath.Join(configDir, "gospt/radio.json"))
+	os.Remove(filepath.Join(configDir, "gspot/radio.json"))
 	_ = c.Client.Pause(c.Context)
 	return nil
 }
 
 func (c *Commander) GetRadioPlaylist(name string) (*spotify.FullPlaylist, *sql.DB, error) {
 	configDir, _ := os.UserConfigDir()
-	playlistFile, err := os.ReadFile(filepath.Join(configDir, "gospt/radio.json"))
+	playlistFile, err := os.ReadFile(filepath.Join(configDir, "gspot/radio.json"))
 	if errors.Is(err, os.ErrNotExist) {
 		return c.CreateRadioPlaylist(name)
 	}
@@ -306,7 +311,7 @@ func (c *Commander) GetRadioPlaylist(name string) (*spotify.FullPlaylist, *sql.D
 	if err != nil {
 		return nil, nil, err
 	}
-	db, err := sql.Open("sqlite", filepath.Join(configDir, "gospt/radio.db"))
+	db, err := sql.Open("sqlite", filepath.Join(configDir, "gspot/radio.db"))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -325,11 +330,11 @@ func (c *Commander) CreateRadioPlaylist(name string) (*spotify.FullPlaylist, *sq
 	if err != nil {
 		return nil, nil, err
 	}
-	err = os.WriteFile(filepath.Join(configDir, "gospt/radio.json"), raw, 0o600)
+	err = os.WriteFile(filepath.Join(configDir, "gspot/radio.json"), raw, 0o600)
 	if err != nil {
 		return nil, nil, err
 	}
-	db, err := sql.Open("sqlite", filepath.Join(configDir, "gospt/radio.db"))
+	db, err := sql.Open("sqlite", filepath.Join(configDir, "gspot/radio.db"))
 	if err != nil {
 		return nil, nil, err
 	}

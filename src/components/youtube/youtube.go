@@ -94,7 +94,7 @@ func Search(query string) string {
 	ctx := context.Background()
 
 	confDir, _ := os.UserConfigDir()
-	b, err := os.ReadFile(filepath.Join(confDir, "gospt", "client_secret.json"))
+	b, err := os.ReadFile(filepath.Join(confDir, "gspot", "client_secret.json"))
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}

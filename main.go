@@ -3,10 +3,10 @@ package main
 import (
 	"go.uber.org/fx"
 
-	"git.asdf.cafe/abs3nt/gospt-ng/src/app"
-	"git.asdf.cafe/abs3nt/gospt-ng/src/components/cache"
-	"git.asdf.cafe/abs3nt/gospt-ng/src/components/cli"
-	"git.asdf.cafe/abs3nt/gospt-ng/src/components/commands"
+	"git.asdf.cafe/abs3nt/gspot/src/app"
+	"git.asdf.cafe/abs3nt/gspot/src/components/cache"
+	"git.asdf.cafe/abs3nt/gspot/src/components/cli"
+	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
 )
 
 func main() {
