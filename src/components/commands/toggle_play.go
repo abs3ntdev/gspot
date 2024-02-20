@@ -3,10 +3,10 @@ package commands
 func (c *Commander) TogglePlay() error {
 	state, err := c.Client().PlayerState(c.Context)
 	if err != nil {
-		return err
+		return c.Play()
 	}
 	if state.Playing {
-		return c.Client().Pause(c.Context)
+		return c.Pause()
 	}
-	return c.Client().Play(c.Context)
+	return c.Play()
 }
