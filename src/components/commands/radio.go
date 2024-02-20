@@ -16,12 +16,12 @@ import (
 )
 
 func (c *Commander) Radio() error {
-	current_song, err := c.Client().PlayerCurrentlyPlaying(c.Context)
+	currentSong, err := c.Client().PlayerCurrentlyPlaying(c.Context)
 	if err != nil {
 		return err
 	}
-	if current_song.Item != nil {
-		return c.RadioGivenSong(current_song.Item.SimpleTrack, current_song.Progress)
+	if currentSong.Item != nil {
+		return c.RadioGivenSong(currentSong.Item.SimpleTrack, currentSong.Progress)
 	}
 	_, err = c.activateDevice()
 	if err != nil {
@@ -153,12 +153,13 @@ func (c *Commander) RadioGivenArtist(artist spotify.SimpleArtist) error {
 		seed := spotify.Seeds{
 			Tracks: []spotify.ID{recomendationIds[id]},
 		}
-		additional_recs, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+		additionalRecs, err := c.Client().
+			GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
 		if err != nil {
 			return err
 		}
 		additionalRecsIds := []spotify.ID{}
-		for _, song := range additional_recs.Tracks {
+		for _, song := range additionalRecs.Tracks {
 			exists, err := c.SongExists(db, song.ID)
 			if err != nil {
 				return err
@@ -255,12 +256,13 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
 		seed := spotify.Seeds{
 			Tracks: []spotify.ID{recomendationIds[id]},
 		}
-		additional_recs, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+		additionalRecs, err := c.Client().
+			GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
 		if err != nil {
 			return err
 		}
 		additionalRecsIds := []spotify.ID{}
-		for _, song := range additional_recs.Tracks {
+		for _, song := range additionalRecs.Tracks {
 			exists, err := c.SongExists(db, song.ID)
 			if err != nil {
 				return err
@@ -344,9 +346,9 @@ func (c *Commander) CreateRadioPlaylist(name string) (*spotify.FullPlaylist, *sq
 }
 
 func (c *Commander) SongExists(db *sql.DB, song spotify.ID) (bool, error) {
-	song_id := string(song)
+	songID := string(song)
 	sqlStmt := `SELECT id FROM radio WHERE id = ?`
-	err := db.QueryRow(sqlStmt, song_id).Scan(&song_id)
+	err := db.QueryRow(sqlStmt, songID).Scan(&songID)
 	if err != nil {
 		if err != sql.ErrNoRows {
 			return false, err
@@ -366,7 +368,7 @@ func (c *Commander) RefillRadio() error {
 	if !status.Playing {
 		return nil
 	}
-	to_remove := []spotify.ID{}
+	toRemove := []spotify.ID{}
 	radioPlaylist, db, err := c.GetRadioPlaylist("")
 	if err != nil {
 		return err
@@ -394,13 +396,13 @@ func (c *Commander) RefillRadio() error {
 			if track.Track.Track.ID == status.Item.ID {
 				break
 			}
-			to_remove = append(to_remove, track.Track.Track.ID)
+			toRemove = append(toRemove, track.Track.Track.ID)
 		}
 		page++
 	}
-	if len(to_remove) > 0 {
+	if len(toRemove) > 0 {
 		var trackGroups []spotify.ID
-		for idx, item := range to_remove {
+		for idx, item := range toRemove {
 			if idx%100 == 0 {
 				_, err = c.Client().RemoveTracksFromPlaylist(c.Context, radioPlaylist.ID, trackGroups...)
 				trackGroups = []spotify.ID{}
@@ -416,7 +418,7 @@ func (c *Commander) RefillRadio() error {
 		}
 	}
 
-	to_add := 500 - (playlistItems.Total - len(to_remove))
+	toAdd := 500 - (playlistItems.Total - len(toRemove))
 	playlistItems, err = c.Client().GetPlaylistItems(c.Context, radioPlaylist.ID)
 	if err != nil {
 		return fmt.Errorf("playlist items: %w", err)
@@ -464,7 +466,7 @@ func (c *Commander) RefillRadio() error {
 	}
 	queue := []spotify.ID{}
 	for idx, rec := range recomendationIds {
-		if idx > to_add {
+		if idx > toAdd {
 			break
 		}
 		_, err = db.QueryContext(c.Context, fmt.Sprintf("INSERT INTO radio (id) VALUES('%s')", rec.String()))
@@ -473,7 +475,7 @@ func (c *Commander) RefillRadio() error {
 		}
 		queue = append(queue, rec)
 	}
-	to_add -= len(queue)
+	toAdd -= len(queue)
 	_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, queue...)
 	if err != nil {
 		return fmt.Errorf("add tracks: %w", err)
@@ -482,30 +484,31 @@ func (c *Commander) RefillRadio() error {
 	if err != nil {
 		return fmt.Errorf("repeat: %w", err)
 	}
-	for to_add > 0 {
+	for toAdd > 0 {
 		id := frand.Intn(len(recomendationIds)-2) + 1
 		seed := spotify.Seeds{
 			Tracks: []spotify.ID{recomendationIds[id]},
 		}
-		additional_recs, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+		additionalRecs, err := c.Client().
+			GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
 		if err != nil {
 			return fmt.Errorf("get recs: %w", err)
 		}
 		additionalRecsIds := []spotify.ID{}
-		for idx, song := range additional_recs.Tracks {
+		for idx, song := range additionalRecs.Tracks {
 			exists, err := c.SongExists(db, song.ID)
 			if err != nil {
 				return fmt.Errorf("check song existence: %w", err)
 			}
 			if !exists {
-				if idx > to_add {
+				if idx > toAdd {
 					break
 				}
 				additionalRecsIds = append(additionalRecsIds, song.ID)
 				queue = append(queue, song.ID)
 			}
 		}
-		to_add -= len(queue)
+		toAdd -= len(queue)
 		_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
 		if err != nil {
 			return fmt.Errorf("add tracks to playlist: %w", err)
@@ -548,9 +551,9 @@ func (c *Commander) RadioFromAlbum(album spotify.SimpleAlbum) error {
 	return c.RadioGivenList(seedIds[:seedCount], album.Name)
 }
 
-func (c *Commander) RadioGivenList(song_ids []spotify.ID, name string) error {
+func (c *Commander) RadioGivenList(songs []spotify.ID, name string) error {
 	seed := spotify.Seeds{
-		Tracks: song_ids,
+		Tracks: songs,
 	}
 	recomendations, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(99))
 	if err != nil {
@@ -568,7 +571,7 @@ func (c *Commander) RadioGivenList(song_ids []spotify.ID, name string) error {
 	if err != nil {
 		return err
 	}
-	queue := []spotify.ID{song_ids[0]}
+	queue := []spotify.ID{songs[0]}
 	for _, rec := range recomendationIds {
 		exists, err := c.SongExists(db, rec)
 		if err != nil {
@@ -591,13 +594,13 @@ func (c *Commander) RadioGivenList(song_ids []spotify.ID, name string) error {
 	})
 	if err != nil {
 		if isNoActiveError(err) {
-			deviceId, err := c.activateDevice()
+			deviceID, err := c.activateDevice()
 			if err != nil {
 				return err
 			}
 			err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
 				PlaybackContext: &radioPlaylist.URI,
-				DeviceID:        &deviceId,
+				DeviceID:        &deviceID,
 			})
 			if err != nil {
 				return err
@@ -609,12 +612,12 @@ func (c *Commander) RadioGivenList(song_ids []spotify.ID, name string) error {
 		seed := spotify.Seeds{
 			Tracks: []spotify.ID{recomendationIds[id]},
 		}
-		additional_recs, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
+		additionalRecs, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
 		if err != nil {
 			return err
 		}
 		additionalRecsIds := []spotify.ID{}
-		for _, song := range additional_recs.Tracks {
+		for _, song := range additionalRecs.Tracks {
 			exists, err := c.SongExists(db, song.ID)
 			if err != nil {
 				return err

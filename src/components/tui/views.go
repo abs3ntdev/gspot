@@ -171,7 +171,7 @@ func SearchPlaylistsView(commands *commands.Commander, playlists *spotify.Simple
 	for _, playlist := range playlists.Playlists {
 		items = append(items, mainItem{
 			Name:        playlist.Name,
-			Desc:        stripHtmlRegex(playlist.Description),
+			Desc:        stripHTMLRegex(playlist.Description),
 			SpotifyItem: playlist,
 		})
 	}
@@ -269,13 +269,13 @@ func SavedTracksView(commands *commands.Commander) ([]list.Item, error) {
 func MainView(c *commands.Commander) ([]list.Item, error) {
 	c.Log.Debug("SWITCHING TO MAIN VIEW")
 	wg := errgroup.Group{}
-	var saved_items *spotify.SavedTrackPage
+	var savedItems *spotify.SavedTrackPage
 	var playlists *spotify.SimplePlaylistPage
 	var artists *spotify.FullArtistCursorPage
 	var albums *spotify.SavedAlbumPage
 
 	wg.Go(func() (err error) {
-		saved_items, err = c.Client().CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset(0))
+		savedItems, err = c.Client().CurrentUsersTracks(c.Context, spotify.Limit(50), spotify.Offset(0))
 		return
 	})
 
@@ -300,11 +300,11 @@ func MainView(c *commands.Commander) ([]list.Item, error) {
 	}
 
 	items := []list.Item{}
-	if saved_items != nil && saved_items.Total != 0 {
+	if savedItems != nil && savedItems.Total != 0 {
 		items = append(items, mainItem{
 			Name:        "Saved Tracks",
-			Desc:        fmt.Sprintf("%d saved songs", saved_items.Total),
-			SpotifyItem: saved_items,
+			Desc:        fmt.Sprintf("%d saved songs", savedItems.Total),
+			SpotifyItem: savedItems,
 		})
 	}
 	if albums != nil && albums.Total != 0 {
@@ -330,7 +330,7 @@ func MainView(c *commands.Commander) ([]list.Item, error) {
 		for _, playlist := range playlists.Playlists {
 			items = append(items, mainItem{
 				Name:        playlist.Name,
-				Desc:        stripHtmlRegex(playlist.Description),
+				Desc:        stripHTMLRegex(playlist.Description),
 				SpotifyItem: playlist,
 			})
 		}
@@ -338,7 +338,7 @@ func MainView(c *commands.Commander) ([]list.Item, error) {
 	return items, nil
 }
 
-func stripHtmlRegex(s string) string {
+func stripHTMLRegex(s string) string {
 	r := regexp.MustCompile(regex)
 	return r.ReplaceAllString(s, "")
 }

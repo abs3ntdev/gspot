@@ -33,24 +33,24 @@ func (fn roundTripperFunc) RoundTrip(req *http.Request) (*http.Response, error) 
 }
 
 func GetClient(conf *config.Config) (c *spotify.Client, err error) {
-	if conf.ClientId == "" || (conf.ClientSecret == "" && conf.ClientSecretCmd == "") || conf.Port == "" {
+	if conf.ClientID == "" || (conf.ClientSecret == "" && conf.ClientSecretCmd == "") || conf.Port == "" {
 		return nil, fmt.Errorf("INVALID CONFIG")
 	}
 	if conf.ClientSecretCmd != "" {
 		args := strings.Fields(conf.ClientSecretCmd)
 		cmd := args[0]
-		secret_command := exec.Command(cmd)
+		secretCommand := exec.Command(cmd)
 		if len(args) > 1 {
-			secret_command.Args = args
+			secretCommand.Args = args
 		}
-		secret, err := secret_command.Output()
+		secret, err := secretCommand.Output()
 		if err != nil {
 			panic(err)
 		}
 		conf.ClientSecret = strings.TrimSpace(string(secret))
 	}
 	auth = spotifyauth.New(
-		spotifyauth.WithClientID(conf.ClientId),
+		spotifyauth.WithClientID(conf.ClientID),
 		spotifyauth.WithClientSecret(conf.ClientSecret),
 		spotifyauth.WithRedirectURL(fmt.Sprintf("http://localhost:%s/callback", conf.Port)),
 		spotifyauth.WithScopes(
@@ -93,11 +93,11 @@ func GetClient(conf *config.Config) (c *spotify.Client, err error) {
 		})
 		authClient := auth.Client(authCtx, tok)
 		client := spotify.New(authClient, spotify.WithRetry(true))
-		new_token, err := client.Token()
+		newToken, err := client.Token()
 		if err != nil {
 			return nil, err
 		}
-		out, err := json.MarshalIndent(new_token, "", " ")
+		out, err := json.MarshalIndent(newToken, "", " ")
 		if err != nil {
 			return nil, err
 		}

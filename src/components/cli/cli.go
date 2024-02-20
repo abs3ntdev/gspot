@@ -40,7 +40,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Usage:     "Plays a spotify url",
 				ArgsUsage: "url",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
-					return c.PlayUrl(cmd.Args().First())
+					return c.PlayURL(cmd.Args().First())
 				},
 				Category: "Playback",
 			},

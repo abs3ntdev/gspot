@@ -43,11 +43,11 @@ func (c *Commander) PlayLikedSongs(position int) error {
 	if err != nil {
 		return err
 	}
-	to_add := []spotify.ID{}
+	toAdd := []spotify.ID{}
 	for _, song := range songs.Tracks {
-		to_add = append(to_add, song.ID)
+		toAdd = append(toAdd, song.ID)
 	}
-	_, err = c.Client().AddTracksToPlaylist(c.Context, playlist.ID, to_add...)
+	_, err = c.Client().AddTracksToPlaylist(c.Context, playlist.ID, toAdd...)
 	if err != nil {
 		return err
 	}
@@ -78,11 +78,11 @@ func (c *Commander) PlayLikedSongs(position int) error {
 		if err != nil {
 			return err
 		}
-		to_add := []spotify.ID{}
+		toAdd := []spotify.ID{}
 		for _, song := range songs.Tracks {
-			to_add = append(to_add, song.ID)
+			toAdd = append(toAdd, song.ID)
 		}
-		_, err = c.Client().AddTracksToPlaylist(c.Context, playlist.ID, to_add...)
+		_, err = c.Client().AddTracksToPlaylist(c.Context, playlist.ID, toAdd...)
 		if err != nil {
 			return err
 		}
@@ -91,20 +91,20 @@ func (c *Commander) PlayLikedSongs(position int) error {
 	return err
 }
 
-func (c *Commander) PlayUrl(urlString string) error {
+func (c *Commander) PlayURL(urlString string) error {
 	url, err := url.Parse(urlString)
 	if err != nil {
 		return err
 	}
-	track_id := strings.Split(url.Path, "/")[2]
-	err = c.Client().QueueSong(c.Context, spotify.ID(track_id))
+	trackID := strings.Split(url.Path, "/")[2]
+	err = c.Client().QueueSong(c.Context, spotify.ID(trackID))
 	if err != nil {
 		if isNoActiveError(err) {
 			deviceID, err := c.activateDevice()
 			if err != nil {
 				return err
 			}
-			err = c.Client().QueueSongOpt(c.Context, spotify.ID(track_id), &spotify.PlayOptions{
+			err = c.Client().QueueSongOpt(c.Context, spotify.ID(trackID), &spotify.PlayOptions{
 				DeviceID: &deviceID,
 			})
 			if err != nil {

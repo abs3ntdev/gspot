@@ -32,7 +32,7 @@ func (m *mainModel) LoadMoreItems() {
 		for _, item := range items {
 			m.list.InsertItem(len(m.list.Items())+1, item)
 		}
-		main_updates <- m
+		mainUpdates <- m
 		return
 	case "artists":
 		artists, err := m.commands.Client().CurrentUsersFollowedArtists(
@@ -60,7 +60,7 @@ func (m *mainModel) LoadMoreItems() {
 		for _, item := range items {
 			m.list.InsertItem(len(m.list.Items())+1, item)
 		}
-		main_updates <- m
+		mainUpdates <- m
 		return
 	case "album":
 		tracks, err := m.commands.AlbumTracks(m.album.ID, (page + 1))
@@ -80,7 +80,7 @@ func (m *mainModel) LoadMoreItems() {
 		for _, item := range items {
 			m.list.InsertItem(len(m.list.Items())+1, item)
 		}
-		main_updates <- m
+		mainUpdates <- m
 		return
 	case "albums":
 		albums, err := m.commands.UserAlbums(page + 1)
@@ -99,7 +99,7 @@ func (m *mainModel) LoadMoreItems() {
 		for _, item := range items {
 			m.list.InsertItem(len(m.list.Items())+1, item)
 		}
-		main_updates <- m
+		mainUpdates <- m
 		return
 	case "main":
 		playlists, err := m.commands.Playlists(page + 1)
@@ -117,7 +117,7 @@ func (m *mainModel) LoadMoreItems() {
 		for _, item := range items {
 			m.list.InsertItem(len(m.list.Items())+1, item)
 		}
-		main_updates <- m
+		mainUpdates <- m
 		return
 	case "playlist":
 		playlistItems, err := m.commands.PlaylistTracks(m.playlist.ID, (page + 1))
@@ -139,7 +139,7 @@ func (m *mainModel) LoadMoreItems() {
 		for _, item := range items {
 			m.list.InsertItem(len(m.list.Items())+1, item)
 		}
-		main_updates <- m
+		mainUpdates <- m
 		return
 	case "tracks":
 		tracks, err := m.commands.TrackList(page + 1)
@@ -159,7 +159,7 @@ func (m *mainModel) LoadMoreItems() {
 		for _, item := range items {
 			m.list.InsertItem(len(m.list.Items())+1, item)
 		}
-		main_updates <- m
+		mainUpdates <- m
 		return
 	}
 }

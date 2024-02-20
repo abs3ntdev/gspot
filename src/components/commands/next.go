@@ -20,12 +20,12 @@ func (c *Commander) Next(amt int, inqueue bool) error {
 		err := c.Client().Next(c.Context)
 		if err != nil {
 			if isNoActiveError(err) {
-				deviceId, err := c.activateDevice()
+				deviceID, err := c.activateDevice()
 				if err != nil {
 					return err
 				}
 				err = c.Client().NextOpt(c.Context, &spotify.PlayOptions{
-					DeviceID: &deviceId,
+					DeviceID: &deviceID,
 				})
 				if err != nil {
 					return err

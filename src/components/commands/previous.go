@@ -8,12 +8,12 @@ func (c *Commander) Previous() error {
 	err := c.Client().Previous(c.Context)
 	if err != nil {
 		if isNoActiveError(err) {
-			deviceId, err := c.activateDevice()
+			deviceID, err := c.activateDevice()
 			if err != nil {
 				return err
 			}
 			err = c.Client().PreviousOpt(c.Context, &spotify.PlayOptions{
-				DeviceID: &deviceId,
+				DeviceID: &deviceID,
 			})
 			if err != nil {
 				return err
