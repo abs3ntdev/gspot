@@ -1,16 +1,14 @@
-build: gspot
+build: 
+	go build -ldflags="-X 'git.asdf.cafe/abs3nt/gspot/src/components/cli.Version=$(shell git show -s --date=short --pretty='format:%h (%ad)' HEAD)'" -o dist/ ./cmd/gspot
 
-gspot: $(shell find . -name '*.go')
-	go build -ldflags="-X 'git.asdf.cafe/abs3nt/gspot/src/components/cli.Version=$(shell git show -s --date=short --pretty='format:%h (%ad)' HEAD)'" -o dist/ .
-
-run:
-	go run main.go
+run: build
+	./dist/gspot
 
 tidy:
 	go mod tidy
 
 clean:
-	rm -rf bin
+	rm -rf dist
 
 uninstall:
 	rm -f /usr/bin/gspot
