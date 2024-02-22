@@ -859,6 +859,7 @@ func (m *mainModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		h, v := DocStyle.GetFrameSize()
 		m.list.SetSize(msg.Width-h, msg.Height-v-1)
+		DocStyle.Width(msg.Width - h)
 	}
 
 	// return
