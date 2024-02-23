@@ -10,7 +10,6 @@ before:
 builds:
   - env:
       - CGO_ENABLED=0
-    main: ./cmd/gspot
     goos:
       - linux
       - windows
