@@ -1,4 +1,4 @@
-name: Build
+name: build-binary
 run-name: ${{ gitea.actor }} is building
 on: [push]
 

@@ -1,0 +1,28 @@
+name: deployer
+run-name: ${{ gitea.actor }} is releasing
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup up go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache: true
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: nightly
+          args: release --clean
+        env:
+          gitea_token: ${{ secrets.gitea_token}}
