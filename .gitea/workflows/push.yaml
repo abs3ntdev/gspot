@@ -1,9 +1,9 @@
-name: build-binary
+name: builder
 run-name: ${{ gitea.actor }} is building
 on: [push]
 
 jobs:
-  Build:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
