@@ -25,4 +25,4 @@ jobs:
           version: nightly
           args: release --clean
         env:
-          gitea_token: ${{ secrets.gitea_token}}
+          GITEA_TOKEN: ${{ secrets.gitea_token}}
