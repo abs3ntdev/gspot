@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/urfave/cli/v3"
 	"github.com/zmb3/spotify/v2"
@@ -22,6 +23,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 		EnableShellCompletion: true,
 		Version:               Version,
 		Action: func(ctx context.Context, cmd *cli.Command) error {
+			if cmd.Args().Present() {
+				return fmt.Errorf("unknown command: %s", strings.Join(cmd.Args().Slice(), " "))
+			}
 			return tui.StartTea(c, "main")
 		},
 		Commands: []*cli.Command{
@@ -30,6 +34,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Aliases: []string{"pl", "start", "s"},
 				Usage:   "Plays spotify",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.Play()
 				},
 				Category: "Playback",
@@ -40,6 +47,12 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Usage:     "Plays a spotify url",
 				ArgsUsage: "url",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if !cmd.Args().Present() {
+						return fmt.Errorf("no url provided")
+					}
+					if cmd.NArg() > 1 {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.PlayURL(cmd.Args().First())
 				},
 				Category: "Playback",
@@ -49,6 +62,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Aliases: []string{"pa"},
 				Usage:   "Pauses spotify",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.Pause()
 				},
 				Category: "Playback",
@@ -58,6 +74,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Aliases: []string{"t"},
 				Usage:   "Toggles play/pause",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.TogglePlay()
 				},
 				Category: "Playback",
@@ -67,6 +86,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Aliases: []string{"yy"},
 				Usage:   "Prints the current song's spotify link",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.PrintLink()
 				},
 				Category: "Sharing",
@@ -76,6 +98,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Aliases: []string{"lc"},
 				Usage:   "Prints the current album or playlist",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.PrintLinkContext()
 				},
 				Category: "Sharing",
@@ -85,6 +110,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Aliases: []string{"yl"},
 				Usage:   "Prints the current song's youtube link",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.PrintYoutubeLink()
 				},
 				Category: "Sharing",
@@ -95,6 +123,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Usage:     "Skips to the next song",
 				ArgsUsage: "amount",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.NArg() > 1 {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					if cmd.NArg() > 0 {
 						amt, err := strconv.Atoi(cmd.Args().First())
 						if err != nil {
@@ -111,6 +142,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Aliases: []string{"b", "prev", "back"},
 				Usage:   "Skips to the previous song",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.Previous()
 				},
 				Category: "Playback",
@@ -120,6 +154,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Aliases: []string{"l"},
 				Usage:   "Likes the current song",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.Like()
 				},
 				Category: "Library Management",
@@ -129,6 +166,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Aliases: []string{"u"},
 				Usage:   "Unlikes the current song",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.UnLike()
 				},
 				Category: "Library Management",
@@ -146,6 +186,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					},
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.NowPlaying(cmd.Bool("force"))
 				},
 				Category: "Info",
@@ -161,6 +204,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 						Usage:     "Increase the volume",
 						ArgsUsage: "percent",
 						Action: func(ctx context.Context, cmd *cli.Command) error {
+							if cmd.NArg() > 1 {
+								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+							}
 							amt, err := strconv.Atoi(cmd.Args().First())
 							if err != nil {
 								return err
@@ -174,6 +220,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 						Usage:     "Decrease the volume",
 						ArgsUsage: "percent",
 						Action: func(ctx context.Context, cmd *cli.Command) error {
+							if cmd.NArg() > 1 {
+								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+							}
 							amt, err := strconv.Atoi(cmd.Args().First())
 							if err != nil {
 								return err
@@ -186,6 +235,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 						Aliases: []string{"m"},
 						Usage:   "Mute",
 						Action: func(ctx context.Context, cmd *cli.Command) error {
+							if cmd.Args().Present() {
+								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+							}
 							return c.Mute()
 						},
 					},
@@ -194,6 +246,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 						Aliases: []string{"um"},
 						Usage:   "Unmute",
 						Action: func(ctx context.Context, cmd *cli.Command) error {
+							if cmd.Args().Present() {
+								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+							}
 							return c.UnMute()
 						},
 					},
@@ -202,6 +257,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 						Aliases: []string{"tm"},
 						Usage:   "Toggle mute",
 						Action: func(ctx context.Context, cmd *cli.Command) error {
+							if cmd.Args().Present() {
+								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+							}
 							return c.ToggleMute()
 						},
 					},
@@ -218,6 +276,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					}
 				},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.NArg() > 1 {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.DownloadCover(cmd.Args().First())
 				},
 				Category: "Info",
@@ -227,6 +288,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Usage:   "Starts a radio from the current song",
 				Aliases: []string{"r"},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.Radio()
 				},
 				Category: "Radio",
@@ -236,6 +300,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Usage:   "Clears the radio queue",
 				Aliases: []string{"cr"},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.ClearRadio()
 				},
 				Category: "Radio",
@@ -245,6 +312,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Usage:   "Refills the radio queue with similar songs",
 				Aliases: []string{"rr"},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.RefillRadio()
 				},
 				Category: "Radio",
@@ -253,6 +323,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Name:  "status",
 				Usage: "Prints the current status",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.Status()
 				},
 				Category: "Info",
@@ -262,6 +335,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Usage:   "Lists available devices",
 				Aliases: []string{"d"},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.ListDevices()
 				},
 				Category: "Info",
@@ -274,6 +350,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.NArg() == 0 {
 						return fmt.Errorf("no device id provided")
 					}
+					if cmd.NArg() > 1 {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.SetDevice(spotify.ID(cmd.Args().First()))
 				},
 				Category: "Playback",
@@ -282,6 +361,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Name:  "repeat",
 				Usage: "Toggle repeat mode",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.Repeat()
 				},
 				Category: "Playback",
@@ -290,6 +372,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Name:  "shuffle",
 				Usage: "Toggle shuffle mode",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return c.Shuffle()
 				},
 				Category: "Playback",
@@ -298,6 +383,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Name:  "tui",
 				Usage: "Starts the TUI",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					return tui.StartTea(c, "main")
 				},
 			},
@@ -307,6 +395,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Aliases:  []string{"sk"},
 				Category: "Playback",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.NArg() > 1 {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
 					pos, err := strconv.Atoi(cmd.Args().First())
 					if err != nil {
 						return err
@@ -319,6 +410,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 						Aliases: []string{"f"},
 						Usage:   "Seek forward",
 						Action: func(ctx context.Context, cmd *cli.Command) error {
+							if cmd.Args().Present() {
+								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+							}
 							return c.Seek(true)
 						},
 					},
@@ -327,6 +421,9 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 						Aliases: []string{"b"},
 						Usage:   "Seek backward",
 						Action: func(ctx context.Context, cmd *cli.Command) error {
+							if cmd.Args().Present() {
+								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+							}
 							return c.Seek(false)
 						},
 					},

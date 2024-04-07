@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -96,7 +97,11 @@ func (c *Commander) PlayURL(urlString string) error {
 	if err != nil {
 		return err
 	}
-	trackID := strings.Split(url.Path, "/")[2]
+	splittUrl := strings.Split(url.Path, "/")
+	if len(splittUrl) < 3 {
+		return fmt.Errorf("invalid url")
+	}
+	trackID := splittUrl[2]
 	err = c.Client().QueueSong(c.Context, spotify.ID(trackID))
 	if err != nil {
 		if isNoActiveError(err) {
