@@ -5,7 +5,7 @@ func (c *Commander) ChangeVolume(amount int) error {
 	if err != nil {
 		return err
 	}
-	newVolume := state.Device.Volume + amount
+	newVolume := int(state.Device.Volume) + amount
 	if newVolume > 100 {
 		newVolume = 100
 	}

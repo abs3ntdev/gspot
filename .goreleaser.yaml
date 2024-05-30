@@ -30,29 +30,29 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     format_overrides:
-    - goos: windows
-      format: zip
+      - goos: windows
+        format: zip
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
 changelog:
   sort: asc
   groups:
-  - title: Added
-    regexp: '^.*?ADD(\([[:word:]]+\))??!?:.+$'
-    order: 0
-  - title: 'Bug fixes'
-    regexp: '^.*?BUG(\([[:word:]]+\))??!?:.+$'
-    order: 1
-  - title: 'Enhancements'
-    regexp: '^.*?IMPROVED(\([[:word:]]+\))??!?:.+$'
-    order: 1
-  - title: 'Docs'
-    regexp: '^.*?DOC(\([[:word:]]+\))??!?:.+$'
-    order: 1
-  - title: 'CI'
-    regexp: '^.*?CI(\([[:word:]]+\))??!?:.+$'
-    order: 1
-  - title: Others
-    order: 999
+    - title: Added
+      regexp: '^.*?ADD(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: "Bug fixes"
+      regexp: '^.*?BUG(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: "Enhancements"
+      regexp: '^.*?IMPROVED(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: "Docs"
+      regexp: '^.*?DOC(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: "CI"
+      regexp: '^.*?CI(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: Others
+      order: 999

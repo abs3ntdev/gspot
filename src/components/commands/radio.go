@@ -180,7 +180,7 @@ func (c *Commander) RadioGivenArtist(artist spotify.SimpleArtist) error {
 	return nil
 }
 
-func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
+func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos spotify.Numeric) error {
 	start := time.Now().UnixMilli()
 	seed := spotify.Seeds{
 		Tracks: []spotify.ID{song.ID},
@@ -225,7 +225,7 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos int) error {
 	}
 	delay := time.Now().UnixMilli() - start
 	if pos != 0 {
-		pos = pos + int(delay)
+		pos = pos + spotify.Numeric(delay)
 	}
 	err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
 		PlaybackContext: &radioPlaylist.URI,
@@ -418,7 +418,7 @@ func (c *Commander) RefillRadio() error {
 		}
 	}
 
-	toAdd := 500 - (playlistItems.Total - len(toRemove))
+	toAdd := 500 - (int(playlistItems.Total) - len(toRemove))
 	playlistItems, err = c.Client().GetPlaylistItems(c.Context, radioPlaylist.ID)
 	if err != nil {
 		return fmt.Errorf("playlist items: %w", err)

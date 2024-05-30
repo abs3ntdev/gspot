@@ -9,7 +9,7 @@ func (c *Commander) Seek(fwd bool) error {
 	if !fwd {
 		newPos = current.Progress - 5000
 	}
-	err = c.Client().Seek(c.Context, newPos)
+	err = c.Client().Seek(c.Context, int(newPos))
 	if err != nil {
 		return err
 	}
