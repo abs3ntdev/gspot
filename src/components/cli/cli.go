@@ -13,6 +13,7 @@ import (
 
 	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
 	"git.asdf.cafe/abs3nt/gspot/src/components/tui"
+	"git.asdf.cafe/abs3nt/gspot/src/components/tuitview"
 )
 
 var Version = "dev"
@@ -387,6 +388,17 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
 					return tui.StartTea(c, "main")
+				},
+			},
+			{
+				Name:  "tview",
+				Usage: "Starts the TUI using tview (experimental)",
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					if cmd.Args().Present() {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
+					// start tview tui
+					return tuitview.TuitView(c)
 				},
 			},
 			{
