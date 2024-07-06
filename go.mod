@@ -15,7 +15,7 @@ require (
 	github.com/urfave/cli/v3 v3.0.0-alpha9
 	github.com/zmb3/spotify/v2 v2.4.2
 	go.uber.org/fx v1.22.0
-	golang.org/x/exp v0.0.0-20240530194437-404ba88c7ed0
+	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
 	golang.org/x/net v0.25.0
 	golang.org/x/oauth2 v0.20.0
 	golang.org/x/sync v0.7.0
