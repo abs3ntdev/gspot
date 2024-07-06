@@ -19,7 +19,7 @@ require (
 	golang.org/x/net v0.27.0
 	golang.org/x/oauth2 v0.21.0
 	golang.org/x/sync v0.7.0
-	google.golang.org/api v0.182.0
+	google.golang.org/api v0.187.0
 	modernc.org/sqlite v1.30.1
 )
 
