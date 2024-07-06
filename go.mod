@@ -4,7 +4,7 @@ go 1.22.3
 
 require (
 	gfx.cafe/util/go/frand v1.11.1
-	gfx.cafe/util/go/fxplus v0.0.0-20231226111635-bc00a6a250fb
+	gfx.cafe/util/go/fxplus v1.11.1
 	git.asdf.cafe/abs3nt/gunner v0.0.1
 	github.com/atotto/clipboard v0.1.4
 	github.com/charmbracelet/bubbles v0.18.0
