@@ -17,7 +17,7 @@ require (
 	go.uber.org/fx v1.22.1
 	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
 	golang.org/x/net v0.27.0
-	golang.org/x/oauth2 v0.20.0
+	golang.org/x/oauth2 v0.21.0
 	golang.org/x/sync v0.7.0
 	google.golang.org/api v0.182.0
 	modernc.org/sqlite v1.30.1
