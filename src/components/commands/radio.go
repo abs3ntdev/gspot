@@ -35,20 +35,11 @@ func (c *Commander) Radio() error {
 }
 
 func (c *Commander) RadioFromPlaylist(playlist spotify.SimplePlaylist) error {
-	total := playlist.Tracks.Total
-	if total == 0 {
-		return fmt.Errorf("this playlist is empty")
-	}
-	pages := int(math.Ceil(float64(total) / 50))
-	randomPage := 1
-	if pages > 1 {
-		randomPage = rand.Intn(pages-1) + 1
-	}
 	playlistPage, err := c.Client().GetPlaylistItems(
 		c.Context,
 		playlist.ID,
 		spotify.Limit(50),
-		spotify.Offset((randomPage-1)*50),
+		spotify.Offset(0),
 	)
 	if err != nil {
 		return err
@@ -404,7 +395,7 @@ func (c *Commander) RefillRadio() error {
 	if len(toRemove) > 0 {
 		var trackGroups []spotify.ID
 		for idx, item := range toRemove {
-			if idx%100 == 0 {
+			if idx%100 == 0 && idx != 0 {
 				_, err = c.Client().RemoveTracksFromPlaylist(c.Context, radioPlaylist.ID, trackGroups...)
 				trackGroups = []spotify.ID{}
 			}
