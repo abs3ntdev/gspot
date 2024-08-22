@@ -365,8 +365,9 @@ func (c *Commander) RefillRadio() error {
 	if err != nil {
 		return err
 	}
+	paused := false
 	if !status.Playing {
-		return nil
+		paused = true
 	}
 	toRemove := []spotify.ID{}
 	radioPlaylist, db, err := c.GetRadioPlaylist("")
@@ -374,13 +375,13 @@ func (c *Commander) RefillRadio() error {
 		return err
 	}
 
-	if status.PlaybackContext.URI != radioPlaylist.URI {
-		return nil
-	}
-
 	playlistItems, err := c.Client().GetPlaylistItems(c.Context, radioPlaylist.ID)
 	if err != nil {
 		return fmt.Errorf("orig playlist items: %w", err)
+	}
+
+	if status.PlaybackContext.URI != radioPlaylist.URI || paused {
+		return c.RadioFromPlaylist(radioPlaylist.SimplePlaylist)
 	}
 
 	page := 0
