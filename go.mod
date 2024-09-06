@@ -5,8 +5,8 @@ go 1.22.3
 require (
 	git.asdf.cafe/abs3nt/gunner v0.0.1
 	github.com/atotto/clipboard v0.1.4
-	github.com/charmbracelet/bubbles v0.19.0
-	github.com/charmbracelet/bubbletea v0.27.1
+	github.com/charmbracelet/bubbles v0.20.0
+	github.com/charmbracelet/bubbletea v1.1.0
 	github.com/charmbracelet/lipgloss v0.13.0
 	github.com/lmittmann/tint v1.0.5
 	github.com/rivo/tview v0.0.0-20240818110301-fd649dbf1223
