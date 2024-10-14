@@ -10,7 +10,7 @@ require (
 	github.com/charmbracelet/lipgloss v0.13.0
 	github.com/lmittmann/tint v1.0.5
 	github.com/rivo/tview v0.0.0-20240818110301-fd649dbf1223
-	github.com/urfave/cli/v3 v3.0.0-alpha9
+	github.com/urfave/cli/v3 v3.0.0-alpha9.1
 	github.com/zmb3/spotify/v2 v2.4.2
 	go.uber.org/fx v1.22.2
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
