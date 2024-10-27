@@ -22,7 +22,8 @@ func Run(c *commands.Commander, conf *config.Config, s fx.Shutdowner) {
 		Commander: c,
 	}
 
-	rpc.Register(&CommandHandler)
+	server := rpc.NewServer()
+	server.Register(&CommandHandler)
 
 	listener, err := net.Listen("unix", socketPath)
 	if err != nil {
@@ -39,6 +40,7 @@ func Run(c *commands.Commander, conf *config.Config, s fx.Shutdowner) {
 			log.Println("Accept error:", err)
 			continue
 		}
-		go rpc.ServeConn(conn)
+		codec := NewLoggingServerCodec(conn)
+		go server.ServeCodec(codec)
 	}
 }
