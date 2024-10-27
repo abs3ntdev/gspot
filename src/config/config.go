@@ -7,4 +7,5 @@ type Config struct {
 	Port            string `yaml:"port"`
 	LogLevel        string `yaml:"log_level"         default:"info"`
 	LogOutput       string `yaml:"log_output"        default:"stdout"`
+	SocketPath      string `yaml:"socket_path"       default:"/tmp/gspot.sock"`
 }

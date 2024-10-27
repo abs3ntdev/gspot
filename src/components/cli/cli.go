@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+	"net/rpc"
 	"os"
 	"strconv"
 	"strings"
@@ -38,7 +39,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.Play()
+					return sendCommandRPC("Play", "hello")
 				},
 				Category: "Playback",
 			},
@@ -448,4 +449,25 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 		s.Shutdown(fx.ExitCode(1))
 	}
 	s.Shutdown()
+}
+
+type GenericReply struct {
+	Message string
+}
+
+func sendCommandRPC(method string, args interface{}) error {
+	client, err := rpc.Dial("unix", "/tmp/gspot.sock")
+	if err != nil {
+		return fmt.Errorf("could not connect to daemon: %v", err)
+	}
+	defer client.Close()
+
+	var reply string
+	err = client.Call("Handler."+method, args, &reply)
+	if err != nil {
+		return fmt.Errorf("error calling %s: %v", method, err)
+	}
+
+	fmt.Println(reply)
+	return nil
 }
