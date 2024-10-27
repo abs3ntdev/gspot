@@ -13,6 +13,7 @@ import (
 	"go.uber.org/fx"
 
 	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
+	"git.asdf.cafe/abs3nt/gspot/src/components/daemon"
 	"git.asdf.cafe/abs3nt/gspot/src/components/tui"
 	"git.asdf.cafe/abs3nt/gspot/src/components/tuitview"
 )
@@ -39,7 +40,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return sendCommandRPC("Play", "hello")
+					return sendCommandRPC("Play", daemon.PlayArgs{})
 				},
 				Category: "Playback",
 			},
@@ -55,7 +56,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.NArg() > 1 {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.PlayURL(cmd.Args().First())
+					return sendCommandRPC("PlayURL", daemon.PlayURLArgs{URL: cmd.Args().First()})
 				},
 				Category: "Playback",
 			},
@@ -67,7 +68,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.Pause()
+					return sendCommandRPC("Pause", daemon.PauseArgs{})
 				},
 				Category: "Playback",
 			},
@@ -79,7 +80,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.TogglePlay()
+					return sendCommandRPC("TogglePlay", daemon.TogglePlayArgs{})
 				},
 				Category: "Playback",
 			},
@@ -91,7 +92,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.PrintLink()
+					return sendCommandRPC("PrintLink", daemon.LinkArgs{})
 				},
 				Category: "Sharing",
 			},
@@ -103,7 +104,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.PrintLinkContext()
+					return sendCommandRPC("PrintLinkContext", daemon.LinkContextArgs{})
 				},
 				Category: "Sharing",
 			},
@@ -115,7 +116,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.PrintYoutubeLink()
+					return sendCommandRPC("PrintYoutubeLink", daemon.YoutubeLinkArgs{})
 				},
 				Category: "Sharing",
 			},
@@ -128,14 +129,15 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.NArg() > 1 {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
+					amount := 1
 					if cmd.NArg() > 0 {
 						amt, err := strconv.Atoi(cmd.Args().First())
 						if err != nil {
 							return err
 						}
-						return c.Next(amt, false)
+						amount = amt
 					}
-					return c.Next(1, false)
+					return sendCommandRPC("Next", daemon.NextArgs{Amount: amount})
 				},
 				Category: "Playback",
 			},
@@ -147,7 +149,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.Previous()
+					return sendCommandRPC("Previous", daemon.PreviousArgs{})
 				},
 				Category: "Playback",
 			},
@@ -159,7 +161,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.Like()
+					return sendCommandRPC("Like", daemon.LikeArgs{})
 				},
 				Category: "Library Management",
 			},
@@ -171,7 +173,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.UnLike()
+					return sendCommandRPC("UnLike", daemon.UnlikeArgs{})
 				},
 				Category: "Library Management",
 			},
@@ -191,7 +193,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.NowPlaying(cmd.Bool("force"))
+					return sendCommandRPC("NowPlaying", daemon.NowPlayingArgs{Force: cmd.Bool("force")})
 				},
 				Category: "Info",
 			},
@@ -213,7 +215,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 							if err != nil {
 								return err
 							}
-							return c.ChangeVolume(amt)
+							return sendCommandRPC("ChangeVolume", daemon.VolumeArgs{Amount: amt})
 						},
 					},
 					{
@@ -229,7 +231,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 							if err != nil {
 								return err
 							}
-							return c.ChangeVolume(-amt)
+							return sendCommandRPC("ChangeVolume", daemon.VolumeArgs{Amount: -amt})
 						},
 					},
 					{
@@ -240,7 +242,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 							if cmd.Args().Present() {
 								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 							}
-							return c.Mute()
+							return sendCommandRPC("Mute", daemon.MuteArgs{})
 						},
 					},
 					{
@@ -251,7 +253,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 							if cmd.Args().Present() {
 								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 							}
-							return c.UnMute()
+							return sendCommandRPC("UnMute", daemon.UnmuteArgs{})
 						},
 					},
 					{
@@ -262,7 +264,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 							if cmd.Args().Present() {
 								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 							}
-							return c.ToggleMute()
+							return sendCommandRPC("ToggleMute", daemon.ToggleMuteArgs{})
 						},
 					},
 				},
@@ -281,7 +283,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.NArg() > 1 {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.DownloadCover(cmd.Args().First())
+					return sendCommandRPC("DownloadCover", daemon.DownloadCoverArgs{Path: cmd.Args().First()})
 				},
 				Category: "Info",
 			},
@@ -293,7 +295,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.Radio()
+					return sendCommandRPC("Radio", daemon.RadioArgs{})
 				},
 				Category: "Radio",
 			},
@@ -305,7 +307,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.ClearRadio()
+					return sendCommandRPC("ClearRadio", daemon.ClearRadioArgs{})
 				},
 				Category: "Radio",
 			},
@@ -317,7 +319,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.RefillRadio()
+					return sendCommandRPC("RefillRadio", daemon.RefillRadioArgs{})
 				},
 				Category: "Radio",
 			},
@@ -328,7 +330,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.Status()
+					return sendCommandRPC("Status", daemon.StatusArgs{})
 				},
 				Category: "Info",
 			},
@@ -340,7 +342,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.ListDevices()
+					return sendCommandRPC("ListDevices", daemon.ListDevicesArgs{})
 				},
 				Category: "Info",
 			},
@@ -355,7 +357,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.NArg() > 1 {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.SetDevice(spotify.ID(cmd.Args().First()))
+					return sendCommandRPC("SetDevice", daemon.SetDeviceArgs{DeviceID: spotify.ID(cmd.Args().First())})
 				},
 				Category: "Playback",
 			},
@@ -366,7 +368,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.Repeat()
+					return sendCommandRPC("Repeat", daemon.RepeatArgs{})
 				},
 				Category: "Playback",
 			},
@@ -377,7 +379,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.Shuffle()
+					return sendCommandRPC("Shuffle", daemon.ShuffleArgs{})
 				},
 				Category: "Playback",
 			},
@@ -415,7 +417,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if err != nil {
 						return err
 					}
-					return c.SetPosition(pos)
+					return sendCommandRPC("SetPosition", daemon.SetPositionArgs{Position: pos})
 				},
 				Commands: []*cli.Command{
 					{
@@ -426,7 +428,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 							if cmd.Args().Present() {
 								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 							}
-							return c.Seek(true)
+							return sendCommandRPC("Seek", daemon.SeekArgs{Fwd: true})
 						},
 					},
 					{
@@ -437,7 +439,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 							if cmd.Args().Present() {
 								return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 							}
-							return c.Seek(false)
+							return sendCommandRPC("Seek", daemon.SeekArgs{Fwd: false})
 						},
 					},
 				},
@@ -449,10 +451,6 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 		s.Shutdown(fx.ExitCode(1))
 	}
 	s.Shutdown()
-}
-
-type GenericReply struct {
-	Message string
 }
 
 func sendCommandRPC(method string, args interface{}) error {
@@ -468,6 +466,9 @@ func sendCommandRPC(method string, args interface{}) error {
 		return fmt.Errorf("error calling %s: %v", method, err)
 	}
 
-	fmt.Println(reply)
+	if reply != "" {
+		fmt.Println(reply)
+	}
+
 	return nil
 }

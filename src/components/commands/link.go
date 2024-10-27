@@ -1,21 +1,17 @@
 package commands
 
-import "fmt"
-
-func (c *Commander) PrintLink() error {
+func (c *Commander) PrintLink() (string, error) {
 	state, err := c.Client().PlayerState(c.Context)
 	if err != nil {
-		return err
+		return "", err
 	}
-	fmt.Println(state.Item.ExternalURLs["spotify"])
-	return nil
+	return state.Item.ExternalURLs["spotify"], nil
 }
 
-func (c *Commander) PrintLinkContext() error {
+func (c *Commander) PrintLinkContext() (string, error) {
 	state, err := c.Client().PlayerState(c.Context)
 	if err != nil {
-		return err
+		return "", err
 	}
-	fmt.Println(state.PlaybackContext.ExternalURLs["spotify"])
-	return nil
+	return state.PlaybackContext.ExternalURLs["spotify"], nil
 }
