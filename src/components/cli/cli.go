@@ -92,7 +92,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return sendCommandRPC("PrintLink", daemon.LinkArgs{})
+					return sendCommandRPC("Link", daemon.LinkArgs{})
 				},
 				Category: "Sharing",
 			},
@@ -104,7 +104,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return sendCommandRPC("PrintLinkContext", daemon.LinkContextArgs{})
+					return sendCommandRPC("LinkContext", daemon.LinkContextArgs{})
 				},
 				Category: "Sharing",
 			},
@@ -116,7 +116,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return sendCommandRPC("PrintYoutubeLink", daemon.YoutubeLinkArgs{})
+					return sendCommandRPC("YoutubeLink", daemon.YoutubeLinkArgs{})
 				},
 				Category: "Sharing",
 			},
@@ -342,7 +342,7 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return sendCommandRPC("ListDevices", daemon.ListDevicesArgs{})
+					return sendCommandRPC("Devices", daemon.ListDevicesArgs{})
 				},
 				Category: "Info",
 			},
