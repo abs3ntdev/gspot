@@ -18,18 +18,18 @@ import (
 func (c *Commander) Radio() error {
 	currentSong, err := c.Client().PlayerCurrentlyPlaying(c.Context)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get current song: %w", err)
 	}
 	if currentSong.Item != nil {
 		return c.RadioGivenSong(currentSong.Item.SimpleTrack, currentSong.Progress)
 	}
 	_, err = c.activateDevice()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to activate device: %w", err)
 	}
 	tracks, err := c.Client().CurrentUsersTracks(c.Context, spotify.Limit(10))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get current users tracks: %w", err)
 	}
 	return c.RadioGivenSong(tracks.Tracks[rand.Intn(len(tracks.Tracks))].SimpleTrack, 0)
 }
@@ -178,7 +178,7 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos spotify.Numeric
 	}
 	recomendations, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(99))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get recommendations: %w", err)
 	}
 	recomendationIds := []spotify.ID{}
 	for _, song := range recomendations.Tracks {
@@ -218,25 +218,9 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos spotify.Numeric
 	if pos != 0 {
 		pos = pos + spotify.Numeric(delay)
 	}
-	err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
-		PlaybackContext: &radioPlaylist.URI,
-		PositionMs:      pos,
-	})
+	err = c.PlayRadio(radioPlaylist, int(pos))
 	if err != nil {
-		if isNoActiveError(err) {
-			deviceID, err := c.activateDevice()
-			if err != nil {
-				return err
-			}
-			err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
-				PlaybackContext: &radioPlaylist.URI,
-				DeviceID:        &deviceID,
-				PositionMs:      pos,
-			})
-			if err != nil {
-				return err
-			}
-		}
+		return err
 	}
 	err = c.Client().Repeat(c.Context, "context")
 	if err != nil {
@@ -269,6 +253,30 @@ func (c *Commander) RadioGivenSong(song spotify.SimpleTrack, pos spotify.Numeric
 		_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
 		if err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+func (c *Commander) PlayRadio(radioPlaylist *spotify.FullPlaylist, pos int) error {
+	err := c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
+		PlaybackContext: &radioPlaylist.URI,
+		PositionMs:      spotify.Numeric(pos),
+	})
+	if err != nil {
+		if isNoActiveError(err) {
+			deviceID, err := c.activateDevice()
+			if err != nil {
+				return err
+			}
+			err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
+				PlaybackContext: &radioPlaylist.URI,
+				DeviceID:        &deviceID,
+				PositionMs:      spotify.Numeric(pos),
+			})
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -581,23 +589,9 @@ func (c *Commander) RadioGivenList(songs []spotify.ID, name string) error {
 	if err != nil {
 		return err
 	}
-	err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
-		PlaybackContext: &radioPlaylist.URI,
-	})
+	err = c.PlayRadio(radioPlaylist, 0)
 	if err != nil {
-		if isNoActiveError(err) {
-			deviceID, err := c.activateDevice()
-			if err != nil {
-				return err
-			}
-			err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
-				PlaybackContext: &radioPlaylist.URI,
-				DeviceID:        &deviceID,
-			})
-			if err != nil {
-				return err
-			}
-		}
+		return err
 	}
 	for i := 0; i < 4; i++ {
 		id := rand.Intn(len(recomendationIds)-2) + 1
