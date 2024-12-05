@@ -11,7 +11,7 @@ require (
 	github.com/lmittmann/tint v1.0.5
 	github.com/rivo/tview v0.0.0-20241016194538-c5e4fb24af13
 	github.com/urfave/cli/v3 v3.0.0-alpha9.1
-	github.com/zmb3/spotify/v2 v2.4.2
+	github.com/zmb3/spotify/v2 v2.4.3
 	go.uber.org/fx v1.23.0
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c
 	golang.org/x/net v0.30.0
