@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"database/sql"
 	"log/slog"
 	"sync"
 
@@ -10,6 +11,7 @@ import (
 
 	"git.asdf.cafe/abs3nt/gspot/src/components/cache"
 	"git.asdf.cafe/abs3nt/gspot/src/config"
+	"git.asdf.cafe/abs3nt/gspot/src/listenbrainz"
 	"git.asdf.cafe/abs3nt/gspot/src/services"
 )
 
@@ -26,6 +28,8 @@ type CommanderParams struct {
 	Log     *slog.Logger
 	Cache   *cache.Cache
 	Config  *config.Config
+	Lb      *listenbrainz.ListenBrainz
+	Db      *sql.DB
 }
 
 type Commander struct {
@@ -36,6 +40,8 @@ type Commander struct {
 	mu      sync.RWMutex
 	cl      *spotify.Client
 	conf    *config.Config
+	lb      *listenbrainz.ListenBrainz
+	db      *sql.DB
 }
 
 func NewCommander(p CommanderParams) CommanderResult {
@@ -44,6 +50,8 @@ func NewCommander(p CommanderParams) CommanderResult {
 		Log:     p.Log,
 		Cache:   p.Cache,
 		conf:    p.Config,
+		lb:      p.Lb,
+		db:      p.Db,
 	}
 	return CommanderResult{
 		Commander: c,

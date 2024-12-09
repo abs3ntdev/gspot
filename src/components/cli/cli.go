@@ -285,14 +285,37 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 				Category: "Info",
 			},
 			{
-				Name:    "radio",
-				Usage:   "Starts a radio from the current song",
+				Name:  "radio",
+				Usage: "creates a radio using a prompt",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "prompt",
+						Aliases: []string{"p"},
+						Usage:   "prompt",
+					},
+					&cli.StringFlag{
+						Name:    "mode",
+						Aliases: []string{"m"},
+						Value:   "hard",
+						Validator: func(s string) error {
+							if s != "hard" && s != "easy" && s != "medium" {
+								return fmt.Errorf("invalid mode: %s (valid: hard, easy, medium)", s)
+							}
+							return nil
+						},
+						Usage: "prompt",
+					},
+				},
 				Aliases: []string{"r"},
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					if cmd.Args().Present() {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					return c.Radio()
+					// prompt is the only one we suypport
+					if prompt := cmd.String("prompt"); prompt != "" {
+						return c.RadioFromPrompt(ctx, prompt, cmd.String("mode"))
+					}
+					return fmt.Errorf("radio requires a prompt")
 				},
 				Category: "Radio",
 			},
@@ -305,18 +328,6 @@ func Run(c *commands.Commander, s fx.Shutdowner) {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
 					return c.ClearRadio()
-				},
-				Category: "Radio",
-			},
-			{
-				Name:    "refillradio",
-				Usage:   "Refills the radio queue with similar songs",
-				Aliases: []string{"rr"},
-				Action: func(ctx context.Context, cmd *cli.Command) error {
-					if cmd.Args().Present() {
-						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
-					}
-					return c.RefillRadio()
 				},
 				Category: "Radio",
 			},

@@ -13,6 +13,9 @@ import (
 	"git.asdf.cafe/abs3nt/gspot/src/components/cli"
 	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
 	"git.asdf.cafe/abs3nt/gspot/src/components/logger"
+	"git.asdf.cafe/abs3nt/gspot/src/components/sqldb"
+	"git.asdf.cafe/abs3nt/gspot/src/config"
+	"git.asdf.cafe/abs3nt/gspot/src/listenbrainz"
 	"git.asdf.cafe/abs3nt/gspot/src/services"
 )
 
@@ -30,6 +33,8 @@ func main() {
 			Context,
 			cache.NewCache,
 			commands.NewCommander,
+			sqldb.New,
+			listenbrainz.New,
 			logger.NewLogger,
 		),
 		fx.Invoke(
@@ -52,6 +57,7 @@ func Context(
 		log = slog.Default()
 	}
 	ctx, cn := context.WithCancelCause(context.Background())
+	ctx = config.WithLogger(ctx, log)
 	lc.Append(fx.Hook{
 		OnStop: func(ctx context.Context) error {
 			cn(fmt.Errorf("%w: %w", context.Canceled, ErrContextShutdown))

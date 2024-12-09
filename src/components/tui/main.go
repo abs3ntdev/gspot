@@ -90,97 +90,119 @@ type mainModel struct {
 
 func (m *mainModel) PlayRadio() {
 	go m.SendMessage("Starting radio for "+m.list.SelectedItem().(mainItem).Title(), 2*time.Second)
-	selectedItem := m.list.SelectedItem().(mainItem).SpotifyItem
-	switch item := selectedItem.(type) {
-	case spotify.SimplePlaylist:
-		go func() {
-			err := m.commands.RadioFromPlaylist(item)
-			if err != nil {
-				m.SendMessage(err.Error(), 5*time.Second)
-			}
-		}()
-		return
-	case *spotify.SavedTrackPage:
-		go func() {
-			err := m.commands.RadioFromSavedTracks()
-			if err != nil {
-				m.SendMessage(err.Error(), 5*time.Second)
-			}
-		}()
-		return
-	case spotify.SimpleAlbum:
-		go func() {
-			err := m.commands.RadioFromAlbum(item)
-			if err != nil {
-				m.SendMessage(err.Error(), 5*time.Second)
-			}
-		}()
-		return
-	case spotify.FullAlbum:
-		go func() {
-			err := m.commands.RadioFromAlbum(item.SimpleAlbum)
-			if err != nil {
-				m.SendMessage(err.Error(), 5*time.Second)
-			}
-		}()
-		return
-	case spotify.SimpleArtist:
-		go func() {
-			err := m.commands.RadioGivenArtist(item)
-			if err != nil {
-				m.SendMessage(err.Error(), 5*time.Second)
-			}
-		}()
-		return
-	case spotify.FullArtist:
-		go func() {
-			err := m.commands.RadioGivenArtist(item.SimpleArtist)
-			if err != nil {
-				m.SendMessage(err.Error(), 5*time.Second)
-			}
-		}()
-		return
-	case spotify.SimpleTrack:
-		go func() {
-			err := m.commands.RadioGivenSong(item, 0)
-			if err != nil {
-				m.SendMessage(err.Error(), 5*time.Second)
-			}
-		}()
-		return
-	case spotify.FullTrack:
-		go func() {
-			err := m.commands.RadioGivenSong(item.SimpleTrack, 0)
-			if err != nil {
-				m.SendMessage(err.Error(), 5*time.Second)
-			}
-		}()
-		return
-	case spotify.PlaylistTrack:
-		go func() {
-			err := m.commands.RadioGivenSong(item.Track.SimpleTrack, 0)
-			if err != nil {
-				m.SendMessage(err.Error(), 5*time.Second)
-			}
-		}()
-		return
-	case spotify.PlaylistItem:
-		go func() {
-			err := m.commands.RadioGivenSong(item.Track.Track.SimpleTrack, 0)
-			if err != nil {
-				m.SendMessage(err.Error(), 5*time.Second)
-			}
-		}()
-		return
-	case spotify.SavedTrack:
-		go func() {
-			err := m.commands.RadioGivenSong(item.SimpleTrack, 0)
-			if err != nil {
-				m.SendMessage(err.Error(), 5*time.Second)
-			}
-		}()
-		return
-	}
+	//	selectedItem := m.list.SelectedItem().(mainItem).SpotifyItem
+	//	switch item := selectedItem.(type) {
+	//
+	// case spotify.SimplePlaylist:
+	//
+	//	go func() {
+	//		err := m.commands.RadioFromPlaylist(item)
+	//		if err != nil {
+	//			m.SendMessage(err.Error(), 5*time.Second)
+	//		}
+	//	}()
+	//	return
+	//
+	// case *spotify.SavedTrackPage:
+	//
+	//	go func() {
+	//		err := m.commands.RadioFromSavedTracks()
+	//		if err != nil {
+	//			m.SendMessage(err.Error(), 5*time.Second)
+	//		}
+	//	}()
+	//	return
+	//
+	// case spotify.SimpleAlbum:
+	//
+	//	go func() {
+	//		err := m.commands.RadioFromAlbum(item)
+	//		if err != nil {
+	//			m.SendMessage(err.Error(), 5*time.Second)
+	//		}
+	//	}()
+	//	return
+	//
+	// case spotify.FullAlbum:
+	//
+	//	go func() {
+	//		err := m.commands.RadioFromAlbum(item.SimpleAlbum)
+	//		if err != nil {
+	//			m.SendMessage(err.Error(), 5*time.Second)
+	//		}
+	//	}()
+	//	return
+	//
+	// case spotify.SimpleArtist:
+	//
+	//	go func() {
+	//		err := m.commands.RadioGivenArtist(item)
+	//		if err != nil {
+	//			m.SendMessage(err.Error(), 5*time.Second)
+	//		}
+	//	}()
+	//	return
+	//
+	// case spotify.FullArtist:
+	//
+	//	go func() {
+	//		err := m.commands.RadioGivenArtist(item.SimpleArtist)
+	//		if err != nil {
+	//			m.SendMessage(err.Error(), 5*time.Second)
+	//		}
+	//	}()
+	//	return
+	//
+	// case spotify.SimpleTrack:
+	//
+	//	go func() {
+	//		err := m.commands.RadioGivenSong(item, 0)
+	//		if err != nil {
+	//			m.SendMessage(err.Error(), 5*time.Second)
+	//		}
+	//	}()
+	//	return
+	//
+	// case spotify.FullTrack:
+	//
+	//	go func() {
+	//		err := m.commands.RadioGivenSong(item.SimpleTrack, 0)
+	//		if err != nil {
+	//			m.SendMessage(err.Error(), 5*time.Second)
+	//		}
+	//	}()
+	//	return
+	//
+	// case spotify.PlaylistTrack:
+	//
+	//	go func() {
+	//		err := m.commands.RadioGivenSong(item.Track.SimpleTrack, 0)
+	//		if err != nil {
+	//			m.SendMessage(err.Error(), 5*time.Second)
+	//		}
+	//	}()
+	//	return
+	//
+	// case spotify.PlaylistItem:
+	//
+	//	go func() {
+	//		err := m.commands.RadioGivenSong(item.Track.Track.SimpleTrack, 0)
+	//		if err != nil {
+	//			m.SendMessage(err.Error(), 5*time.Second)
+	//		}
+	//	}()
+	//	return
+	//
+	// case spotify.SavedTrack:
+	//
+	//	go func() {
+	//		err := m.commands.RadioGivenSong(item.SimpleTrack, 0)
+	//		if err != nil {
+	//			m.SendMessage(err.Error(), 5*time.Second)
+	//		}
+	//	}()
+	//	return
+	//	}
 }
 
 func (m *mainModel) GoBack() (tea.Cmd, error) {

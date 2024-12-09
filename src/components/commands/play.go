@@ -35,7 +35,7 @@ func (c *Commander) PlayLikedSongs(position int) error {
 	if err != nil {
 		return err
 	}
-	playlist, _, err := c.GetRadioPlaylist("Saved Songs")
+	playlist, err := c.GetRadioPlaylist("Saved Songs")
 	if err != nil {
 		return err
 	}
