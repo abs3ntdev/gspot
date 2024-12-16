@@ -9,22 +9,15 @@ import (
 )
 
 func (c *Commander) Play() error {
-	err := c.Client().Play(c.Context)
+	deviceID, err := c.activateDevice()
 	if err != nil {
-		if isNoActiveError(err) {
-			deviceID, err := c.activateDevice()
-			if err != nil {
-				return err
-			}
-			err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
-				DeviceID: &deviceID,
-			})
-			if err != nil {
-				return err
-			}
-		} else {
-			return err
-		}
+		return err
+	}
+	err = c.Client().PlayOpt(c.Context, &spotify.PlayOptions{
+		DeviceID: &deviceID,
+	})
+	if err != nil {
+		return fmt.Errorf("play opt: %w", err)
 	}
 	return nil
 }

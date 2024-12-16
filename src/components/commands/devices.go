@@ -3,6 +3,7 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -14,6 +15,11 @@ func (c *Commander) ListDevices() error {
 	if err != nil {
 		return err
 	}
+	playerState, err := c.Client().PlayerState(c.Context)
+	if err != nil {
+		return err
+	}
+	log.Printf("%+v\n", playerState)
 	return PrintDevices(devices)
 }
 
