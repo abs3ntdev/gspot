@@ -9,7 +9,7 @@ require (
 	github.com/charmbracelet/bubbletea v1.1.2
 	github.com/charmbracelet/lipgloss v0.13.1
 	github.com/lmittmann/tint v1.0.5
-	github.com/rivo/tview v0.0.0-20241016194538-c5e4fb24af13
+	github.com/rivo/tview v0.0.0-20241227133733-17b7edb88c57
 	github.com/urfave/cli/v3 v3.0.0-alpha9.1
 	github.com/zmb3/spotify/v2 v2.4.2
 	go.uber.org/fx v1.23.0
