@@ -27,7 +27,7 @@ func (c *Commander) GetRecomendationIdsForPrompt(ctx context.Context, prompt str
 	if err != nil {
 		return nil, err
 	}
-	ids := []spotify.ID{}
+	isMap := map[spotify.ID]struct{}{}
 	for _, v := range radioResp.Tracks {
 		match, err := c.lb.MatchTrack(ctx, &v)
 		if err != nil {
@@ -41,9 +41,13 @@ func (c *Commander) GetRecomendationIdsForPrompt(ctx context.Context, prompt str
 		if match.SpotifyId == "" {
 			continue
 		}
-		ids = append(ids, spotify.ID(match.SpotifyId))
+		isMap[spotify.ID(match.SpotifyId)] = struct{}{}
 	}
-	return ids, nil
+	keys := make([]spotify.ID, 0, len(isMap))
+	for i := range isMap {
+		keys = append(keys, i)
+	}
+	return keys, nil
 }
 
 func (c *Commander) RadioFromPrompt(ctx context.Context, prompt string, mode string) error {
