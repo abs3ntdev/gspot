@@ -1,6 +1,8 @@
 module git.asdf.cafe/abs3nt/gspot
 
-go 1.22.3
+go 1.23.0
+
+toolchain go1.24.1
 
 require (
 	git.asdf.cafe/abs3nt/gunner v0.0.1
@@ -15,7 +17,7 @@ require (
 	go.uber.org/fx v1.23.0
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c
 	golang.org/x/net v0.30.0
-	golang.org/x/oauth2 v0.23.0
+	golang.org/x/oauth2 v0.28.0
 	golang.org/x/sync v0.8.0
 	google.golang.org/api v0.203.0
 	modernc.org/sqlite v1.33.1
