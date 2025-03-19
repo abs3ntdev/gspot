@@ -164,7 +164,7 @@ func (c *Commander) RadioGivenList(songs []spotify.ID, name string) error {
 	if err != nil {
 		return err
 	}
-	queue := []spotify.ID{songs[0]}
+	queue := []spotify.ID{}
 	for _, rec := range songs {
 		exists, err := c.SongExists(c.db, rec)
 		if err != nil {
