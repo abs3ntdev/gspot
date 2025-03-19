@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math/rand"
 	"os"
 	"path/filepath"
 
@@ -185,34 +184,6 @@ func (c *Commander) RadioGivenList(songs []spotify.ID, name string) error {
 	err = c.PlayRadio(radioPlaylist, 0)
 	if err != nil {
 		return err
-	}
-	for i := 0; i < 4; i++ {
-		id := rand.Intn(len(songs)-2) + 1
-		seed := spotify.Seeds{
-			Tracks: []spotify.ID{songs[id]},
-		}
-		additionalRecs, err := c.Client().GetRecommendations(c.Context, seed, &spotify.TrackAttributes{}, spotify.Limit(100))
-		if err != nil {
-			return err
-		}
-		additionalRecsIds := []spotify.ID{}
-		for _, song := range additionalRecs.Tracks {
-			exists, err := c.SongExists(c.db, song.ID)
-			if err != nil {
-				return err
-			}
-			if !exists {
-				_, err = c.db.QueryContext(c.Context, fmt.Sprintf("INSERT INTO radio (id) VALUES('%s')", string(song.ID)))
-				if err != nil {
-					return err
-				}
-				additionalRecsIds = append(additionalRecsIds, song.ID)
-			}
-		}
-		_, err = c.Client().AddTracksToPlaylist(c.Context, radioPlaylist.ID, additionalRecsIds...)
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
