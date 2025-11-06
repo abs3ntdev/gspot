@@ -59,6 +59,28 @@ you will be asked to login, you will only have to do this the first time. After 
 
 helpful keybinds are shown in the bottom of the screen, hit ? to see all of them
 
+## DAEMON MODE
+
+`gspot-daemon`
+
+The daemon runs a background RPC server that allows you to control Spotify playback via a Unix socket. This is useful for integrations with other tools like the [tmux plugin](https://github.com/abs3ntdev/tmux-gspot) or custom scripts.
+
+The daemon provides control over:
+- Playback (play, pause, toggle, next, previous, seek)
+- Volume control (change volume, mute/unmute)
+- Track information (now playing, links, status)
+- Playlists and radio
+- Device management
+- Like/unlike tracks
+
+By default, the daemon listens on `/tmp/gspot.sock`. You can configure a different socket path in your config:
+
+```
+socket_path: "/path/to/your/socket.sock"
+```
+
+The daemon will automatically start when needed by integrations, or you can run it manually in the background
+
 To use the custom radio feature:
 
 `gspot radio`
