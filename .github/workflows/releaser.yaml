@@ -1,5 +1,5 @@
 name: deployer
-run-name: ${{ gitea.actor }} is releasing
+run-name: ${{ github.actor }} is releasing
 on:
   push:
     tags:
@@ -8,6 +8,8 @@ on:
 jobs:
   go-releaser:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,4 +27,4 @@ jobs:
           version: nightly
           args: release --clean
         env:
-          GITEA_TOKEN: ${{ secrets.ACCESS_TOKEN_GITEA}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}

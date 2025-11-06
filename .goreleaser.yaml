@@ -1,8 +1,4 @@
-gitea_urls:
-  api: https://git.asdf.cafe/api/v1
-  download: https://git.asdf.cafe
-  skip_tls_verify: false
-
+version: 2
 before:
   hooks:
     - go mod tidy

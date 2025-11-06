@@ -1,5 +1,5 @@
 name: builder
-run-name: ${{ gitea.actor }} is building
+run-name: ${{ github.actor }} is building
 on: [push]
 
 jobs:
