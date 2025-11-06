@@ -52,7 +52,7 @@ func GetClient(conf *config.Config) (c *spotify.Client, err error) {
 	auth = spotifyauth.New(
 		spotifyauth.WithClientID(conf.ClientID),
 		spotifyauth.WithClientSecret(conf.ClientSecret),
-		spotifyauth.WithRedirectURL(fmt.Sprintf("http://localhost:%s/callback", conf.Port)),
+		spotifyauth.WithRedirectURL(fmt.Sprintf("http://127.0.0.1:%s/callback", conf.Port)),
 		spotifyauth.WithScopes(
 			spotifyauth.ScopeImageUpload,
 			spotifyauth.ScopePlaylistReadPrivate,

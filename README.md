@@ -24,7 +24,7 @@ This project is still under heavy development and some things might not work or 
 
 go here https://developer.spotify.com/dashboard/applications to make a spotify application. you will need a client ID and a client secret. Set your redirect uri like this:
 
-`http://localhost:8888/callback`
+`http://127.0.0.1:8888/callback`
 
 add your information to ~/.config/gspot/gspot.yml like this
 
