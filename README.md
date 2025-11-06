@@ -88,6 +88,8 @@ To use the custom radio feature:
 or hit ctrl+r on any track in the TUI. This will start an extended radio. To replenish the current radio run `gspot refillradio` and all the songs already listened will be removed and that number of new recomendations will be added.
 
 This radio uses slightly different logic than the standard spotify radio to give a longer playlist and more recomendation. With a cronjob you can schedule refill to run to have an infinite and morphing radio station.
+^^^^^^ Spotify broke this feature its not longer possible  ^^^^^^
+
 
 To view help:
 
