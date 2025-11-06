@@ -18,13 +18,13 @@ jobs:
       - name: Setup up go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: '1.24.5'
           cache: true
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser
-          version: nightly
+          version: latest
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
