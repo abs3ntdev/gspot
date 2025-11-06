@@ -4,7 +4,25 @@ before:
     - go mod tidy
 
 builds:
-  - env:
+  - id: gspot
+    main: ./cmd/gspot
+    binary: gspot
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    ignore:
+      - goos: windows
+        goarch: "386"
+    ldflags:
+      - -s -w -X git.asdf.cafe/abs3nt/gspot/src/components/cli.Version={{.Version}}
+
+  - id: gspot-daemon
+    main: ./cmd/gspot-daemon
+    binary: gspot-daemon
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
