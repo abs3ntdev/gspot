@@ -2,13 +2,12 @@ package commands
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/zmb3/spotify/v2"
 )
 
-func (c *Commander) Status() error {
+func (c *Commander) Status() (string, error) {
 	state, err := c.Cache.GetOrDo("state", func() (string, error) {
 		state, err := c.Client().PlayerState(c.Context)
 		if err != nil {
@@ -21,10 +20,9 @@ func (c *Commander) Status() error {
 		return str, nil
 	}, 5*time.Second)
 	if err != nil {
-		return err
+		return "", err
 	}
-	fmt.Println(state)
-	return nil
+	return state, nil
 }
 
 func (c *Commander) FormatState(state *spotify.PlayerState) (string, error) {

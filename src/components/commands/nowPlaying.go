@@ -7,16 +7,15 @@ import (
 	"github.com/zmb3/spotify/v2"
 )
 
-func (c *Commander) NowPlaying(force bool) error {
+func (c *Commander) NowPlaying(force bool) (string, error) {
 	if force {
 		current, err := c.Client().PlayerCurrentlyPlaying(c.Context)
 		if err != nil {
-			return err
+			return "", err
 		}
 		str := FormatSong(current)
-		fmt.Println(str)
-		_, err = c.Cache.Put("now_playing", str, 5*time.Second)
-		return err
+		go c.Cache.Put("now_playing", str, 5*time.Second)
+		return str, nil
 	}
 	song, err := c.Cache.GetOrDo("now_playing", func() (string, error) {
 		current, err := c.Client().PlayerCurrentlyPlaying(c.Context)
@@ -27,10 +26,9 @@ func (c *Commander) NowPlaying(force bool) error {
 		return str, nil
 	}, 5*time.Second)
 	if err != nil {
-		return err
+		return "", err
 	}
-	fmt.Println(song)
-	return nil
+	return song, nil
 }
 
 func FormatSong(current *spotify.CurrentlyPlaying) string {

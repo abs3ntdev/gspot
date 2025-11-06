@@ -10,8 +10,8 @@ import (
 	"go.uber.org/fx/fxevent"
 
 	"git.asdf.cafe/abs3nt/gspot/src/components/cache"
-	"git.asdf.cafe/abs3nt/gspot/src/components/cli"
 	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
+	"git.asdf.cafe/abs3nt/gspot/src/components/daemon"
 	"git.asdf.cafe/abs3nt/gspot/src/components/logger"
 	"git.asdf.cafe/abs3nt/gspot/src/services"
 )
@@ -33,7 +33,7 @@ func main() {
 			logger.NewLogger,
 		),
 		fx.Invoke(
-			cli.Run,
+			daemon.Run,
 		),
 	)
 	app.Run()
