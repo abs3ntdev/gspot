@@ -14,7 +14,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/zmb3/spotify/v2"
 
-	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
+	"github.com/abs3ntdev/gspot/src/components/commands"
 )
 
 var (

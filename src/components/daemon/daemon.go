@@ -10,8 +10,8 @@ import (
 
 	"go.uber.org/fx"
 
-	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
-	"git.asdf.cafe/abs3nt/gspot/src/config"
+	"github.com/abs3ntdev/gspot/src/components/commands"
+	"github.com/abs3ntdev/gspot/src/config"
 )
 
 func Run(c *commands.Commander, conf *config.Config, s fx.Shutdowner) {

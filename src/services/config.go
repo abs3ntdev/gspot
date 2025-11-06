@@ -1,10 +1,10 @@
 package services
 
 import (
-	"git.asdf.cafe/abs3nt/gunner"
+	"github.com/abs3ntdev/gunner"
 	"go.uber.org/fx"
 
-	"git.asdf.cafe/abs3nt/gspot/src/config"
+	"github.com/abs3ntdev/gspot/src/config"
 )
 
 var Config = fx.Options(

@@ -16,7 +16,7 @@ import (
 	"golang.org/x/exp/slog"
 	"golang.org/x/oauth2"
 
-	"git.asdf.cafe/abs3nt/gspot/src/config"
+	"github.com/abs3ntdev/gspot/src/config"
 )
 
 var (

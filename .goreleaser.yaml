@@ -17,7 +17,7 @@ builds:
       - goos: windows
         goarch: "386"
     ldflags:
-      - -s -w -X git.asdf.cafe/abs3nt/gspot/src/components/cli.Version={{.Version}}
+      - -s -w -X github.com/abs3ntdev/gspot/src/components/cli.Version={{.Version}}
 
   - id: gspot-daemon
     main: ./cmd/gspot-daemon
@@ -32,7 +32,7 @@ builds:
       - goos: windows
         goarch: "386"
     ldflags:
-      - -s -w -X git.asdf.cafe/abs3nt/gspot/src/components/cli.Version={{.Version}}
+      - -s -w -X github.com/abs3ntdev/gspot/src/components/cli.Version={{.Version}}
 
 archives:
   - formats: [ 'tar.gz' ]

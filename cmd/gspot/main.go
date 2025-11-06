@@ -9,11 +9,11 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 
-	"git.asdf.cafe/abs3nt/gspot/src/components/cache"
-	"git.asdf.cafe/abs3nt/gspot/src/components/cli"
-	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
-	"git.asdf.cafe/abs3nt/gspot/src/components/logger"
-	"git.asdf.cafe/abs3nt/gspot/src/services"
+	"github.com/abs3ntdev/gspot/src/components/cache"
+	"github.com/abs3ntdev/gspot/src/components/cli"
+	"github.com/abs3ntdev/gspot/src/components/commands"
+	"github.com/abs3ntdev/gspot/src/components/logger"
+	"github.com/abs3ntdev/gspot/src/services"
 )
 
 func main() {

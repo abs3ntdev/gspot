@@ -1,7 +1,7 @@
 package daemon
 
 import (
-	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
+	"github.com/abs3ntdev/gspot/src/components/commands"
 	"github.com/zmb3/spotify/v2"
 )
 

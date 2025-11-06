@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"git.asdf.cafe/abs3nt/gspot/src/components/youtube"
+	"github.com/abs3ntdev/gspot/src/components/youtube"
 )
 
 func (c *Commander) PrintYoutubeLink() (string, error) {

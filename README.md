@@ -12,7 +12,7 @@ This project is still under heavy development and some things might not work or 
 
 # To build from source by pulling and building the binary
 
-`git clone https://git.asdf.cafe/abs3nt/gspot`
+`git clone https://github.com/abs3ntdev/gspot`
 
 `cd gspot`
 
@@ -73,6 +73,6 @@ To view help:
 
 Very open to contributations feel free to open a PR
 
-[tmux plugin](https://git.asdf.cafe/abs3nt/tmux-gspot)
+[tmux plugin](https://github.com/abs3ntdev/tmux-gspot)
 
-[wiki](https://git.asdf.cafe/abs3nt/gspot/wiki)
+[wiki](https://github.com/abs3ntdev/gspot/wiki)

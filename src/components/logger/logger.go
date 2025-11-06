@@ -9,7 +9,7 @@ import (
 	"github.com/lmittmann/tint"
 	"go.uber.org/fx"
 
-	"git.asdf.cafe/abs3nt/gspot/src/config"
+	"github.com/abs3ntdev/gspot/src/config"
 )
 
 type LoggerResult struct {

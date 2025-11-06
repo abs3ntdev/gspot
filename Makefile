@@ -1,5 +1,5 @@
 build: 
-	go build -ldflags="-X 'git.asdf.cafe/abs3nt/gspot/src/components/cli.Version=$(shell git show -s --date=short --pretty='format:%h (%ad)' HEAD)'" -o dist/ ./cmd/gspot
+	go build -ldflags="-X 'github.com/abs3ntdev/gspot/src/components/cli.Version=$(shell git show -s --date=short --pretty='format:%h (%ad)' HEAD)'" -o dist/ ./cmd/gspot
 	go build -o dist/ ./cmd/gspot-daemon
 
 rundaemon: build

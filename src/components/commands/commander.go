@@ -8,9 +8,9 @@ import (
 	"github.com/zmb3/spotify/v2"
 	"go.uber.org/fx"
 
-	"git.asdf.cafe/abs3nt/gspot/src/components/cache"
-	"git.asdf.cafe/abs3nt/gspot/src/config"
-	"git.asdf.cafe/abs3nt/gspot/src/services"
+	"github.com/abs3ntdev/gspot/src/components/cache"
+	"github.com/abs3ntdev/gspot/src/config"
+	"github.com/abs3ntdev/gspot/src/services"
 )
 
 type CommanderResult struct {

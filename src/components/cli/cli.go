@@ -12,10 +12,10 @@ import (
 	"github.com/zmb3/spotify/v2"
 	"go.uber.org/fx"
 
-	"git.asdf.cafe/abs3nt/gspot/src/components/commands"
-	"git.asdf.cafe/abs3nt/gspot/src/components/daemon"
-	"git.asdf.cafe/abs3nt/gspot/src/components/tui"
-	"git.asdf.cafe/abs3nt/gspot/src/components/tuitview"
+	"github.com/abs3ntdev/gspot/src/components/commands"
+	"github.com/abs3ntdev/gspot/src/components/daemon"
+	"github.com/abs3ntdev/gspot/src/components/tui"
+	"github.com/abs3ntdev/gspot/src/components/tuitview"
 )
 
 var Version = "dev"

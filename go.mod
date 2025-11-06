@@ -1,9 +1,9 @@
-module git.asdf.cafe/abs3nt/gspot
+module github.com/abs3ntdev/gspot
 
-go 1.24.5
+go 1.25
 
 require (
-	git.asdf.cafe/abs3nt/gunner v0.0.1
+	github.com/abs3ntdev/gunner v0.0.3
 	github.com/atotto/clipboard v0.1.4
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.6
@@ -66,7 +66,7 @@ require (
 	go.uber.org/dig v1.19.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
-	go.yaml.in/yaml/v2 v2.4.2 // indirect
+	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	golang.org/x/crypto v0.40.0 // indirect
 	golang.org/x/sys v0.34.0 // indirect
 	golang.org/x/term v0.33.0 // indirect
