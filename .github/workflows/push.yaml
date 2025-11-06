@@ -12,4 +12,4 @@ jobs:
           go-version: "1.24"
           cache: true
       - run: go mod tidy
-      - run: go build -o gspot
+      - run: go build -o dist ./cmd/...
