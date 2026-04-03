@@ -112,6 +112,32 @@ func prettyCover(w io.Writer, resp *gspotv1.DownloadCoverResponse) error {
 	return nil
 }
 
+func prettyPlaylists(w io.Writer, resp *gspotv1.ListPlaylistsResponse) error {
+	if len(resp.Playlists) == 0 {
+		fmt.Fprintln(w, "No playlists found")
+		return nil
+	}
+	for _, p := range resp.Playlists {
+		fmt.Fprintf(w, "  %-40s %3d tracks  %s\n", p.Name, p.TrackCount, p.Id)
+	}
+	fmt.Fprintf(w, "\n%d playlists total\n", resp.Total)
+	return nil
+}
+
+func prettyPlaylist(w io.Writer, resp *gspotv1.GetPlaylistResponse) error {
+	if resp.Playlist == nil {
+		fmt.Fprintln(w, "Playlist not found")
+		return nil
+	}
+	fmt.Fprintf(w, "%s (%d tracks) by %s\n", resp.Playlist.Name, resp.Playlist.TrackCount, resp.Playlist.Owner)
+	fmt.Fprintln(w, strings.Repeat("─", 60))
+	for i, t := range resp.Tracks {
+		duration := formatDuration(t.DurationMs)
+		fmt.Fprintf(w, "  %3d. %-35s %-20s %s\n", i+1, t.Name, t.Artist, duration)
+	}
+	return nil
+}
+
 // prettyEmpty is for commands with no meaningful response data.
 func prettyEmpty[T any](w io.Writer, resp T) error {
 	return nil

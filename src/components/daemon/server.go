@@ -270,7 +270,110 @@ func (s *Server) DownloadCover(ctx context.Context, req *connect.Request[gspotv1
 	return connect.NewResponse(&gspotv1.DownloadCoverResponse{Path: path}), nil
 }
 
+// Playlists
+
+func (s *Server) ListPlaylists(ctx context.Context, req *connect.Request[gspotv1.ListPlaylistsRequest]) (*connect.Response[gspotv1.ListPlaylistsResponse], error) {
+	limit := int(req.Msg.Limit)
+	if limit <= 0 {
+		limit = 50
+	}
+	offset := int(req.Msg.Offset)
+
+	playlists, err := s.commander.Client().CurrentUsersPlaylists(s.commander.Context, spotify.Limit(limit), spotify.Offset(offset))
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &gspotv1.ListPlaylistsResponse{
+		Total: int32(playlists.Total),
+	}
+	for _, p := range playlists.Playlists {
+		resp.Playlists = append(resp.Playlists, playlistToProto(p))
+	}
+	return connect.NewResponse(resp), nil
+}
+
+func (s *Server) GetPlaylist(ctx context.Context, req *connect.Request[gspotv1.GetPlaylistRequest]) (*connect.Response[gspotv1.GetPlaylistResponse], error) {
+	playlist, err := s.commander.Client().GetPlaylist(s.commander.Context, spotify.ID(req.Msg.PlaylistId))
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &gspotv1.GetPlaylistResponse{
+		Playlist: &gspotv1.Playlist{
+			Id:         string(playlist.ID),
+			Name:       playlist.Name,
+			Owner:      playlist.Owner.DisplayName,
+			TrackCount: int32(playlist.Tracks.Total),
+			IsPublic:   playlist.IsPublic,
+		},
+	}
+	if urls := playlist.ExternalURLs; urls != nil {
+		resp.Playlist.SpotifyUrl = urls["spotify"]
+	}
+
+	for _, item := range playlist.Tracks.Tracks {
+		t := item.Track
+		track := &gspotv1.Track{
+			Id:         string(t.ID),
+			Name:       t.Name,
+			Album:      t.Album.Name,
+			DurationMs: int32(t.Duration),
+		}
+		if len(t.Artists) > 0 {
+			track.Artist = t.Artists[0].Name
+		}
+		if urls := t.ExternalURLs; urls != nil {
+			track.SpotifyUrl = urls["spotify"]
+		}
+		resp.Tracks = append(resp.Tracks, track)
+	}
+	return connect.NewResponse(resp), nil
+}
+
+func (s *Server) PlayPlaylist(ctx context.Context, req *connect.Request[gspotv1.PlayPlaylistRequest]) (*connect.Response[gspotv1.PlayPlaylistResponse], error) {
+	uri := spotify.URI("spotify:playlist:" + req.Msg.PlaylistId)
+	opts := &spotify.PlayOptions{
+		PlaybackContext: &uri,
+	}
+	if req.Msg.Offset > 0 {
+		offset := int(req.Msg.Offset)
+		opts.PlaybackOffset = &spotify.PlaybackOffset{Position: &offset}
+	}
+	err := s.commander.Client().PlayOpt(s.commander.Context, opts)
+	if err != nil {
+		if commands.IsNoActiveError(err) {
+			deviceID, err := s.commander.ActivateDevice()
+			if err != nil {
+				return nil, err
+			}
+			opts.DeviceID = &deviceID
+			err = s.commander.Client().PlayOpt(s.commander.Context, opts)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	}
+	return connect.NewResponse(&gspotv1.PlayPlaylistResponse{}), nil
+}
+
 // Helpers
+
+func playlistToProto(p spotify.SimplePlaylist) *gspotv1.Playlist {
+	pl := &gspotv1.Playlist{
+		Id:         string(p.ID),
+		Name:       p.Name,
+		Owner:      p.Owner.DisplayName,
+		TrackCount: int32(p.Tracks.Total),
+		IsPublic:   p.IsPublic,
+	}
+	if urls := p.ExternalURLs; urls != nil {
+		pl.SpotifyUrl = urls["spotify"]
+	}
+	return pl
+}
 
 func playerStateToProto(state *spotify.PlayerState) *gspotv1.PlayerState {
 	if state == nil {

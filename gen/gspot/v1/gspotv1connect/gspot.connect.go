@@ -71,6 +71,15 @@ const (
 	GspotServiceLikeProcedure = "/gspot.v1.GspotService/Like"
 	// GspotServiceUnLikeProcedure is the fully-qualified name of the GspotService's UnLike RPC.
 	GspotServiceUnLikeProcedure = "/gspot.v1.GspotService/UnLike"
+	// GspotServiceListPlaylistsProcedure is the fully-qualified name of the GspotService's
+	// ListPlaylists RPC.
+	GspotServiceListPlaylistsProcedure = "/gspot.v1.GspotService/ListPlaylists"
+	// GspotServiceGetPlaylistProcedure is the fully-qualified name of the GspotService's GetPlaylist
+	// RPC.
+	GspotServiceGetPlaylistProcedure = "/gspot.v1.GspotService/GetPlaylist"
+	// GspotServicePlayPlaylistProcedure is the fully-qualified name of the GspotService's PlayPlaylist
+	// RPC.
+	GspotServicePlayPlaylistProcedure = "/gspot.v1.GspotService/PlayPlaylist"
 	// GspotServiceNowPlayingProcedure is the fully-qualified name of the GspotService's NowPlaying RPC.
 	GspotServiceNowPlayingProcedure = "/gspot.v1.GspotService/NowPlaying"
 	// GspotServiceStatusProcedure is the fully-qualified name of the GspotService's Status RPC.
@@ -113,6 +122,10 @@ type GspotServiceClient interface {
 	// Library
 	Like(context.Context, *connect.Request[v1.LikeRequest]) (*connect.Response[v1.LikeResponse], error)
 	UnLike(context.Context, *connect.Request[v1.UnLikeRequest]) (*connect.Response[v1.UnLikeResponse], error)
+	// Playlists
+	ListPlaylists(context.Context, *connect.Request[v1.ListPlaylistsRequest]) (*connect.Response[v1.ListPlaylistsResponse], error)
+	GetPlaylist(context.Context, *connect.Request[v1.GetPlaylistRequest]) (*connect.Response[v1.GetPlaylistResponse], error)
+	PlayPlaylist(context.Context, *connect.Request[v1.PlayPlaylistRequest]) (*connect.Response[v1.PlayPlaylistResponse], error)
 	// Info / queries
 	NowPlaying(context.Context, *connect.Request[v1.NowPlayingRequest]) (*connect.Response[v1.NowPlayingResponse], error)
 	Status(context.Context, *connect.Request[v1.StatusRequest]) (*connect.Response[v1.StatusResponse], error)
@@ -242,6 +255,24 @@ func NewGspotServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(gspotServiceMethods.ByName("UnLike")),
 			connect.WithClientOptions(opts...),
 		),
+		listPlaylists: connect.NewClient[v1.ListPlaylistsRequest, v1.ListPlaylistsResponse](
+			httpClient,
+			baseURL+GspotServiceListPlaylistsProcedure,
+			connect.WithSchema(gspotServiceMethods.ByName("ListPlaylists")),
+			connect.WithClientOptions(opts...),
+		),
+		getPlaylist: connect.NewClient[v1.GetPlaylistRequest, v1.GetPlaylistResponse](
+			httpClient,
+			baseURL+GspotServiceGetPlaylistProcedure,
+			connect.WithSchema(gspotServiceMethods.ByName("GetPlaylist")),
+			connect.WithClientOptions(opts...),
+		),
+		playPlaylist: connect.NewClient[v1.PlayPlaylistRequest, v1.PlayPlaylistResponse](
+			httpClient,
+			baseURL+GspotServicePlayPlaylistProcedure,
+			connect.WithSchema(gspotServiceMethods.ByName("PlayPlaylist")),
+			connect.WithClientOptions(opts...),
+		),
 		nowPlaying: connect.NewClient[v1.NowPlayingRequest, v1.NowPlayingResponse](
 			httpClient,
 			baseURL+GspotServiceNowPlayingProcedure,
@@ -307,6 +338,9 @@ type gspotServiceClient struct {
 	queueSong      *connect.Client[v1.QueueSongRequest, v1.QueueSongResponse]
 	like           *connect.Client[v1.LikeRequest, v1.LikeResponse]
 	unLike         *connect.Client[v1.UnLikeRequest, v1.UnLikeResponse]
+	listPlaylists  *connect.Client[v1.ListPlaylistsRequest, v1.ListPlaylistsResponse]
+	getPlaylist    *connect.Client[v1.GetPlaylistRequest, v1.GetPlaylistResponse]
+	playPlaylist   *connect.Client[v1.PlayPlaylistRequest, v1.PlayPlaylistResponse]
 	nowPlaying     *connect.Client[v1.NowPlayingRequest, v1.NowPlayingResponse]
 	status         *connect.Client[v1.StatusRequest, v1.StatusResponse]
 	listDevices    *connect.Client[v1.ListDevicesRequest, v1.ListDevicesResponse]
@@ -406,6 +440,21 @@ func (c *gspotServiceClient) UnLike(ctx context.Context, req *connect.Request[v1
 	return c.unLike.CallUnary(ctx, req)
 }
 
+// ListPlaylists calls gspot.v1.GspotService.ListPlaylists.
+func (c *gspotServiceClient) ListPlaylists(ctx context.Context, req *connect.Request[v1.ListPlaylistsRequest]) (*connect.Response[v1.ListPlaylistsResponse], error) {
+	return c.listPlaylists.CallUnary(ctx, req)
+}
+
+// GetPlaylist calls gspot.v1.GspotService.GetPlaylist.
+func (c *gspotServiceClient) GetPlaylist(ctx context.Context, req *connect.Request[v1.GetPlaylistRequest]) (*connect.Response[v1.GetPlaylistResponse], error) {
+	return c.getPlaylist.CallUnary(ctx, req)
+}
+
+// PlayPlaylist calls gspot.v1.GspotService.PlayPlaylist.
+func (c *gspotServiceClient) PlayPlaylist(ctx context.Context, req *connect.Request[v1.PlayPlaylistRequest]) (*connect.Response[v1.PlayPlaylistResponse], error) {
+	return c.playPlaylist.CallUnary(ctx, req)
+}
+
 // NowPlaying calls gspot.v1.GspotService.NowPlaying.
 func (c *gspotServiceClient) NowPlaying(ctx context.Context, req *connect.Request[v1.NowPlayingRequest]) (*connect.Response[v1.NowPlayingResponse], error) {
 	return c.nowPlaying.CallUnary(ctx, req)
@@ -463,6 +512,10 @@ type GspotServiceHandler interface {
 	// Library
 	Like(context.Context, *connect.Request[v1.LikeRequest]) (*connect.Response[v1.LikeResponse], error)
 	UnLike(context.Context, *connect.Request[v1.UnLikeRequest]) (*connect.Response[v1.UnLikeResponse], error)
+	// Playlists
+	ListPlaylists(context.Context, *connect.Request[v1.ListPlaylistsRequest]) (*connect.Response[v1.ListPlaylistsResponse], error)
+	GetPlaylist(context.Context, *connect.Request[v1.GetPlaylistRequest]) (*connect.Response[v1.GetPlaylistResponse], error)
+	PlayPlaylist(context.Context, *connect.Request[v1.PlayPlaylistRequest]) (*connect.Response[v1.PlayPlaylistResponse], error)
 	// Info / queries
 	NowPlaying(context.Context, *connect.Request[v1.NowPlayingRequest]) (*connect.Response[v1.NowPlayingResponse], error)
 	Status(context.Context, *connect.Request[v1.StatusRequest]) (*connect.Response[v1.StatusResponse], error)
@@ -588,6 +641,24 @@ func NewGspotServiceHandler(svc GspotServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(gspotServiceMethods.ByName("UnLike")),
 		connect.WithHandlerOptions(opts...),
 	)
+	gspotServiceListPlaylistsHandler := connect.NewUnaryHandler(
+		GspotServiceListPlaylistsProcedure,
+		svc.ListPlaylists,
+		connect.WithSchema(gspotServiceMethods.ByName("ListPlaylists")),
+		connect.WithHandlerOptions(opts...),
+	)
+	gspotServiceGetPlaylistHandler := connect.NewUnaryHandler(
+		GspotServiceGetPlaylistProcedure,
+		svc.GetPlaylist,
+		connect.WithSchema(gspotServiceMethods.ByName("GetPlaylist")),
+		connect.WithHandlerOptions(opts...),
+	)
+	gspotServicePlayPlaylistHandler := connect.NewUnaryHandler(
+		GspotServicePlayPlaylistProcedure,
+		svc.PlayPlaylist,
+		connect.WithSchema(gspotServiceMethods.ByName("PlayPlaylist")),
+		connect.WithHandlerOptions(opts...),
+	)
 	gspotServiceNowPlayingHandler := connect.NewUnaryHandler(
 		GspotServiceNowPlayingProcedure,
 		svc.NowPlaying,
@@ -668,6 +739,12 @@ func NewGspotServiceHandler(svc GspotServiceHandler, opts ...connect.HandlerOpti
 			gspotServiceLikeHandler.ServeHTTP(w, r)
 		case GspotServiceUnLikeProcedure:
 			gspotServiceUnLikeHandler.ServeHTTP(w, r)
+		case GspotServiceListPlaylistsProcedure:
+			gspotServiceListPlaylistsHandler.ServeHTTP(w, r)
+		case GspotServiceGetPlaylistProcedure:
+			gspotServiceGetPlaylistHandler.ServeHTTP(w, r)
+		case GspotServicePlayPlaylistProcedure:
+			gspotServicePlayPlaylistHandler.ServeHTTP(w, r)
 		case GspotServiceNowPlayingProcedure:
 			gspotServiceNowPlayingHandler.ServeHTTP(w, r)
 		case GspotServiceStatusProcedure:
@@ -761,6 +838,18 @@ func (UnimplementedGspotServiceHandler) Like(context.Context, *connect.Request[v
 
 func (UnimplementedGspotServiceHandler) UnLike(context.Context, *connect.Request[v1.UnLikeRequest]) (*connect.Response[v1.UnLikeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.UnLike is not implemented"))
+}
+
+func (UnimplementedGspotServiceHandler) ListPlaylists(context.Context, *connect.Request[v1.ListPlaylistsRequest]) (*connect.Response[v1.ListPlaylistsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.ListPlaylists is not implemented"))
+}
+
+func (UnimplementedGspotServiceHandler) GetPlaylist(context.Context, *connect.Request[v1.GetPlaylistRequest]) (*connect.Response[v1.GetPlaylistResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.GetPlaylist is not implemented"))
+}
+
+func (UnimplementedGspotServiceHandler) PlayPlaylist(context.Context, *connect.Request[v1.PlayPlaylistRequest]) (*connect.Response[v1.PlayPlaylistResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.PlayPlaylist is not implemented"))
 }
 
 func (UnimplementedGspotServiceHandler) NowPlaying(context.Context, *connect.Request[v1.NowPlayingRequest]) (*connect.Response[v1.NowPlayingResponse], error) {

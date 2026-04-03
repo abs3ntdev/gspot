@@ -57,6 +57,11 @@ service GspotService {
   rpc Like(LikeRequest) returns (LikeResponse);
   rpc UnLike(UnLikeRequest) returns (UnLikeResponse);
 
+  // Playlists
+  rpc ListPlaylists(ListPlaylistsRequest) returns (ListPlaylistsResponse);
+  rpc GetPlaylist(GetPlaylistRequest) returns (GetPlaylistResponse);
+  rpc PlayPlaylist(PlayPlaylistRequest) returns (PlayPlaylistResponse);
+
   // Info / queries
   rpc NowPlaying(NowPlayingRequest) returns (NowPlayingResponse);
   rpc Status(StatusRequest) returns (StatusResponse);
@@ -146,6 +151,40 @@ message LikeResponse {}
 
 message UnLikeRequest {}
 message UnLikeResponse {}
+
+// Playlist messages
+
+message Playlist {
+  string id = 1;
+  string name = 2;
+  string owner = 3;
+  int32 track_count = 4;
+  bool is_public = 5;
+  string spotify_url = 6;
+}
+
+message ListPlaylistsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+message ListPlaylistsResponse {
+  repeated Playlist playlists = 1;
+  int32 total = 2;
+}
+
+message GetPlaylistRequest {
+  string playlist_id = 1;
+}
+message GetPlaylistResponse {
+  Playlist playlist = 1;
+  repeated Track tracks = 2;
+}
+
+message PlayPlaylistRequest {
+  string playlist_id = 1;
+  int32 offset = 2;
+}
+message PlayPlaylistResponse {}
 
 // Info requests & responses
 

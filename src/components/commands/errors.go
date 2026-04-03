@@ -2,6 +2,6 @@ package commands
 
 import "strings"
 
-func isNoActiveError(err error) bool {
+func IsNoActiveError(err error) bool {
 	return strings.Contains(err.Error(), "No active device found")
 }

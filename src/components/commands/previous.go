@@ -7,8 +7,8 @@ import (
 func (c *Commander) Previous() error {
 	err := c.Client().Previous(c.Context)
 	if err != nil {
-		if isNoActiveError(err) {
-			deviceID, err := c.activateDevice()
+		if IsNoActiveError(err) {
+			deviceID, err := c.ActivateDevice()
 			if err != nil {
 				return err
 			}

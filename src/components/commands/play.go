@@ -11,8 +11,8 @@ import (
 func (c *Commander) Play() error {
 	err := c.Client().Play(c.Context)
 	if err != nil {
-		if isNoActiveError(err) {
-			deviceID, err := c.activateDevice()
+		if IsNoActiveError(err) {
+			deviceID, err := c.ActivateDevice()
 			if err != nil {
 				return err
 			}
@@ -41,8 +41,8 @@ func (c *Commander) PlayURL(urlString string) error {
 	trackID := splittUrl[2]
 	err = c.Client().QueueSong(c.Context, spotify.ID(trackID))
 	if err != nil {
-		if isNoActiveError(err) {
-			deviceID, err := c.activateDevice()
+		if IsNoActiveError(err) {
+			deviceID, err := c.ActivateDevice()
 			if err != nil {
 				return err
 			}

@@ -5,8 +5,8 @@ import "github.com/zmb3/spotify/v2"
 func (c *Commander) QueueSong(id spotify.ID) error {
 	err := c.Client().QueueSong(c.Context, id)
 	if err != nil {
-		if isNoActiveError(err) {
-			deviceID, err := c.activateDevice()
+		if IsNoActiveError(err) {
+			deviceID, err := c.ActivateDevice()
 			if err != nil {
 				return err
 			}
