@@ -1,0 +1,191 @@
+syntax = "proto3";
+
+package gspot.v1;
+
+option go_package = "github.com/abs3ntdev/gspot/gen/gspot/v1;gspotv1";
+
+// Shared messages
+
+message Device {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+  int32 volume_percent = 4;
+  bool is_active = 5;
+}
+
+message Track {
+  string id = 1;
+  string name = 2;
+  string artist = 3;
+  string album = 4;
+  int32 duration_ms = 5;
+  string spotify_url = 6;
+}
+
+message PlayerState {
+  Track track = 1;
+  bool is_playing = 2;
+  int32 progress_ms = 3;
+  string repeat_state = 4;
+  bool shuffle_state = 5;
+  Device device = 6;
+}
+
+// Service definition
+
+service GspotService {
+  // Playback control
+  rpc Play(PlayRequest) returns (PlayResponse);
+  rpc PlayURL(PlayURLRequest) returns (PlayURLResponse);
+  rpc Pause(PauseRequest) returns (PauseResponse);
+  rpc TogglePlay(TogglePlayRequest) returns (TogglePlayResponse);
+  rpc Next(NextRequest) returns (NextResponse);
+  rpc Previous(PreviousRequest) returns (PreviousResponse);
+  rpc Seek(SeekRequest) returns (SeekResponse);
+  rpc SetPosition(SetPositionRequest) returns (SetPositionResponse);
+  rpc ChangeVolume(ChangeVolumeRequest) returns (ChangeVolumeResponse);
+  rpc Mute(MuteRequest) returns (MuteResponse);
+  rpc UnMute(UnMuteRequest) returns (UnMuteResponse);
+  rpc ToggleMute(ToggleMuteRequest) returns (ToggleMuteResponse);
+  rpc Repeat(RepeatRequest) returns (RepeatResponse);
+  rpc Shuffle(ShuffleRequest) returns (ShuffleResponse);
+  rpc SetDevice(SetDeviceRequest) returns (SetDeviceResponse);
+  rpc QueueSong(QueueSongRequest) returns (QueueSongResponse);
+
+  // Library
+  rpc Like(LikeRequest) returns (LikeResponse);
+  rpc UnLike(UnLikeRequest) returns (UnLikeResponse);
+
+  // Info / queries
+  rpc NowPlaying(NowPlayingRequest) returns (NowPlayingResponse);
+  rpc Status(StatusRequest) returns (StatusResponse);
+  rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse);
+  rpc GetLink(GetLinkRequest) returns (GetLinkResponse);
+  rpc GetLinkContext(GetLinkContextRequest) returns (GetLinkContextResponse);
+  rpc GetYoutubeLink(GetYoutubeLinkRequest) returns (GetYoutubeLinkResponse);
+  rpc DownloadCover(DownloadCoverRequest) returns (DownloadCoverResponse);
+}
+
+// Playback requests & responses
+
+message PlayRequest {}
+message PlayResponse {}
+
+message PlayURLRequest {
+  string url = 1;
+}
+message PlayURLResponse {}
+
+message PauseRequest {}
+message PauseResponse {}
+
+message TogglePlayRequest {}
+message TogglePlayResponse {}
+
+message NextRequest {
+  int32 amount = 1;
+}
+message NextResponse {}
+
+message PreviousRequest {}
+message PreviousResponse {}
+
+message SeekRequest {
+  bool forward = 1;
+}
+message SeekResponse {}
+
+message SetPositionRequest {
+  int32 position_ms = 1;
+}
+message SetPositionResponse {}
+
+message ChangeVolumeRequest {
+  int32 amount = 1;
+}
+message ChangeVolumeResponse {
+  int32 volume_percent = 1;
+}
+
+message MuteRequest {}
+message MuteResponse {}
+
+message UnMuteRequest {}
+message UnMuteResponse {}
+
+message ToggleMuteRequest {}
+message ToggleMuteResponse {}
+
+message RepeatRequest {}
+message RepeatResponse {
+  string state = 1;
+}
+
+message ShuffleRequest {}
+message ShuffleResponse {
+  bool state = 1;
+}
+
+message SetDeviceRequest {
+  string device_id = 1;
+}
+message SetDeviceResponse {
+  Device device = 1;
+}
+
+message QueueSongRequest {
+  string track_id = 1;
+}
+message QueueSongResponse {}
+
+// Library requests & responses
+
+message LikeRequest {}
+message LikeResponse {}
+
+message UnLikeRequest {}
+message UnLikeResponse {}
+
+// Info requests & responses
+
+message NowPlayingRequest {
+  bool force = 1;
+}
+message NowPlayingResponse {
+  Track track = 1;
+  bool is_playing = 2;
+  int32 progress_ms = 3;
+}
+
+message StatusRequest {}
+message StatusResponse {
+  PlayerState state = 1;
+}
+
+message ListDevicesRequest {}
+message ListDevicesResponse {
+  repeated Device devices = 1;
+}
+
+message GetLinkRequest {}
+message GetLinkResponse {
+  string url = 1;
+}
+
+message GetLinkContextRequest {}
+message GetLinkContextResponse {
+  string url = 1;
+}
+
+message GetYoutubeLinkRequest {}
+message GetYoutubeLinkResponse {
+  string url = 1;
+}
+
+message DownloadCoverRequest {
+  string path = 1;
+}
+message DownloadCoverResponse {
+  string path = 1;
+}
