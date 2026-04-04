@@ -98,6 +98,8 @@ const (
 	// GspotServiceDownloadCoverProcedure is the fully-qualified name of the GspotService's
 	// DownloadCover RPC.
 	GspotServiceDownloadCoverProcedure = "/gspot.v1.GspotService/DownloadCover"
+	// GspotServiceSubscribeProcedure is the fully-qualified name of the GspotService's Subscribe RPC.
+	GspotServiceSubscribeProcedure = "/gspot.v1.GspotService/Subscribe"
 )
 
 // GspotServiceClient is a client for the gspot.v1.GspotService service.
@@ -134,6 +136,8 @@ type GspotServiceClient interface {
 	GetLinkContext(context.Context, *connect.Request[v1.GetLinkContextRequest]) (*connect.Response[v1.GetLinkContextResponse], error)
 	GetYoutubeLink(context.Context, *connect.Request[v1.GetYoutubeLinkRequest]) (*connect.Response[v1.GetYoutubeLinkResponse], error)
 	DownloadCover(context.Context, *connect.Request[v1.DownloadCoverRequest]) (*connect.Response[v1.DownloadCoverResponse], error)
+	// Streaming
+	Subscribe(context.Context, *connect.Request[v1.SubscribeRequest]) (*connect.ServerStreamForClient[v1.SubscribeResponse], error)
 }
 
 // NewGspotServiceClient constructs a client for the gspot.v1.GspotService service. By default, it
@@ -315,6 +319,12 @@ func NewGspotServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(gspotServiceMethods.ByName("DownloadCover")),
 			connect.WithClientOptions(opts...),
 		),
+		subscribe: connect.NewClient[v1.SubscribeRequest, v1.SubscribeResponse](
+			httpClient,
+			baseURL+GspotServiceSubscribeProcedure,
+			connect.WithSchema(gspotServiceMethods.ByName("Subscribe")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -348,6 +358,7 @@ type gspotServiceClient struct {
 	getLinkContext *connect.Client[v1.GetLinkContextRequest, v1.GetLinkContextResponse]
 	getYoutubeLink *connect.Client[v1.GetYoutubeLinkRequest, v1.GetYoutubeLinkResponse]
 	downloadCover  *connect.Client[v1.DownloadCoverRequest, v1.DownloadCoverResponse]
+	subscribe      *connect.Client[v1.SubscribeRequest, v1.SubscribeResponse]
 }
 
 // Play calls gspot.v1.GspotService.Play.
@@ -490,6 +501,11 @@ func (c *gspotServiceClient) DownloadCover(ctx context.Context, req *connect.Req
 	return c.downloadCover.CallUnary(ctx, req)
 }
 
+// Subscribe calls gspot.v1.GspotService.Subscribe.
+func (c *gspotServiceClient) Subscribe(ctx context.Context, req *connect.Request[v1.SubscribeRequest]) (*connect.ServerStreamForClient[v1.SubscribeResponse], error) {
+	return c.subscribe.CallServerStream(ctx, req)
+}
+
 // GspotServiceHandler is an implementation of the gspot.v1.GspotService service.
 type GspotServiceHandler interface {
 	// Playback control
@@ -524,6 +540,8 @@ type GspotServiceHandler interface {
 	GetLinkContext(context.Context, *connect.Request[v1.GetLinkContextRequest]) (*connect.Response[v1.GetLinkContextResponse], error)
 	GetYoutubeLink(context.Context, *connect.Request[v1.GetYoutubeLinkRequest]) (*connect.Response[v1.GetYoutubeLinkResponse], error)
 	DownloadCover(context.Context, *connect.Request[v1.DownloadCoverRequest]) (*connect.Response[v1.DownloadCoverResponse], error)
+	// Streaming
+	Subscribe(context.Context, *connect.Request[v1.SubscribeRequest], *connect.ServerStream[v1.SubscribeResponse]) error
 }
 
 // NewGspotServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -701,6 +719,12 @@ func NewGspotServiceHandler(svc GspotServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(gspotServiceMethods.ByName("DownloadCover")),
 		connect.WithHandlerOptions(opts...),
 	)
+	gspotServiceSubscribeHandler := connect.NewServerStreamHandler(
+		GspotServiceSubscribeProcedure,
+		svc.Subscribe,
+		connect.WithSchema(gspotServiceMethods.ByName("Subscribe")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/gspot.v1.GspotService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case GspotServicePlayProcedure:
@@ -759,6 +783,8 @@ func NewGspotServiceHandler(svc GspotServiceHandler, opts ...connect.HandlerOpti
 			gspotServiceGetYoutubeLinkHandler.ServeHTTP(w, r)
 		case GspotServiceDownloadCoverProcedure:
 			gspotServiceDownloadCoverHandler.ServeHTTP(w, r)
+		case GspotServiceSubscribeProcedure:
+			gspotServiceSubscribeHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -878,4 +904,8 @@ func (UnimplementedGspotServiceHandler) GetYoutubeLink(context.Context, *connect
 
 func (UnimplementedGspotServiceHandler) DownloadCover(context.Context, *connect.Request[v1.DownloadCoverRequest]) (*connect.Response[v1.DownloadCoverResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.DownloadCover is not implemented"))
+}
+
+func (UnimplementedGspotServiceHandler) Subscribe(context.Context, *connect.Request[v1.SubscribeRequest], *connect.ServerStream[v1.SubscribeResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.Subscribe is not implemented"))
 }

@@ -6,11 +6,14 @@ import (
 	"fmt"
 	"log/slog"
 
+	golibrespot "github.com/devgianlu/go-librespot"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 
 	"github.com/abs3ntdev/gspot/src/components/cache"
 	"github.com/abs3ntdev/gspot/src/components/commands"
+	"github.com/abs3ntdev/gspot/src/components/daemon"
+	librespotpkg "github.com/abs3ntdev/gspot/src/components/librespot"
 	"github.com/abs3ntdev/gspot/src/components/logger"
 	"github.com/abs3ntdev/gspot/src/services"
 )
@@ -23,13 +26,27 @@ var ConfigDeps = fx.Options(
 	fx.Provide(logger.NewLogger),
 )
 
-// DaemonDeps provides the full stack: config, logger, cache, commander, managed context.
+// DaemonDeps provides the full stack for daemon run:
+// config, logger, cache, commander, librespot player, server, HTTP server, PID file.
 var DaemonDeps = fx.Options(
 	ConfigDeps,
 	fx.Provide(
 		managedContext,
 		cache.NewCache,
 		commands.NewCommander,
+		// Librespot logger adapter
+		func(log *slog.Logger) golibrespot.Logger {
+			return librespotpkg.NewSlogAdapter(log)
+		},
+		// Librespot player (nil if not enabled in config)
+		librespotpkg.NewPlayer,
+		// ConnectRPC server (receives optional librespot player)
+		daemon.NewServer,
+	),
+	// Lifecycle hooks (order matters: PID file first, then HTTP server)
+	fx.Invoke(
+		daemon.NewPidFile,
+		daemon.NewHTTPServer,
 	),
 	fx.WithLogger(func(log *slog.Logger) fxevent.Logger {
 		l := &fxevent.SlogLogger{Logger: log}

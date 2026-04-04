@@ -2,6 +2,7 @@ package daemon
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 	"time"
 
@@ -11,15 +12,17 @@ import (
 
 	gspotv1 "github.com/abs3ntdev/gspot/gen/gspot/v1"
 	"github.com/abs3ntdev/gspot/src/components/commands"
+	librespotpkg "github.com/abs3ntdev/gspot/src/components/librespot"
 )
 
 // Server implements the GspotService ConnectRPC handler.
 type Server struct {
 	commander *commands.Commander
+	librespot *librespotpkg.Player
 }
 
-func NewServer(c *commands.Commander) *Server {
-	return &Server{commander: c}
+func NewServer(c *commands.Commander, lp *librespotpkg.Player) *Server {
+	return &Server{commander: c, librespot: lp}
 }
 
 // Playback
@@ -145,6 +148,18 @@ func (s *Server) Shuffle(ctx context.Context, req *connect.Request[gspotv1.Shuff
 }
 
 func (s *Server) SetDevice(ctx context.Context, req *connect.Request[gspotv1.SetDeviceRequest]) (*connect.Response[gspotv1.SetDeviceResponse], error) {
+	// If setting to the librespot device, just acknowledge — it becomes active when playback starts
+	if s.librespot != nil && req.Msg.DeviceId == s.librespot.DeviceId() {
+		return connect.NewResponse(&gspotv1.SetDeviceResponse{
+			Device: &gspotv1.Device{
+				Id:       s.librespot.DeviceId(),
+				Name:     s.librespot.GetState().GetDevice().GetName(),
+				Type:     "Computer",
+				IsActive: true,
+			},
+		}), nil
+	}
+
 	if err := s.commander.SetDevice(spotify.ID(req.Msg.DeviceId)); err != nil {
 		return nil, err
 	}
@@ -334,6 +349,16 @@ func (s *Server) GetPlaylist(ctx context.Context, req *connect.Request[gspotv1.G
 }
 
 func (s *Server) PlayPlaylist(ctx context.Context, req *connect.Request[gspotv1.PlayPlaylistRequest]) (*connect.Response[gspotv1.PlayPlaylistResponse], error) {
+	// Route through librespot if it's active or enabled (play locally)
+	if s.librespot != nil && s.librespot.IsActive() {
+		uri := "spotify:playlist:" + req.Msg.PlaylistId
+		if err := s.librespot.LoadContext(ctx, uri, int(req.Msg.Offset)); err != nil {
+			return nil, err
+		}
+		return connect.NewResponse(&gspotv1.PlayPlaylistResponse{}), nil
+	}
+
+	// Fall back to Web API
 	uri := spotify.URI("spotify:playlist:" + req.Msg.PlaylistId)
 	opts := &spotify.PlayOptions{
 		PlaybackContext: &uri,
@@ -345,6 +370,14 @@ func (s *Server) PlayPlaylist(ctx context.Context, req *connect.Request[gspotv1.
 	err := s.commander.Client().PlayOpt(s.commander.Context, opts)
 	if err != nil {
 		if commands.IsNoActiveError(err) {
+			// No active device — try librespot if available
+			if s.librespot != nil {
+				luri := "spotify:playlist:" + req.Msg.PlaylistId
+				if err := s.librespot.LoadContext(ctx, luri, int(req.Msg.Offset)); err != nil {
+					return nil, err
+				}
+				return connect.NewResponse(&gspotv1.PlayPlaylistResponse{}), nil
+			}
 			deviceID, err := s.commander.ActivateDevice()
 			if err != nil {
 				return nil, err
@@ -412,6 +445,28 @@ func deviceToProto(d spotify.PlayerDevice) *gspotv1.Device {
 		Type:          d.Type,
 		VolumePercent: int32(d.Volume),
 		IsActive:      d.Active,
+	}
+}
+
+// Subscribe streams player events to the client.
+func (s *Server) Subscribe(ctx context.Context, req *connect.Request[gspotv1.SubscribeRequest], stream *connect.ServerStream[gspotv1.SubscribeResponse]) error {
+	if s.librespot == nil {
+		return connect.NewError(connect.CodeUnimplemented, fmt.Errorf("librespot not enabled"))
+	}
+
+	ch := s.librespot.Subscribe()
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case ev, ok := <-ch:
+			if !ok {
+				return nil
+			}
+			if err := stream.Send(ev); err != nil {
+				return err
+			}
+		}
 	}
 }
 

@@ -46,6 +46,7 @@ func allCommands() []*cli.Command {
 	cmds = append(cmds, infoCommands()...)
 	cmds = append(cmds, libraryCommands()...)
 	cmds = append(cmds, playlistCommands()...)
+	cmds = append(cmds, librespotCommands()...)
 	cmds = append(cmds, daemonCommands()...)
 	return cmds
 }

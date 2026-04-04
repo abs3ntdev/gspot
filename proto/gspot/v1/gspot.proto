@@ -70,6 +70,18 @@ service GspotService {
   rpc GetLinkContext(GetLinkContextRequest) returns (GetLinkContextResponse);
   rpc GetYoutubeLink(GetYoutubeLinkRequest) returns (GetYoutubeLinkResponse);
   rpc DownloadCover(DownloadCoverRequest) returns (DownloadCoverResponse);
+
+  // Streaming
+  rpc Subscribe(SubscribeRequest) returns (stream SubscribeResponse);
+}
+
+// Streaming messages
+
+message SubscribeRequest {}
+
+message SubscribeResponse {
+  PlayerState state = 1;
+  string event_type = 2;
 }
 
 // Playback requests & responses
