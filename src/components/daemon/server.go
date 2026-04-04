@@ -2,6 +2,7 @@ package daemon
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 	"time"
 
@@ -11,21 +12,26 @@ import (
 
 	gspotv1 "github.com/abs3ntdev/gspot/gen/gspot/v1"
 	"github.com/abs3ntdev/gspot/src/components/commands"
+	librespotpkg "github.com/abs3ntdev/gspot/src/components/librespot"
 )
 
 // Server implements the GspotService ConnectRPC handler.
 type Server struct {
 	commander *commands.Commander
+	librespot *librespotpkg.Player
 }
 
-func NewServer(c *commands.Commander) *Server {
-	return &Server{commander: c}
+func NewServer(c *commands.Commander, lp *librespotpkg.Player) *Server {
+	return &Server{commander: c, librespot: lp}
 }
 
-// Playback
+// Playback — routes through librespot when active, otherwise Web API.
 
 func (s *Server) Play(ctx context.Context, req *connect.Request[gspotv1.PlayRequest]) (*connect.Response[gspotv1.PlayResponse], error) {
-	if err := s.retryPlayer(ctx, s.commander.Play); err != nil {
+	if err := s.routePlayback(ctx,
+		func() error { return s.librespot.Play(ctx) },
+		s.commander.Play,
+	); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.PlayResponse{}), nil
@@ -39,14 +45,26 @@ func (s *Server) PlayURL(ctx context.Context, req *connect.Request[gspotv1.PlayU
 }
 
 func (s *Server) Pause(ctx context.Context, req *connect.Request[gspotv1.PauseRequest]) (*connect.Response[gspotv1.PauseResponse], error) {
-	if err := s.retryPlayer(ctx, s.commander.Pause); err != nil {
+	if err := s.routePlayback(ctx,
+		func() error { return s.librespot.Pause(ctx) },
+		s.commander.Pause,
+	); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.PauseResponse{}), nil
 }
 
 func (s *Server) TogglePlay(ctx context.Context, req *connect.Request[gspotv1.TogglePlayRequest]) (*connect.Response[gspotv1.TogglePlayResponse], error) {
-	if err := s.retryPlayer(ctx, s.commander.TogglePlay); err != nil {
+	if err := s.routePlayback(ctx,
+		func() error {
+			state := s.librespot.GetState()
+			if state != nil && state.IsPlaying {
+				return s.librespot.Pause(ctx)
+			}
+			return s.librespot.Play(ctx)
+		},
+		s.commander.TogglePlay,
+	); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.TogglePlayResponse{}), nil
@@ -57,44 +75,96 @@ func (s *Server) Next(ctx context.Context, req *connect.Request[gspotv1.NextRequ
 	if amount == 0 {
 		amount = 1
 	}
-	if err := s.retryPlayer(ctx, func() error { return s.commander.Next(amount, false) }); err != nil {
+	if err := s.routePlayback(ctx,
+		func() error {
+			for range amount {
+				if err := s.librespot.Next(ctx); err != nil {
+					return err
+				}
+			}
+			return nil
+		},
+		func() error { return s.commander.Next(amount, false) },
+	); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.NextResponse{}), nil
 }
 
 func (s *Server) Previous(ctx context.Context, req *connect.Request[gspotv1.PreviousRequest]) (*connect.Response[gspotv1.PreviousResponse], error) {
-	if err := s.retryPlayer(ctx, s.commander.Previous); err != nil {
+	if err := s.routePlayback(ctx,
+		func() error { return s.librespot.Previous(ctx) },
+		s.commander.Previous,
+	); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.PreviousResponse{}), nil
 }
 
 func (s *Server) Seek(ctx context.Context, req *connect.Request[gspotv1.SeekRequest]) (*connect.Response[gspotv1.SeekResponse], error) {
-	if err := s.retryPlayer(ctx, func() error { return s.commander.Seek(req.Msg.Forward) }); err != nil {
+	if err := s.routePlayback(ctx,
+		func() error {
+			pos := int64(s.librespot.GetState().GetProgressMs())
+			if req.Msg.Forward {
+				pos += 5000
+			} else {
+				pos -= 5000
+			}
+			return s.librespot.Seek(ctx, pos)
+		},
+		func() error { return s.commander.Seek(req.Msg.Forward) },
+	); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.SeekResponse{}), nil
 }
 
 func (s *Server) SetPosition(ctx context.Context, req *connect.Request[gspotv1.SetPositionRequest]) (*connect.Response[gspotv1.SetPositionResponse], error) {
-	if err := s.retryPlayer(ctx, func() error { return s.commander.SetPosition(int(req.Msg.PositionMs)) }); err != nil {
+	if err := s.routePlayback(ctx,
+		func() error { return s.librespot.Seek(ctx, int64(req.Msg.PositionMs)) },
+		func() error { return s.commander.SetPosition(int(req.Msg.PositionMs)) },
+	); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.SetPositionResponse{}), nil
 }
 
 func (s *Server) ChangeVolume(ctx context.Context, req *connect.Request[gspotv1.ChangeVolumeRequest]) (*connect.Response[gspotv1.ChangeVolumeResponse], error) {
-	if err := s.retryPlayer(ctx, func() error { return s.commander.ChangeVolume(int(req.Msg.Amount)) }); err != nil {
+	var newVol int32
+	if err := s.routePlayback(ctx,
+		func() error {
+			state := s.librespot.GetState()
+			currentVol := int32(0)
+			if state != nil && state.Device != nil {
+				currentVol = state.Device.VolumePercent
+			}
+			newVol = max(0, min(100, currentVol+req.Msg.Amount))
+			return s.librespot.SetVolume(ctx, uint32(newVol))
+		},
+		func() error {
+			if err := s.commander.ChangeVolume(int(req.Msg.Amount)); err != nil {
+				return err
+			}
+			state, err := s.commander.Client().PlayerState(s.commander.Context)
+			if err == nil && state != nil {
+				newVol = int32(state.Device.Volume)
+			}
+			return nil
+		},
+	); err != nil {
 		return nil, err
 	}
-	// Read back current volume.
-	state, err := s.commander.Client().PlayerState(s.commander.Context)
-	vol := int32(0)
-	if err == nil && state != nil {
-		vol = int32(state.Device.Volume)
+	return connect.NewResponse(&gspotv1.ChangeVolumeResponse{VolumePercent: newVol}), nil
+}
+
+func (s *Server) SetVolume(ctx context.Context, req *connect.Request[gspotv1.SetVolumeRequest]) (*connect.Response[gspotv1.SetVolumeResponse], error) {
+	if err := s.routePlayback(ctx,
+		func() error { return s.librespot.SetVolume(ctx, uint32(req.Msg.VolumePercent)) },
+		func() error { return s.commander.SetVolume(int(req.Msg.VolumePercent)) },
+	); err != nil {
+		return nil, err
 	}
-	return connect.NewResponse(&gspotv1.ChangeVolumeResponse{VolumePercent: vol}), nil
+	return connect.NewResponse(&gspotv1.SetVolumeResponse{VolumePercent: req.Msg.VolumePercent}), nil
 }
 
 func (s *Server) Mute(ctx context.Context, req *connect.Request[gspotv1.MuteRequest]) (*connect.Response[gspotv1.MuteResponse], error) {
@@ -145,6 +215,18 @@ func (s *Server) Shuffle(ctx context.Context, req *connect.Request[gspotv1.Shuff
 }
 
 func (s *Server) SetDevice(ctx context.Context, req *connect.Request[gspotv1.SetDeviceRequest]) (*connect.Response[gspotv1.SetDeviceResponse], error) {
+	// If setting to the librespot device, just acknowledge — it becomes active when playback starts
+	if s.librespot != nil && req.Msg.DeviceId == s.librespot.DeviceId() {
+		return connect.NewResponse(&gspotv1.SetDeviceResponse{
+			Device: &gspotv1.Device{
+				Id:       s.librespot.DeviceId(),
+				Name:     s.librespot.GetState().GetDevice().GetName(),
+				Type:     "Computer",
+				IsActive: true,
+			},
+		}), nil
+	}
+
 	if err := s.commander.SetDevice(spotify.ID(req.Msg.DeviceId)); err != nil {
 		return nil, err
 	}
@@ -188,6 +270,18 @@ func (s *Server) UnLike(ctx context.Context, req *connect.Request[gspotv1.UnLike
 // Info / queries
 
 func (s *Server) NowPlaying(ctx context.Context, req *connect.Request[gspotv1.NowPlayingRequest]) (*connect.Response[gspotv1.NowPlayingResponse], error) {
+	// Use librespot state when it's the active device
+	if s.librespot != nil && s.librespot.IsActive() {
+		ps := s.librespot.GetState()
+		resp := &gspotv1.NowPlayingResponse{}
+		if ps != nil {
+			resp.IsPlaying = ps.IsPlaying
+			resp.ProgressMs = ps.ProgressMs
+			resp.Track = ps.Track
+		}
+		return connect.NewResponse(resp), nil
+	}
+
 	current, err := s.commander.Client().PlayerCurrentlyPlaying(s.commander.Context)
 	if err != nil {
 		return nil, err
@@ -215,6 +309,13 @@ func (s *Server) NowPlaying(ctx context.Context, req *connect.Request[gspotv1.No
 }
 
 func (s *Server) Status(ctx context.Context, req *connect.Request[gspotv1.StatusRequest]) (*connect.Response[gspotv1.StatusResponse], error) {
+	// Use librespot state when it's the active device
+	if s.librespot != nil && s.librespot.IsActive() {
+		return connect.NewResponse(&gspotv1.StatusResponse{
+			State: s.librespot.GetState(),
+		}), nil
+	}
+
 	state, err := s.commander.Client().PlayerState(s.commander.Context)
 	if err != nil {
 		return nil, err
@@ -334,7 +435,18 @@ func (s *Server) GetPlaylist(ctx context.Context, req *connect.Request[gspotv1.G
 }
 
 func (s *Server) PlayPlaylist(ctx context.Context, req *connect.Request[gspotv1.PlayPlaylistRequest]) (*connect.Response[gspotv1.PlayPlaylistResponse], error) {
-	uri := spotify.URI("spotify:playlist:" + req.Msg.PlaylistId)
+	playlistURI := "spotify:playlist:" + req.Msg.PlaylistId
+
+	// If librespot is enabled, try it first — avoids spurious Web API errors
+	if s.librespot != nil {
+		if err := s.librespot.LoadContext(ctx, playlistURI, int(req.Msg.Offset)); err == nil {
+			return connect.NewResponse(&gspotv1.PlayPlaylistResponse{}), nil
+		}
+		// If librespot fails (e.g., not connected yet), fall through to Web API
+	}
+
+	// Web API path
+	uri := spotify.URI(playlistURI)
 	opts := &spotify.PlayOptions{
 		PlaybackContext: &uri,
 	}
@@ -413,6 +525,37 @@ func deviceToProto(d spotify.PlayerDevice) *gspotv1.Device {
 		VolumePercent: int32(d.Volume),
 		IsActive:      d.Active,
 	}
+}
+
+// Subscribe streams player events to the client.
+func (s *Server) Subscribe(ctx context.Context, req *connect.Request[gspotv1.SubscribeRequest], stream *connect.ServerStream[gspotv1.SubscribeResponse]) error {
+	if s.librespot == nil {
+		return connect.NewError(connect.CodeUnimplemented, fmt.Errorf("librespot not enabled"))
+	}
+
+	ch := s.librespot.Subscribe()
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case ev, ok := <-ch:
+			if !ok {
+				return nil
+			}
+			if err := stream.Send(ev); err != nil {
+				return err
+			}
+		}
+	}
+}
+
+// routePlayback routes a playback command through librespot if it's the active
+// device, otherwise through the Web API with retry on restriction errors.
+func (s *Server) routePlayback(ctx context.Context, local func() error, remote func() error) error {
+	if s.librespot != nil && s.librespot.IsActive() {
+		return local()
+	}
+	return s.retryPlayer(ctx, remote)
 }
 
 // retryPlayer retries a player command on Spotify restriction errors.

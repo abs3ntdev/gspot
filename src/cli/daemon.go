@@ -87,10 +87,8 @@ func daemonCommands() []*cli.Command {
 							return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 						}
 						// Full fx lifecycle — blocks until signal.
-						fx.New(
-							DaemonDeps,
-							fx.Invoke(daemon.Run),
-						).Run()
+						// DaemonDeps includes lifecycle hooks for PID file, HTTP server, and librespot.
+						fx.New(DaemonDeps).Run()
 						return nil
 					},
 				},

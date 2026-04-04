@@ -172,15 +172,19 @@ func volumeCommand() *cli.Command {
 		Commands: []*cli.Command{
 			{
 				Name:      "up",
-				Usage:     "Increase the volume",
-				ArgsUsage: "percent",
+				Usage:     "Increase the volume (default: 5%)",
+				ArgsUsage: "[percent]",
 				Action: rpcCommand(func(ctx context.Context, cmd *cli.Command, svc *Service) error {
 					if cmd.NArg() > 1 {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					amt, err := strconv.Atoi(cmd.Args().First())
-					if err != nil {
-						return err
+					amt := 5
+					if cmd.NArg() == 1 {
+						var err error
+						amt, err = strconv.Atoi(cmd.Args().First())
+						if err != nil {
+							return fmt.Errorf("invalid amount: %s", cmd.Args().First())
+						}
 					}
 					resp, err := svc.Client.ChangeVolume(ctx, connect.NewRequest(&gspotv1.ChangeVolumeRequest{Amount: int32(amt)}))
 					if err != nil {
@@ -192,21 +196,50 @@ func volumeCommand() *cli.Command {
 			{
 				Name:      "down",
 				Aliases:   []string{"dn"},
-				Usage:     "Decrease the volume",
-				ArgsUsage: "percent",
+				Usage:     "Decrease the volume (default: 5%)",
+				ArgsUsage: "[percent]",
 				Action: rpcCommand(func(ctx context.Context, cmd *cli.Command, svc *Service) error {
 					if cmd.NArg() > 1 {
 						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
 					}
-					amt, err := strconv.Atoi(cmd.Args().First())
-					if err != nil {
-						return err
+					amt := 5
+					if cmd.NArg() == 1 {
+						var err error
+						amt, err = strconv.Atoi(cmd.Args().First())
+						if err != nil {
+							return fmt.Errorf("invalid amount: %s", cmd.Args().First())
+						}
 					}
 					resp, err := svc.Client.ChangeVolume(ctx, connect.NewRequest(&gspotv1.ChangeVolumeRequest{Amount: int32(-amt)}))
 					if err != nil {
 						return err
 					}
 					return CmdOutput(cmd, resp.Msg, prettyVolume)
+				}),
+			},
+			{
+				Name:      "set",
+				Usage:     "Set the volume to a specific level (0-100)",
+				ArgsUsage: "<percent>",
+				Action: rpcCommand(func(ctx context.Context, cmd *cli.Command, svc *Service) error {
+					if cmd.NArg() == 0 {
+						return fmt.Errorf("volume level required (0-100)")
+					}
+					if cmd.NArg() > 1 {
+						return fmt.Errorf("unexpected arguments: %s", strings.Join(cmd.Args().Slice(), " "))
+					}
+					vol, err := strconv.Atoi(cmd.Args().First())
+					if err != nil {
+						return fmt.Errorf("invalid volume: %s", cmd.Args().First())
+					}
+					if vol < 0 || vol > 100 {
+						return fmt.Errorf("volume must be between 0 and 100")
+					}
+					resp, err := svc.Client.SetVolume(ctx, connect.NewRequest(&gspotv1.SetVolumeRequest{VolumePercent: int32(vol)}))
+					if err != nil {
+						return err
+					}
+					return CmdOutput(cmd, resp.Msg, prettySetVolume)
 				}),
 			},
 			{

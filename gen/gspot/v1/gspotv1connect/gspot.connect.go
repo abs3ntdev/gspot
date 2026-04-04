@@ -53,6 +53,8 @@ const (
 	// GspotServiceChangeVolumeProcedure is the fully-qualified name of the GspotService's ChangeVolume
 	// RPC.
 	GspotServiceChangeVolumeProcedure = "/gspot.v1.GspotService/ChangeVolume"
+	// GspotServiceSetVolumeProcedure is the fully-qualified name of the GspotService's SetVolume RPC.
+	GspotServiceSetVolumeProcedure = "/gspot.v1.GspotService/SetVolume"
 	// GspotServiceMuteProcedure is the fully-qualified name of the GspotService's Mute RPC.
 	GspotServiceMuteProcedure = "/gspot.v1.GspotService/Mute"
 	// GspotServiceUnMuteProcedure is the fully-qualified name of the GspotService's UnMute RPC.
@@ -98,6 +100,8 @@ const (
 	// GspotServiceDownloadCoverProcedure is the fully-qualified name of the GspotService's
 	// DownloadCover RPC.
 	GspotServiceDownloadCoverProcedure = "/gspot.v1.GspotService/DownloadCover"
+	// GspotServiceSubscribeProcedure is the fully-qualified name of the GspotService's Subscribe RPC.
+	GspotServiceSubscribeProcedure = "/gspot.v1.GspotService/Subscribe"
 )
 
 // GspotServiceClient is a client for the gspot.v1.GspotService service.
@@ -112,6 +116,7 @@ type GspotServiceClient interface {
 	Seek(context.Context, *connect.Request[v1.SeekRequest]) (*connect.Response[v1.SeekResponse], error)
 	SetPosition(context.Context, *connect.Request[v1.SetPositionRequest]) (*connect.Response[v1.SetPositionResponse], error)
 	ChangeVolume(context.Context, *connect.Request[v1.ChangeVolumeRequest]) (*connect.Response[v1.ChangeVolumeResponse], error)
+	SetVolume(context.Context, *connect.Request[v1.SetVolumeRequest]) (*connect.Response[v1.SetVolumeResponse], error)
 	Mute(context.Context, *connect.Request[v1.MuteRequest]) (*connect.Response[v1.MuteResponse], error)
 	UnMute(context.Context, *connect.Request[v1.UnMuteRequest]) (*connect.Response[v1.UnMuteResponse], error)
 	ToggleMute(context.Context, *connect.Request[v1.ToggleMuteRequest]) (*connect.Response[v1.ToggleMuteResponse], error)
@@ -134,6 +139,8 @@ type GspotServiceClient interface {
 	GetLinkContext(context.Context, *connect.Request[v1.GetLinkContextRequest]) (*connect.Response[v1.GetLinkContextResponse], error)
 	GetYoutubeLink(context.Context, *connect.Request[v1.GetYoutubeLinkRequest]) (*connect.Response[v1.GetYoutubeLinkResponse], error)
 	DownloadCover(context.Context, *connect.Request[v1.DownloadCoverRequest]) (*connect.Response[v1.DownloadCoverResponse], error)
+	// Streaming
+	Subscribe(context.Context, *connect.Request[v1.SubscribeRequest]) (*connect.ServerStreamForClient[v1.SubscribeResponse], error)
 }
 
 // NewGspotServiceClient constructs a client for the gspot.v1.GspotService service. By default, it
@@ -199,6 +206,12 @@ func NewGspotServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			httpClient,
 			baseURL+GspotServiceChangeVolumeProcedure,
 			connect.WithSchema(gspotServiceMethods.ByName("ChangeVolume")),
+			connect.WithClientOptions(opts...),
+		),
+		setVolume: connect.NewClient[v1.SetVolumeRequest, v1.SetVolumeResponse](
+			httpClient,
+			baseURL+GspotServiceSetVolumeProcedure,
+			connect.WithSchema(gspotServiceMethods.ByName("SetVolume")),
 			connect.WithClientOptions(opts...),
 		),
 		mute: connect.NewClient[v1.MuteRequest, v1.MuteResponse](
@@ -315,6 +328,12 @@ func NewGspotServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(gspotServiceMethods.ByName("DownloadCover")),
 			connect.WithClientOptions(opts...),
 		),
+		subscribe: connect.NewClient[v1.SubscribeRequest, v1.SubscribeResponse](
+			httpClient,
+			baseURL+GspotServiceSubscribeProcedure,
+			connect.WithSchema(gspotServiceMethods.ByName("Subscribe")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -329,6 +348,7 @@ type gspotServiceClient struct {
 	seek           *connect.Client[v1.SeekRequest, v1.SeekResponse]
 	setPosition    *connect.Client[v1.SetPositionRequest, v1.SetPositionResponse]
 	changeVolume   *connect.Client[v1.ChangeVolumeRequest, v1.ChangeVolumeResponse]
+	setVolume      *connect.Client[v1.SetVolumeRequest, v1.SetVolumeResponse]
 	mute           *connect.Client[v1.MuteRequest, v1.MuteResponse]
 	unMute         *connect.Client[v1.UnMuteRequest, v1.UnMuteResponse]
 	toggleMute     *connect.Client[v1.ToggleMuteRequest, v1.ToggleMuteResponse]
@@ -348,6 +368,7 @@ type gspotServiceClient struct {
 	getLinkContext *connect.Client[v1.GetLinkContextRequest, v1.GetLinkContextResponse]
 	getYoutubeLink *connect.Client[v1.GetYoutubeLinkRequest, v1.GetYoutubeLinkResponse]
 	downloadCover  *connect.Client[v1.DownloadCoverRequest, v1.DownloadCoverResponse]
+	subscribe      *connect.Client[v1.SubscribeRequest, v1.SubscribeResponse]
 }
 
 // Play calls gspot.v1.GspotService.Play.
@@ -393,6 +414,11 @@ func (c *gspotServiceClient) SetPosition(ctx context.Context, req *connect.Reque
 // ChangeVolume calls gspot.v1.GspotService.ChangeVolume.
 func (c *gspotServiceClient) ChangeVolume(ctx context.Context, req *connect.Request[v1.ChangeVolumeRequest]) (*connect.Response[v1.ChangeVolumeResponse], error) {
 	return c.changeVolume.CallUnary(ctx, req)
+}
+
+// SetVolume calls gspot.v1.GspotService.SetVolume.
+func (c *gspotServiceClient) SetVolume(ctx context.Context, req *connect.Request[v1.SetVolumeRequest]) (*connect.Response[v1.SetVolumeResponse], error) {
+	return c.setVolume.CallUnary(ctx, req)
 }
 
 // Mute calls gspot.v1.GspotService.Mute.
@@ -490,6 +516,11 @@ func (c *gspotServiceClient) DownloadCover(ctx context.Context, req *connect.Req
 	return c.downloadCover.CallUnary(ctx, req)
 }
 
+// Subscribe calls gspot.v1.GspotService.Subscribe.
+func (c *gspotServiceClient) Subscribe(ctx context.Context, req *connect.Request[v1.SubscribeRequest]) (*connect.ServerStreamForClient[v1.SubscribeResponse], error) {
+	return c.subscribe.CallServerStream(ctx, req)
+}
+
 // GspotServiceHandler is an implementation of the gspot.v1.GspotService service.
 type GspotServiceHandler interface {
 	// Playback control
@@ -502,6 +533,7 @@ type GspotServiceHandler interface {
 	Seek(context.Context, *connect.Request[v1.SeekRequest]) (*connect.Response[v1.SeekResponse], error)
 	SetPosition(context.Context, *connect.Request[v1.SetPositionRequest]) (*connect.Response[v1.SetPositionResponse], error)
 	ChangeVolume(context.Context, *connect.Request[v1.ChangeVolumeRequest]) (*connect.Response[v1.ChangeVolumeResponse], error)
+	SetVolume(context.Context, *connect.Request[v1.SetVolumeRequest]) (*connect.Response[v1.SetVolumeResponse], error)
 	Mute(context.Context, *connect.Request[v1.MuteRequest]) (*connect.Response[v1.MuteResponse], error)
 	UnMute(context.Context, *connect.Request[v1.UnMuteRequest]) (*connect.Response[v1.UnMuteResponse], error)
 	ToggleMute(context.Context, *connect.Request[v1.ToggleMuteRequest]) (*connect.Response[v1.ToggleMuteResponse], error)
@@ -524,6 +556,8 @@ type GspotServiceHandler interface {
 	GetLinkContext(context.Context, *connect.Request[v1.GetLinkContextRequest]) (*connect.Response[v1.GetLinkContextResponse], error)
 	GetYoutubeLink(context.Context, *connect.Request[v1.GetYoutubeLinkRequest]) (*connect.Response[v1.GetYoutubeLinkResponse], error)
 	DownloadCover(context.Context, *connect.Request[v1.DownloadCoverRequest]) (*connect.Response[v1.DownloadCoverResponse], error)
+	// Streaming
+	Subscribe(context.Context, *connect.Request[v1.SubscribeRequest], *connect.ServerStream[v1.SubscribeResponse]) error
 }
 
 // NewGspotServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -585,6 +619,12 @@ func NewGspotServiceHandler(svc GspotServiceHandler, opts ...connect.HandlerOpti
 		GspotServiceChangeVolumeProcedure,
 		svc.ChangeVolume,
 		connect.WithSchema(gspotServiceMethods.ByName("ChangeVolume")),
+		connect.WithHandlerOptions(opts...),
+	)
+	gspotServiceSetVolumeHandler := connect.NewUnaryHandler(
+		GspotServiceSetVolumeProcedure,
+		svc.SetVolume,
+		connect.WithSchema(gspotServiceMethods.ByName("SetVolume")),
 		connect.WithHandlerOptions(opts...),
 	)
 	gspotServiceMuteHandler := connect.NewUnaryHandler(
@@ -701,6 +741,12 @@ func NewGspotServiceHandler(svc GspotServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(gspotServiceMethods.ByName("DownloadCover")),
 		connect.WithHandlerOptions(opts...),
 	)
+	gspotServiceSubscribeHandler := connect.NewServerStreamHandler(
+		GspotServiceSubscribeProcedure,
+		svc.Subscribe,
+		connect.WithSchema(gspotServiceMethods.ByName("Subscribe")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/gspot.v1.GspotService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case GspotServicePlayProcedure:
@@ -721,6 +767,8 @@ func NewGspotServiceHandler(svc GspotServiceHandler, opts ...connect.HandlerOpti
 			gspotServiceSetPositionHandler.ServeHTTP(w, r)
 		case GspotServiceChangeVolumeProcedure:
 			gspotServiceChangeVolumeHandler.ServeHTTP(w, r)
+		case GspotServiceSetVolumeProcedure:
+			gspotServiceSetVolumeHandler.ServeHTTP(w, r)
 		case GspotServiceMuteProcedure:
 			gspotServiceMuteHandler.ServeHTTP(w, r)
 		case GspotServiceUnMuteProcedure:
@@ -759,6 +807,8 @@ func NewGspotServiceHandler(svc GspotServiceHandler, opts ...connect.HandlerOpti
 			gspotServiceGetYoutubeLinkHandler.ServeHTTP(w, r)
 		case GspotServiceDownloadCoverProcedure:
 			gspotServiceDownloadCoverHandler.ServeHTTP(w, r)
+		case GspotServiceSubscribeProcedure:
+			gspotServiceSubscribeHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -802,6 +852,10 @@ func (UnimplementedGspotServiceHandler) SetPosition(context.Context, *connect.Re
 
 func (UnimplementedGspotServiceHandler) ChangeVolume(context.Context, *connect.Request[v1.ChangeVolumeRequest]) (*connect.Response[v1.ChangeVolumeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.ChangeVolume is not implemented"))
+}
+
+func (UnimplementedGspotServiceHandler) SetVolume(context.Context, *connect.Request[v1.SetVolumeRequest]) (*connect.Response[v1.SetVolumeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.SetVolume is not implemented"))
 }
 
 func (UnimplementedGspotServiceHandler) Mute(context.Context, *connect.Request[v1.MuteRequest]) (*connect.Response[v1.MuteResponse], error) {
@@ -878,4 +932,8 @@ func (UnimplementedGspotServiceHandler) GetYoutubeLink(context.Context, *connect
 
 func (UnimplementedGspotServiceHandler) DownloadCover(context.Context, *connect.Request[v1.DownloadCoverRequest]) (*connect.Response[v1.DownloadCoverResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.DownloadCover is not implemented"))
+}
+
+func (UnimplementedGspotServiceHandler) Subscribe(context.Context, *connect.Request[v1.SubscribeRequest], *connect.ServerStream[v1.SubscribeResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.Subscribe is not implemented"))
 }

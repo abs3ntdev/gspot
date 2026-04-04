@@ -15,6 +15,16 @@ func (c *Commander) ChangeVolume(amount int) error {
 	return c.Client().Volume(c.Context, newVolume)
 }
 
+func (c *Commander) SetVolume(volume int) error {
+	if volume > 100 {
+		volume = 100
+	}
+	if volume < 0 {
+		volume = 0
+	}
+	return c.Client().Volume(c.Context, volume)
+}
+
 func (c *Commander) Mute() error {
 	return c.ChangeVolume(-100)
 }

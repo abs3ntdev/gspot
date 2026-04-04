@@ -45,6 +45,7 @@ service GspotService {
   rpc Seek(SeekRequest) returns (SeekResponse);
   rpc SetPosition(SetPositionRequest) returns (SetPositionResponse);
   rpc ChangeVolume(ChangeVolumeRequest) returns (ChangeVolumeResponse);
+  rpc SetVolume(SetVolumeRequest) returns (SetVolumeResponse);
   rpc Mute(MuteRequest) returns (MuteResponse);
   rpc UnMute(UnMuteRequest) returns (UnMuteResponse);
   rpc ToggleMute(ToggleMuteRequest) returns (ToggleMuteResponse);
@@ -70,6 +71,18 @@ service GspotService {
   rpc GetLinkContext(GetLinkContextRequest) returns (GetLinkContextResponse);
   rpc GetYoutubeLink(GetYoutubeLinkRequest) returns (GetYoutubeLinkResponse);
   rpc DownloadCover(DownloadCoverRequest) returns (DownloadCoverResponse);
+
+  // Streaming
+  rpc Subscribe(SubscribeRequest) returns (stream SubscribeResponse);
+}
+
+// Streaming messages
+
+message SubscribeRequest {}
+
+message SubscribeResponse {
+  PlayerState state = 1;
+  string event_type = 2;
 }
 
 // Playback requests & responses
@@ -110,6 +123,13 @@ message ChangeVolumeRequest {
   int32 amount = 1;
 }
 message ChangeVolumeResponse {
+  int32 volume_percent = 1;
+}
+
+message SetVolumeRequest {
+  int32 volume_percent = 1;
+}
+message SetVolumeResponse {
   int32 volume_percent = 1;
 }
 
