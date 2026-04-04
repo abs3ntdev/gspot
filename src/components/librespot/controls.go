@@ -549,6 +549,9 @@ func (p *Player) updateVolume(newVal uint32) {
 
 	p.audioPlayer.SetVolume(newVal)
 
+	// Update state immediately so GetState() returns the correct volume
+	p.state.device.Volume = newVal
+
 	p.appState.LastVolume = &newVal
 	if err := p.appState.Write(); err != nil {
 		p.log.WithError(err).Error("failed writing state after volume change")

@@ -99,6 +99,11 @@ func prettyShuffle(w io.Writer, resp *gspotv1.ShuffleResponse) error {
 	return nil
 }
 
+func prettySetVolume(w io.Writer, resp *gspotv1.SetVolumeResponse) error {
+	fmt.Fprintf(w, "Volume: %d%%\n", resp.VolumePercent)
+	return nil
+}
+
 func prettyDevice(w io.Writer, resp *gspotv1.SetDeviceResponse) error {
 	if resp.Device == nil {
 		return nil

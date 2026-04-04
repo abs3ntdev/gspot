@@ -1049,6 +1049,94 @@ func (x *ChangeVolumeResponse) GetVolumePercent() int32 {
 	return 0
 }
 
+type SetVolumeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	VolumePercent int32                  `protobuf:"varint,1,opt,name=volume_percent,json=volumePercent,proto3" json:"volume_percent,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetVolumeRequest) Reset() {
+	*x = SetVolumeRequest{}
+	mi := &file_gspot_v1_gspot_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetVolumeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetVolumeRequest) ProtoMessage() {}
+
+func (x *SetVolumeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gspot_v1_gspot_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetVolumeRequest.ProtoReflect.Descriptor instead.
+func (*SetVolumeRequest) Descriptor() ([]byte, []int) {
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *SetVolumeRequest) GetVolumePercent() int32 {
+	if x != nil {
+		return x.VolumePercent
+	}
+	return 0
+}
+
+type SetVolumeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	VolumePercent int32                  `protobuf:"varint,1,opt,name=volume_percent,json=volumePercent,proto3" json:"volume_percent,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetVolumeResponse) Reset() {
+	*x = SetVolumeResponse{}
+	mi := &file_gspot_v1_gspot_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetVolumeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetVolumeResponse) ProtoMessage() {}
+
+func (x *SetVolumeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_gspot_v1_gspot_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetVolumeResponse.ProtoReflect.Descriptor instead.
+func (*SetVolumeResponse) Descriptor() ([]byte, []int) {
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *SetVolumeResponse) GetVolumePercent() int32 {
+	if x != nil {
+		return x.VolumePercent
+	}
+	return 0
+}
+
 type MuteRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1057,7 +1145,7 @@ type MuteRequest struct {
 
 func (x *MuteRequest) Reset() {
 	*x = MuteRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[23]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1069,7 +1157,7 @@ func (x *MuteRequest) String() string {
 func (*MuteRequest) ProtoMessage() {}
 
 func (x *MuteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[23]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1082,7 +1170,7 @@ func (x *MuteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MuteRequest.ProtoReflect.Descriptor instead.
 func (*MuteRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{23}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{25}
 }
 
 type MuteResponse struct {
@@ -1093,7 +1181,7 @@ type MuteResponse struct {
 
 func (x *MuteResponse) Reset() {
 	*x = MuteResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[24]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1105,7 +1193,7 @@ func (x *MuteResponse) String() string {
 func (*MuteResponse) ProtoMessage() {}
 
 func (x *MuteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[24]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1118,7 +1206,7 @@ func (x *MuteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MuteResponse.ProtoReflect.Descriptor instead.
 func (*MuteResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{24}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{26}
 }
 
 type UnMuteRequest struct {
@@ -1129,7 +1217,7 @@ type UnMuteRequest struct {
 
 func (x *UnMuteRequest) Reset() {
 	*x = UnMuteRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[25]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1141,7 +1229,7 @@ func (x *UnMuteRequest) String() string {
 func (*UnMuteRequest) ProtoMessage() {}
 
 func (x *UnMuteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[25]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1154,7 +1242,7 @@ func (x *UnMuteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnMuteRequest.ProtoReflect.Descriptor instead.
 func (*UnMuteRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{25}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{27}
 }
 
 type UnMuteResponse struct {
@@ -1165,7 +1253,7 @@ type UnMuteResponse struct {
 
 func (x *UnMuteResponse) Reset() {
 	*x = UnMuteResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[26]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1177,7 +1265,7 @@ func (x *UnMuteResponse) String() string {
 func (*UnMuteResponse) ProtoMessage() {}
 
 func (x *UnMuteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[26]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1190,7 +1278,7 @@ func (x *UnMuteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnMuteResponse.ProtoReflect.Descriptor instead.
 func (*UnMuteResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{26}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{28}
 }
 
 type ToggleMuteRequest struct {
@@ -1201,7 +1289,7 @@ type ToggleMuteRequest struct {
 
 func (x *ToggleMuteRequest) Reset() {
 	*x = ToggleMuteRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[27]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1213,7 +1301,7 @@ func (x *ToggleMuteRequest) String() string {
 func (*ToggleMuteRequest) ProtoMessage() {}
 
 func (x *ToggleMuteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[27]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1226,7 +1314,7 @@ func (x *ToggleMuteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ToggleMuteRequest.ProtoReflect.Descriptor instead.
 func (*ToggleMuteRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{27}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{29}
 }
 
 type ToggleMuteResponse struct {
@@ -1237,7 +1325,7 @@ type ToggleMuteResponse struct {
 
 func (x *ToggleMuteResponse) Reset() {
 	*x = ToggleMuteResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[28]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1249,7 +1337,7 @@ func (x *ToggleMuteResponse) String() string {
 func (*ToggleMuteResponse) ProtoMessage() {}
 
 func (x *ToggleMuteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[28]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1262,7 +1350,7 @@ func (x *ToggleMuteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ToggleMuteResponse.ProtoReflect.Descriptor instead.
 func (*ToggleMuteResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{28}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{30}
 }
 
 type RepeatRequest struct {
@@ -1273,7 +1361,7 @@ type RepeatRequest struct {
 
 func (x *RepeatRequest) Reset() {
 	*x = RepeatRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[29]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1285,7 +1373,7 @@ func (x *RepeatRequest) String() string {
 func (*RepeatRequest) ProtoMessage() {}
 
 func (x *RepeatRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[29]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1298,7 +1386,7 @@ func (x *RepeatRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepeatRequest.ProtoReflect.Descriptor instead.
 func (*RepeatRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{29}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{31}
 }
 
 type RepeatResponse struct {
@@ -1310,7 +1398,7 @@ type RepeatResponse struct {
 
 func (x *RepeatResponse) Reset() {
 	*x = RepeatResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[30]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1322,7 +1410,7 @@ func (x *RepeatResponse) String() string {
 func (*RepeatResponse) ProtoMessage() {}
 
 func (x *RepeatResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[30]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1335,7 +1423,7 @@ func (x *RepeatResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RepeatResponse.ProtoReflect.Descriptor instead.
 func (*RepeatResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{30}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *RepeatResponse) GetState() string {
@@ -1353,7 +1441,7 @@ type ShuffleRequest struct {
 
 func (x *ShuffleRequest) Reset() {
 	*x = ShuffleRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[31]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1365,7 +1453,7 @@ func (x *ShuffleRequest) String() string {
 func (*ShuffleRequest) ProtoMessage() {}
 
 func (x *ShuffleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[31]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1378,7 +1466,7 @@ func (x *ShuffleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ShuffleRequest.ProtoReflect.Descriptor instead.
 func (*ShuffleRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{31}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{33}
 }
 
 type ShuffleResponse struct {
@@ -1390,7 +1478,7 @@ type ShuffleResponse struct {
 
 func (x *ShuffleResponse) Reset() {
 	*x = ShuffleResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[32]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1402,7 +1490,7 @@ func (x *ShuffleResponse) String() string {
 func (*ShuffleResponse) ProtoMessage() {}
 
 func (x *ShuffleResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[32]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1415,7 +1503,7 @@ func (x *ShuffleResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ShuffleResponse.ProtoReflect.Descriptor instead.
 func (*ShuffleResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{32}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *ShuffleResponse) GetState() bool {
@@ -1434,7 +1522,7 @@ type SetDeviceRequest struct {
 
 func (x *SetDeviceRequest) Reset() {
 	*x = SetDeviceRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[33]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1446,7 +1534,7 @@ func (x *SetDeviceRequest) String() string {
 func (*SetDeviceRequest) ProtoMessage() {}
 
 func (x *SetDeviceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[33]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1459,7 +1547,7 @@ func (x *SetDeviceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetDeviceRequest.ProtoReflect.Descriptor instead.
 func (*SetDeviceRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{33}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *SetDeviceRequest) GetDeviceId() string {
@@ -1478,7 +1566,7 @@ type SetDeviceResponse struct {
 
 func (x *SetDeviceResponse) Reset() {
 	*x = SetDeviceResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[34]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1490,7 +1578,7 @@ func (x *SetDeviceResponse) String() string {
 func (*SetDeviceResponse) ProtoMessage() {}
 
 func (x *SetDeviceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[34]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1503,7 +1591,7 @@ func (x *SetDeviceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetDeviceResponse.ProtoReflect.Descriptor instead.
 func (*SetDeviceResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{34}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *SetDeviceResponse) GetDevice() *Device {
@@ -1522,7 +1610,7 @@ type QueueSongRequest struct {
 
 func (x *QueueSongRequest) Reset() {
 	*x = QueueSongRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[35]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1534,7 +1622,7 @@ func (x *QueueSongRequest) String() string {
 func (*QueueSongRequest) ProtoMessage() {}
 
 func (x *QueueSongRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[35]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1547,7 +1635,7 @@ func (x *QueueSongRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueueSongRequest.ProtoReflect.Descriptor instead.
 func (*QueueSongRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{35}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *QueueSongRequest) GetTrackId() string {
@@ -1565,7 +1653,7 @@ type QueueSongResponse struct {
 
 func (x *QueueSongResponse) Reset() {
 	*x = QueueSongResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[36]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1577,7 +1665,7 @@ func (x *QueueSongResponse) String() string {
 func (*QueueSongResponse) ProtoMessage() {}
 
 func (x *QueueSongResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[36]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1590,7 +1678,7 @@ func (x *QueueSongResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use QueueSongResponse.ProtoReflect.Descriptor instead.
 func (*QueueSongResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{36}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{38}
 }
 
 type LikeRequest struct {
@@ -1601,7 +1689,7 @@ type LikeRequest struct {
 
 func (x *LikeRequest) Reset() {
 	*x = LikeRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[37]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1613,7 +1701,7 @@ func (x *LikeRequest) String() string {
 func (*LikeRequest) ProtoMessage() {}
 
 func (x *LikeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[37]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1626,7 +1714,7 @@ func (x *LikeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LikeRequest.ProtoReflect.Descriptor instead.
 func (*LikeRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{37}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{39}
 }
 
 type LikeResponse struct {
@@ -1637,7 +1725,7 @@ type LikeResponse struct {
 
 func (x *LikeResponse) Reset() {
 	*x = LikeResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[38]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1649,7 +1737,7 @@ func (x *LikeResponse) String() string {
 func (*LikeResponse) ProtoMessage() {}
 
 func (x *LikeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[38]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1662,7 +1750,7 @@ func (x *LikeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LikeResponse.ProtoReflect.Descriptor instead.
 func (*LikeResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{38}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{40}
 }
 
 type UnLikeRequest struct {
@@ -1673,7 +1761,7 @@ type UnLikeRequest struct {
 
 func (x *UnLikeRequest) Reset() {
 	*x = UnLikeRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[39]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1685,7 +1773,7 @@ func (x *UnLikeRequest) String() string {
 func (*UnLikeRequest) ProtoMessage() {}
 
 func (x *UnLikeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[39]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1698,7 +1786,7 @@ func (x *UnLikeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnLikeRequest.ProtoReflect.Descriptor instead.
 func (*UnLikeRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{39}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{41}
 }
 
 type UnLikeResponse struct {
@@ -1709,7 +1797,7 @@ type UnLikeResponse struct {
 
 func (x *UnLikeResponse) Reset() {
 	*x = UnLikeResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[40]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1721,7 +1809,7 @@ func (x *UnLikeResponse) String() string {
 func (*UnLikeResponse) ProtoMessage() {}
 
 func (x *UnLikeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[40]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1734,7 +1822,7 @@ func (x *UnLikeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnLikeResponse.ProtoReflect.Descriptor instead.
 func (*UnLikeResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{40}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{42}
 }
 
 type Playlist struct {
@@ -1751,7 +1839,7 @@ type Playlist struct {
 
 func (x *Playlist) Reset() {
 	*x = Playlist{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[41]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1763,7 +1851,7 @@ func (x *Playlist) String() string {
 func (*Playlist) ProtoMessage() {}
 
 func (x *Playlist) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[41]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1776,7 +1864,7 @@ func (x *Playlist) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Playlist.ProtoReflect.Descriptor instead.
 func (*Playlist) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{41}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *Playlist) GetId() string {
@@ -1831,7 +1919,7 @@ type ListPlaylistsRequest struct {
 
 func (x *ListPlaylistsRequest) Reset() {
 	*x = ListPlaylistsRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[42]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1843,7 +1931,7 @@ func (x *ListPlaylistsRequest) String() string {
 func (*ListPlaylistsRequest) ProtoMessage() {}
 
 func (x *ListPlaylistsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[42]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1856,7 +1944,7 @@ func (x *ListPlaylistsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPlaylistsRequest.ProtoReflect.Descriptor instead.
 func (*ListPlaylistsRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{42}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *ListPlaylistsRequest) GetLimit() int32 {
@@ -1883,7 +1971,7 @@ type ListPlaylistsResponse struct {
 
 func (x *ListPlaylistsResponse) Reset() {
 	*x = ListPlaylistsResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[43]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1895,7 +1983,7 @@ func (x *ListPlaylistsResponse) String() string {
 func (*ListPlaylistsResponse) ProtoMessage() {}
 
 func (x *ListPlaylistsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[43]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1908,7 +1996,7 @@ func (x *ListPlaylistsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPlaylistsResponse.ProtoReflect.Descriptor instead.
 func (*ListPlaylistsResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{43}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *ListPlaylistsResponse) GetPlaylists() []*Playlist {
@@ -1934,7 +2022,7 @@ type GetPlaylistRequest struct {
 
 func (x *GetPlaylistRequest) Reset() {
 	*x = GetPlaylistRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[44]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1946,7 +2034,7 @@ func (x *GetPlaylistRequest) String() string {
 func (*GetPlaylistRequest) ProtoMessage() {}
 
 func (x *GetPlaylistRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[44]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1959,7 +2047,7 @@ func (x *GetPlaylistRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlaylistRequest.ProtoReflect.Descriptor instead.
 func (*GetPlaylistRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{44}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *GetPlaylistRequest) GetPlaylistId() string {
@@ -1979,7 +2067,7 @@ type GetPlaylistResponse struct {
 
 func (x *GetPlaylistResponse) Reset() {
 	*x = GetPlaylistResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[45]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1991,7 +2079,7 @@ func (x *GetPlaylistResponse) String() string {
 func (*GetPlaylistResponse) ProtoMessage() {}
 
 func (x *GetPlaylistResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[45]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2004,7 +2092,7 @@ func (x *GetPlaylistResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPlaylistResponse.ProtoReflect.Descriptor instead.
 func (*GetPlaylistResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{45}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *GetPlaylistResponse) GetPlaylist() *Playlist {
@@ -2031,7 +2119,7 @@ type PlayPlaylistRequest struct {
 
 func (x *PlayPlaylistRequest) Reset() {
 	*x = PlayPlaylistRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[46]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2043,7 +2131,7 @@ func (x *PlayPlaylistRequest) String() string {
 func (*PlayPlaylistRequest) ProtoMessage() {}
 
 func (x *PlayPlaylistRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[46]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2056,7 +2144,7 @@ func (x *PlayPlaylistRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlayPlaylistRequest.ProtoReflect.Descriptor instead.
 func (*PlayPlaylistRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{46}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *PlayPlaylistRequest) GetPlaylistId() string {
@@ -2081,7 +2169,7 @@ type PlayPlaylistResponse struct {
 
 func (x *PlayPlaylistResponse) Reset() {
 	*x = PlayPlaylistResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[47]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2093,7 +2181,7 @@ func (x *PlayPlaylistResponse) String() string {
 func (*PlayPlaylistResponse) ProtoMessage() {}
 
 func (x *PlayPlaylistResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[47]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2106,7 +2194,7 @@ func (x *PlayPlaylistResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlayPlaylistResponse.ProtoReflect.Descriptor instead.
 func (*PlayPlaylistResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{47}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{49}
 }
 
 type NowPlayingRequest struct {
@@ -2118,7 +2206,7 @@ type NowPlayingRequest struct {
 
 func (x *NowPlayingRequest) Reset() {
 	*x = NowPlayingRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[48]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2130,7 +2218,7 @@ func (x *NowPlayingRequest) String() string {
 func (*NowPlayingRequest) ProtoMessage() {}
 
 func (x *NowPlayingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[48]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2143,7 +2231,7 @@ func (x *NowPlayingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NowPlayingRequest.ProtoReflect.Descriptor instead.
 func (*NowPlayingRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{48}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *NowPlayingRequest) GetForce() bool {
@@ -2164,7 +2252,7 @@ type NowPlayingResponse struct {
 
 func (x *NowPlayingResponse) Reset() {
 	*x = NowPlayingResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[49]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2176,7 +2264,7 @@ func (x *NowPlayingResponse) String() string {
 func (*NowPlayingResponse) ProtoMessage() {}
 
 func (x *NowPlayingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[49]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2189,7 +2277,7 @@ func (x *NowPlayingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NowPlayingResponse.ProtoReflect.Descriptor instead.
 func (*NowPlayingResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{49}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *NowPlayingResponse) GetTrack() *Track {
@@ -2221,7 +2309,7 @@ type StatusRequest struct {
 
 func (x *StatusRequest) Reset() {
 	*x = StatusRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[50]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2233,7 +2321,7 @@ func (x *StatusRequest) String() string {
 func (*StatusRequest) ProtoMessage() {}
 
 func (x *StatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[50]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2246,7 +2334,7 @@ func (x *StatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatusRequest.ProtoReflect.Descriptor instead.
 func (*StatusRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{50}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{52}
 }
 
 type StatusResponse struct {
@@ -2258,7 +2346,7 @@ type StatusResponse struct {
 
 func (x *StatusResponse) Reset() {
 	*x = StatusResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[51]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2270,7 +2358,7 @@ func (x *StatusResponse) String() string {
 func (*StatusResponse) ProtoMessage() {}
 
 func (x *StatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[51]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2283,7 +2371,7 @@ func (x *StatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StatusResponse.ProtoReflect.Descriptor instead.
 func (*StatusResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{51}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *StatusResponse) GetState() *PlayerState {
@@ -2301,7 +2389,7 @@ type ListDevicesRequest struct {
 
 func (x *ListDevicesRequest) Reset() {
 	*x = ListDevicesRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[52]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2313,7 +2401,7 @@ func (x *ListDevicesRequest) String() string {
 func (*ListDevicesRequest) ProtoMessage() {}
 
 func (x *ListDevicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[52]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2326,7 +2414,7 @@ func (x *ListDevicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDevicesRequest.ProtoReflect.Descriptor instead.
 func (*ListDevicesRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{52}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{54}
 }
 
 type ListDevicesResponse struct {
@@ -2338,7 +2426,7 @@ type ListDevicesResponse struct {
 
 func (x *ListDevicesResponse) Reset() {
 	*x = ListDevicesResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[53]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2350,7 +2438,7 @@ func (x *ListDevicesResponse) String() string {
 func (*ListDevicesResponse) ProtoMessage() {}
 
 func (x *ListDevicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[53]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2363,7 +2451,7 @@ func (x *ListDevicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDevicesResponse.ProtoReflect.Descriptor instead.
 func (*ListDevicesResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{53}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *ListDevicesResponse) GetDevices() []*Device {
@@ -2381,7 +2469,7 @@ type GetLinkRequest struct {
 
 func (x *GetLinkRequest) Reset() {
 	*x = GetLinkRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[54]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2393,7 +2481,7 @@ func (x *GetLinkRequest) String() string {
 func (*GetLinkRequest) ProtoMessage() {}
 
 func (x *GetLinkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[54]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2406,7 +2494,7 @@ func (x *GetLinkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLinkRequest.ProtoReflect.Descriptor instead.
 func (*GetLinkRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{54}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{56}
 }
 
 type GetLinkResponse struct {
@@ -2418,7 +2506,7 @@ type GetLinkResponse struct {
 
 func (x *GetLinkResponse) Reset() {
 	*x = GetLinkResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[55]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2430,7 +2518,7 @@ func (x *GetLinkResponse) String() string {
 func (*GetLinkResponse) ProtoMessage() {}
 
 func (x *GetLinkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[55]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2443,7 +2531,7 @@ func (x *GetLinkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLinkResponse.ProtoReflect.Descriptor instead.
 func (*GetLinkResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{55}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *GetLinkResponse) GetUrl() string {
@@ -2461,7 +2549,7 @@ type GetLinkContextRequest struct {
 
 func (x *GetLinkContextRequest) Reset() {
 	*x = GetLinkContextRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[56]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2473,7 +2561,7 @@ func (x *GetLinkContextRequest) String() string {
 func (*GetLinkContextRequest) ProtoMessage() {}
 
 func (x *GetLinkContextRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[56]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2486,7 +2574,7 @@ func (x *GetLinkContextRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLinkContextRequest.ProtoReflect.Descriptor instead.
 func (*GetLinkContextRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{56}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{58}
 }
 
 type GetLinkContextResponse struct {
@@ -2498,7 +2586,7 @@ type GetLinkContextResponse struct {
 
 func (x *GetLinkContextResponse) Reset() {
 	*x = GetLinkContextResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[57]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2510,7 +2598,7 @@ func (x *GetLinkContextResponse) String() string {
 func (*GetLinkContextResponse) ProtoMessage() {}
 
 func (x *GetLinkContextResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[57]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2523,7 +2611,7 @@ func (x *GetLinkContextResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLinkContextResponse.ProtoReflect.Descriptor instead.
 func (*GetLinkContextResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{57}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *GetLinkContextResponse) GetUrl() string {
@@ -2541,7 +2629,7 @@ type GetYoutubeLinkRequest struct {
 
 func (x *GetYoutubeLinkRequest) Reset() {
 	*x = GetYoutubeLinkRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[58]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2553,7 +2641,7 @@ func (x *GetYoutubeLinkRequest) String() string {
 func (*GetYoutubeLinkRequest) ProtoMessage() {}
 
 func (x *GetYoutubeLinkRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[58]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2566,7 +2654,7 @@ func (x *GetYoutubeLinkRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetYoutubeLinkRequest.ProtoReflect.Descriptor instead.
 func (*GetYoutubeLinkRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{58}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{60}
 }
 
 type GetYoutubeLinkResponse struct {
@@ -2578,7 +2666,7 @@ type GetYoutubeLinkResponse struct {
 
 func (x *GetYoutubeLinkResponse) Reset() {
 	*x = GetYoutubeLinkResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[59]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2590,7 +2678,7 @@ func (x *GetYoutubeLinkResponse) String() string {
 func (*GetYoutubeLinkResponse) ProtoMessage() {}
 
 func (x *GetYoutubeLinkResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[59]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2603,7 +2691,7 @@ func (x *GetYoutubeLinkResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetYoutubeLinkResponse.ProtoReflect.Descriptor instead.
 func (*GetYoutubeLinkResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{59}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *GetYoutubeLinkResponse) GetUrl() string {
@@ -2622,7 +2710,7 @@ type DownloadCoverRequest struct {
 
 func (x *DownloadCoverRequest) Reset() {
 	*x = DownloadCoverRequest{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[60]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2634,7 +2722,7 @@ func (x *DownloadCoverRequest) String() string {
 func (*DownloadCoverRequest) ProtoMessage() {}
 
 func (x *DownloadCoverRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[60]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2647,7 +2735,7 @@ func (x *DownloadCoverRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DownloadCoverRequest.ProtoReflect.Descriptor instead.
 func (*DownloadCoverRequest) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{60}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *DownloadCoverRequest) GetPath() string {
@@ -2666,7 +2754,7 @@ type DownloadCoverResponse struct {
 
 func (x *DownloadCoverResponse) Reset() {
 	*x = DownloadCoverResponse{}
-	mi := &file_gspot_v1_gspot_proto_msgTypes[61]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2678,7 +2766,7 @@ func (x *DownloadCoverResponse) String() string {
 func (*DownloadCoverResponse) ProtoMessage() {}
 
 func (x *DownloadCoverResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gspot_v1_gspot_proto_msgTypes[61]
+	mi := &file_gspot_v1_gspot_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2691,7 +2779,7 @@ func (x *DownloadCoverResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DownloadCoverResponse.ProtoReflect.Descriptor instead.
 func (*DownloadCoverResponse) Descriptor() ([]byte, []int) {
-	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{61}
+	return file_gspot_v1_gspot_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *DownloadCoverResponse) GetPath() string {
@@ -2759,6 +2847,10 @@ const file_gspot_v1_gspot_proto_rawDesc = "" +
 	"\x13ChangeVolumeRequest\x12\x16\n" +
 	"\x06amount\x18\x01 \x01(\x05R\x06amount\"=\n" +
 	"\x14ChangeVolumeResponse\x12%\n" +
+	"\x0evolume_percent\x18\x01 \x01(\x05R\rvolumePercent\"9\n" +
+	"\x10SetVolumeRequest\x12%\n" +
+	"\x0evolume_percent\x18\x01 \x01(\x05R\rvolumePercent\":\n" +
+	"\x11SetVolumeResponse\x12%\n" +
 	"\x0evolume_percent\x18\x01 \x01(\x05R\rvolumePercent\"\r\n" +
 	"\vMuteRequest\"\x0e\n" +
 	"\fMuteResponse\"\x0f\n" +
@@ -2835,7 +2927,7 @@ const file_gspot_v1_gspot_proto_rawDesc = "" +
 	"\x14DownloadCoverRequest\x12\x12\n" +
 	"\x04path\x18\x01 \x01(\tR\x04path\"+\n" +
 	"\x15DownloadCoverResponse\x12\x12\n" +
-	"\x04path\x18\x01 \x01(\tR\x04path2\xd1\x0f\n" +
+	"\x04path\x18\x01 \x01(\tR\x04path2\x97\x10\n" +
 	"\fGspotService\x125\n" +
 	"\x04Play\x12\x15.gspot.v1.PlayRequest\x1a\x16.gspot.v1.PlayResponse\x12>\n" +
 	"\aPlayURL\x12\x18.gspot.v1.PlayURLRequest\x1a\x19.gspot.v1.PlayURLResponse\x128\n" +
@@ -2846,7 +2938,8 @@ const file_gspot_v1_gspot_proto_rawDesc = "" +
 	"\bPrevious\x12\x19.gspot.v1.PreviousRequest\x1a\x1a.gspot.v1.PreviousResponse\x125\n" +
 	"\x04Seek\x12\x15.gspot.v1.SeekRequest\x1a\x16.gspot.v1.SeekResponse\x12J\n" +
 	"\vSetPosition\x12\x1c.gspot.v1.SetPositionRequest\x1a\x1d.gspot.v1.SetPositionResponse\x12M\n" +
-	"\fChangeVolume\x12\x1d.gspot.v1.ChangeVolumeRequest\x1a\x1e.gspot.v1.ChangeVolumeResponse\x125\n" +
+	"\fChangeVolume\x12\x1d.gspot.v1.ChangeVolumeRequest\x1a\x1e.gspot.v1.ChangeVolumeResponse\x12D\n" +
+	"\tSetVolume\x12\x1a.gspot.v1.SetVolumeRequest\x1a\x1b.gspot.v1.SetVolumeResponse\x125\n" +
 	"\x04Mute\x12\x15.gspot.v1.MuteRequest\x1a\x16.gspot.v1.MuteResponse\x12;\n" +
 	"\x06UnMute\x12\x17.gspot.v1.UnMuteRequest\x1a\x18.gspot.v1.UnMuteResponse\x12G\n" +
 	"\n" +
@@ -2882,7 +2975,7 @@ func file_gspot_v1_gspot_proto_rawDescGZIP() []byte {
 	return file_gspot_v1_gspot_proto_rawDescData
 }
 
-var file_gspot_v1_gspot_proto_msgTypes = make([]protoimpl.MessageInfo, 62)
+var file_gspot_v1_gspot_proto_msgTypes = make([]protoimpl.MessageInfo, 64)
 var file_gspot_v1_gspot_proto_goTypes = []any{
 	(*Device)(nil),                 // 0: gspot.v1.Device
 	(*Track)(nil),                  // 1: gspot.v1.Track
@@ -2907,53 +3000,55 @@ var file_gspot_v1_gspot_proto_goTypes = []any{
 	(*SetPositionResponse)(nil),    // 20: gspot.v1.SetPositionResponse
 	(*ChangeVolumeRequest)(nil),    // 21: gspot.v1.ChangeVolumeRequest
 	(*ChangeVolumeResponse)(nil),   // 22: gspot.v1.ChangeVolumeResponse
-	(*MuteRequest)(nil),            // 23: gspot.v1.MuteRequest
-	(*MuteResponse)(nil),           // 24: gspot.v1.MuteResponse
-	(*UnMuteRequest)(nil),          // 25: gspot.v1.UnMuteRequest
-	(*UnMuteResponse)(nil),         // 26: gspot.v1.UnMuteResponse
-	(*ToggleMuteRequest)(nil),      // 27: gspot.v1.ToggleMuteRequest
-	(*ToggleMuteResponse)(nil),     // 28: gspot.v1.ToggleMuteResponse
-	(*RepeatRequest)(nil),          // 29: gspot.v1.RepeatRequest
-	(*RepeatResponse)(nil),         // 30: gspot.v1.RepeatResponse
-	(*ShuffleRequest)(nil),         // 31: gspot.v1.ShuffleRequest
-	(*ShuffleResponse)(nil),        // 32: gspot.v1.ShuffleResponse
-	(*SetDeviceRequest)(nil),       // 33: gspot.v1.SetDeviceRequest
-	(*SetDeviceResponse)(nil),      // 34: gspot.v1.SetDeviceResponse
-	(*QueueSongRequest)(nil),       // 35: gspot.v1.QueueSongRequest
-	(*QueueSongResponse)(nil),      // 36: gspot.v1.QueueSongResponse
-	(*LikeRequest)(nil),            // 37: gspot.v1.LikeRequest
-	(*LikeResponse)(nil),           // 38: gspot.v1.LikeResponse
-	(*UnLikeRequest)(nil),          // 39: gspot.v1.UnLikeRequest
-	(*UnLikeResponse)(nil),         // 40: gspot.v1.UnLikeResponse
-	(*Playlist)(nil),               // 41: gspot.v1.Playlist
-	(*ListPlaylistsRequest)(nil),   // 42: gspot.v1.ListPlaylistsRequest
-	(*ListPlaylistsResponse)(nil),  // 43: gspot.v1.ListPlaylistsResponse
-	(*GetPlaylistRequest)(nil),     // 44: gspot.v1.GetPlaylistRequest
-	(*GetPlaylistResponse)(nil),    // 45: gspot.v1.GetPlaylistResponse
-	(*PlayPlaylistRequest)(nil),    // 46: gspot.v1.PlayPlaylistRequest
-	(*PlayPlaylistResponse)(nil),   // 47: gspot.v1.PlayPlaylistResponse
-	(*NowPlayingRequest)(nil),      // 48: gspot.v1.NowPlayingRequest
-	(*NowPlayingResponse)(nil),     // 49: gspot.v1.NowPlayingResponse
-	(*StatusRequest)(nil),          // 50: gspot.v1.StatusRequest
-	(*StatusResponse)(nil),         // 51: gspot.v1.StatusResponse
-	(*ListDevicesRequest)(nil),     // 52: gspot.v1.ListDevicesRequest
-	(*ListDevicesResponse)(nil),    // 53: gspot.v1.ListDevicesResponse
-	(*GetLinkRequest)(nil),         // 54: gspot.v1.GetLinkRequest
-	(*GetLinkResponse)(nil),        // 55: gspot.v1.GetLinkResponse
-	(*GetLinkContextRequest)(nil),  // 56: gspot.v1.GetLinkContextRequest
-	(*GetLinkContextResponse)(nil), // 57: gspot.v1.GetLinkContextResponse
-	(*GetYoutubeLinkRequest)(nil),  // 58: gspot.v1.GetYoutubeLinkRequest
-	(*GetYoutubeLinkResponse)(nil), // 59: gspot.v1.GetYoutubeLinkResponse
-	(*DownloadCoverRequest)(nil),   // 60: gspot.v1.DownloadCoverRequest
-	(*DownloadCoverResponse)(nil),  // 61: gspot.v1.DownloadCoverResponse
+	(*SetVolumeRequest)(nil),       // 23: gspot.v1.SetVolumeRequest
+	(*SetVolumeResponse)(nil),      // 24: gspot.v1.SetVolumeResponse
+	(*MuteRequest)(nil),            // 25: gspot.v1.MuteRequest
+	(*MuteResponse)(nil),           // 26: gspot.v1.MuteResponse
+	(*UnMuteRequest)(nil),          // 27: gspot.v1.UnMuteRequest
+	(*UnMuteResponse)(nil),         // 28: gspot.v1.UnMuteResponse
+	(*ToggleMuteRequest)(nil),      // 29: gspot.v1.ToggleMuteRequest
+	(*ToggleMuteResponse)(nil),     // 30: gspot.v1.ToggleMuteResponse
+	(*RepeatRequest)(nil),          // 31: gspot.v1.RepeatRequest
+	(*RepeatResponse)(nil),         // 32: gspot.v1.RepeatResponse
+	(*ShuffleRequest)(nil),         // 33: gspot.v1.ShuffleRequest
+	(*ShuffleResponse)(nil),        // 34: gspot.v1.ShuffleResponse
+	(*SetDeviceRequest)(nil),       // 35: gspot.v1.SetDeviceRequest
+	(*SetDeviceResponse)(nil),      // 36: gspot.v1.SetDeviceResponse
+	(*QueueSongRequest)(nil),       // 37: gspot.v1.QueueSongRequest
+	(*QueueSongResponse)(nil),      // 38: gspot.v1.QueueSongResponse
+	(*LikeRequest)(nil),            // 39: gspot.v1.LikeRequest
+	(*LikeResponse)(nil),           // 40: gspot.v1.LikeResponse
+	(*UnLikeRequest)(nil),          // 41: gspot.v1.UnLikeRequest
+	(*UnLikeResponse)(nil),         // 42: gspot.v1.UnLikeResponse
+	(*Playlist)(nil),               // 43: gspot.v1.Playlist
+	(*ListPlaylistsRequest)(nil),   // 44: gspot.v1.ListPlaylistsRequest
+	(*ListPlaylistsResponse)(nil),  // 45: gspot.v1.ListPlaylistsResponse
+	(*GetPlaylistRequest)(nil),     // 46: gspot.v1.GetPlaylistRequest
+	(*GetPlaylistResponse)(nil),    // 47: gspot.v1.GetPlaylistResponse
+	(*PlayPlaylistRequest)(nil),    // 48: gspot.v1.PlayPlaylistRequest
+	(*PlayPlaylistResponse)(nil),   // 49: gspot.v1.PlayPlaylistResponse
+	(*NowPlayingRequest)(nil),      // 50: gspot.v1.NowPlayingRequest
+	(*NowPlayingResponse)(nil),     // 51: gspot.v1.NowPlayingResponse
+	(*StatusRequest)(nil),          // 52: gspot.v1.StatusRequest
+	(*StatusResponse)(nil),         // 53: gspot.v1.StatusResponse
+	(*ListDevicesRequest)(nil),     // 54: gspot.v1.ListDevicesRequest
+	(*ListDevicesResponse)(nil),    // 55: gspot.v1.ListDevicesResponse
+	(*GetLinkRequest)(nil),         // 56: gspot.v1.GetLinkRequest
+	(*GetLinkResponse)(nil),        // 57: gspot.v1.GetLinkResponse
+	(*GetLinkContextRequest)(nil),  // 58: gspot.v1.GetLinkContextRequest
+	(*GetLinkContextResponse)(nil), // 59: gspot.v1.GetLinkContextResponse
+	(*GetYoutubeLinkRequest)(nil),  // 60: gspot.v1.GetYoutubeLinkRequest
+	(*GetYoutubeLinkResponse)(nil), // 61: gspot.v1.GetYoutubeLinkResponse
+	(*DownloadCoverRequest)(nil),   // 62: gspot.v1.DownloadCoverRequest
+	(*DownloadCoverResponse)(nil),  // 63: gspot.v1.DownloadCoverResponse
 }
 var file_gspot_v1_gspot_proto_depIdxs = []int32{
 	1,  // 0: gspot.v1.PlayerState.track:type_name -> gspot.v1.Track
 	0,  // 1: gspot.v1.PlayerState.device:type_name -> gspot.v1.Device
 	2,  // 2: gspot.v1.SubscribeResponse.state:type_name -> gspot.v1.PlayerState
 	0,  // 3: gspot.v1.SetDeviceResponse.device:type_name -> gspot.v1.Device
-	41, // 4: gspot.v1.ListPlaylistsResponse.playlists:type_name -> gspot.v1.Playlist
-	41, // 5: gspot.v1.GetPlaylistResponse.playlist:type_name -> gspot.v1.Playlist
+	43, // 4: gspot.v1.ListPlaylistsResponse.playlists:type_name -> gspot.v1.Playlist
+	43, // 5: gspot.v1.GetPlaylistResponse.playlist:type_name -> gspot.v1.Playlist
 	1,  // 6: gspot.v1.GetPlaylistResponse.tracks:type_name -> gspot.v1.Track
 	1,  // 7: gspot.v1.NowPlayingResponse.track:type_name -> gspot.v1.Track
 	2,  // 8: gspot.v1.StatusResponse.state:type_name -> gspot.v1.PlayerState
@@ -2967,57 +3062,59 @@ var file_gspot_v1_gspot_proto_depIdxs = []int32{
 	17, // 16: gspot.v1.GspotService.Seek:input_type -> gspot.v1.SeekRequest
 	19, // 17: gspot.v1.GspotService.SetPosition:input_type -> gspot.v1.SetPositionRequest
 	21, // 18: gspot.v1.GspotService.ChangeVolume:input_type -> gspot.v1.ChangeVolumeRequest
-	23, // 19: gspot.v1.GspotService.Mute:input_type -> gspot.v1.MuteRequest
-	25, // 20: gspot.v1.GspotService.UnMute:input_type -> gspot.v1.UnMuteRequest
-	27, // 21: gspot.v1.GspotService.ToggleMute:input_type -> gspot.v1.ToggleMuteRequest
-	29, // 22: gspot.v1.GspotService.Repeat:input_type -> gspot.v1.RepeatRequest
-	31, // 23: gspot.v1.GspotService.Shuffle:input_type -> gspot.v1.ShuffleRequest
-	33, // 24: gspot.v1.GspotService.SetDevice:input_type -> gspot.v1.SetDeviceRequest
-	35, // 25: gspot.v1.GspotService.QueueSong:input_type -> gspot.v1.QueueSongRequest
-	37, // 26: gspot.v1.GspotService.Like:input_type -> gspot.v1.LikeRequest
-	39, // 27: gspot.v1.GspotService.UnLike:input_type -> gspot.v1.UnLikeRequest
-	42, // 28: gspot.v1.GspotService.ListPlaylists:input_type -> gspot.v1.ListPlaylistsRequest
-	44, // 29: gspot.v1.GspotService.GetPlaylist:input_type -> gspot.v1.GetPlaylistRequest
-	46, // 30: gspot.v1.GspotService.PlayPlaylist:input_type -> gspot.v1.PlayPlaylistRequest
-	48, // 31: gspot.v1.GspotService.NowPlaying:input_type -> gspot.v1.NowPlayingRequest
-	50, // 32: gspot.v1.GspotService.Status:input_type -> gspot.v1.StatusRequest
-	52, // 33: gspot.v1.GspotService.ListDevices:input_type -> gspot.v1.ListDevicesRequest
-	54, // 34: gspot.v1.GspotService.GetLink:input_type -> gspot.v1.GetLinkRequest
-	56, // 35: gspot.v1.GspotService.GetLinkContext:input_type -> gspot.v1.GetLinkContextRequest
-	58, // 36: gspot.v1.GspotService.GetYoutubeLink:input_type -> gspot.v1.GetYoutubeLinkRequest
-	60, // 37: gspot.v1.GspotService.DownloadCover:input_type -> gspot.v1.DownloadCoverRequest
-	3,  // 38: gspot.v1.GspotService.Subscribe:input_type -> gspot.v1.SubscribeRequest
-	6,  // 39: gspot.v1.GspotService.Play:output_type -> gspot.v1.PlayResponse
-	8,  // 40: gspot.v1.GspotService.PlayURL:output_type -> gspot.v1.PlayURLResponse
-	10, // 41: gspot.v1.GspotService.Pause:output_type -> gspot.v1.PauseResponse
-	12, // 42: gspot.v1.GspotService.TogglePlay:output_type -> gspot.v1.TogglePlayResponse
-	14, // 43: gspot.v1.GspotService.Next:output_type -> gspot.v1.NextResponse
-	16, // 44: gspot.v1.GspotService.Previous:output_type -> gspot.v1.PreviousResponse
-	18, // 45: gspot.v1.GspotService.Seek:output_type -> gspot.v1.SeekResponse
-	20, // 46: gspot.v1.GspotService.SetPosition:output_type -> gspot.v1.SetPositionResponse
-	22, // 47: gspot.v1.GspotService.ChangeVolume:output_type -> gspot.v1.ChangeVolumeResponse
-	24, // 48: gspot.v1.GspotService.Mute:output_type -> gspot.v1.MuteResponse
-	26, // 49: gspot.v1.GspotService.UnMute:output_type -> gspot.v1.UnMuteResponse
-	28, // 50: gspot.v1.GspotService.ToggleMute:output_type -> gspot.v1.ToggleMuteResponse
-	30, // 51: gspot.v1.GspotService.Repeat:output_type -> gspot.v1.RepeatResponse
-	32, // 52: gspot.v1.GspotService.Shuffle:output_type -> gspot.v1.ShuffleResponse
-	34, // 53: gspot.v1.GspotService.SetDevice:output_type -> gspot.v1.SetDeviceResponse
-	36, // 54: gspot.v1.GspotService.QueueSong:output_type -> gspot.v1.QueueSongResponse
-	38, // 55: gspot.v1.GspotService.Like:output_type -> gspot.v1.LikeResponse
-	40, // 56: gspot.v1.GspotService.UnLike:output_type -> gspot.v1.UnLikeResponse
-	43, // 57: gspot.v1.GspotService.ListPlaylists:output_type -> gspot.v1.ListPlaylistsResponse
-	45, // 58: gspot.v1.GspotService.GetPlaylist:output_type -> gspot.v1.GetPlaylistResponse
-	47, // 59: gspot.v1.GspotService.PlayPlaylist:output_type -> gspot.v1.PlayPlaylistResponse
-	49, // 60: gspot.v1.GspotService.NowPlaying:output_type -> gspot.v1.NowPlayingResponse
-	51, // 61: gspot.v1.GspotService.Status:output_type -> gspot.v1.StatusResponse
-	53, // 62: gspot.v1.GspotService.ListDevices:output_type -> gspot.v1.ListDevicesResponse
-	55, // 63: gspot.v1.GspotService.GetLink:output_type -> gspot.v1.GetLinkResponse
-	57, // 64: gspot.v1.GspotService.GetLinkContext:output_type -> gspot.v1.GetLinkContextResponse
-	59, // 65: gspot.v1.GspotService.GetYoutubeLink:output_type -> gspot.v1.GetYoutubeLinkResponse
-	61, // 66: gspot.v1.GspotService.DownloadCover:output_type -> gspot.v1.DownloadCoverResponse
-	4,  // 67: gspot.v1.GspotService.Subscribe:output_type -> gspot.v1.SubscribeResponse
-	39, // [39:68] is the sub-list for method output_type
-	10, // [10:39] is the sub-list for method input_type
+	23, // 19: gspot.v1.GspotService.SetVolume:input_type -> gspot.v1.SetVolumeRequest
+	25, // 20: gspot.v1.GspotService.Mute:input_type -> gspot.v1.MuteRequest
+	27, // 21: gspot.v1.GspotService.UnMute:input_type -> gspot.v1.UnMuteRequest
+	29, // 22: gspot.v1.GspotService.ToggleMute:input_type -> gspot.v1.ToggleMuteRequest
+	31, // 23: gspot.v1.GspotService.Repeat:input_type -> gspot.v1.RepeatRequest
+	33, // 24: gspot.v1.GspotService.Shuffle:input_type -> gspot.v1.ShuffleRequest
+	35, // 25: gspot.v1.GspotService.SetDevice:input_type -> gspot.v1.SetDeviceRequest
+	37, // 26: gspot.v1.GspotService.QueueSong:input_type -> gspot.v1.QueueSongRequest
+	39, // 27: gspot.v1.GspotService.Like:input_type -> gspot.v1.LikeRequest
+	41, // 28: gspot.v1.GspotService.UnLike:input_type -> gspot.v1.UnLikeRequest
+	44, // 29: gspot.v1.GspotService.ListPlaylists:input_type -> gspot.v1.ListPlaylistsRequest
+	46, // 30: gspot.v1.GspotService.GetPlaylist:input_type -> gspot.v1.GetPlaylistRequest
+	48, // 31: gspot.v1.GspotService.PlayPlaylist:input_type -> gspot.v1.PlayPlaylistRequest
+	50, // 32: gspot.v1.GspotService.NowPlaying:input_type -> gspot.v1.NowPlayingRequest
+	52, // 33: gspot.v1.GspotService.Status:input_type -> gspot.v1.StatusRequest
+	54, // 34: gspot.v1.GspotService.ListDevices:input_type -> gspot.v1.ListDevicesRequest
+	56, // 35: gspot.v1.GspotService.GetLink:input_type -> gspot.v1.GetLinkRequest
+	58, // 36: gspot.v1.GspotService.GetLinkContext:input_type -> gspot.v1.GetLinkContextRequest
+	60, // 37: gspot.v1.GspotService.GetYoutubeLink:input_type -> gspot.v1.GetYoutubeLinkRequest
+	62, // 38: gspot.v1.GspotService.DownloadCover:input_type -> gspot.v1.DownloadCoverRequest
+	3,  // 39: gspot.v1.GspotService.Subscribe:input_type -> gspot.v1.SubscribeRequest
+	6,  // 40: gspot.v1.GspotService.Play:output_type -> gspot.v1.PlayResponse
+	8,  // 41: gspot.v1.GspotService.PlayURL:output_type -> gspot.v1.PlayURLResponse
+	10, // 42: gspot.v1.GspotService.Pause:output_type -> gspot.v1.PauseResponse
+	12, // 43: gspot.v1.GspotService.TogglePlay:output_type -> gspot.v1.TogglePlayResponse
+	14, // 44: gspot.v1.GspotService.Next:output_type -> gspot.v1.NextResponse
+	16, // 45: gspot.v1.GspotService.Previous:output_type -> gspot.v1.PreviousResponse
+	18, // 46: gspot.v1.GspotService.Seek:output_type -> gspot.v1.SeekResponse
+	20, // 47: gspot.v1.GspotService.SetPosition:output_type -> gspot.v1.SetPositionResponse
+	22, // 48: gspot.v1.GspotService.ChangeVolume:output_type -> gspot.v1.ChangeVolumeResponse
+	24, // 49: gspot.v1.GspotService.SetVolume:output_type -> gspot.v1.SetVolumeResponse
+	26, // 50: gspot.v1.GspotService.Mute:output_type -> gspot.v1.MuteResponse
+	28, // 51: gspot.v1.GspotService.UnMute:output_type -> gspot.v1.UnMuteResponse
+	30, // 52: gspot.v1.GspotService.ToggleMute:output_type -> gspot.v1.ToggleMuteResponse
+	32, // 53: gspot.v1.GspotService.Repeat:output_type -> gspot.v1.RepeatResponse
+	34, // 54: gspot.v1.GspotService.Shuffle:output_type -> gspot.v1.ShuffleResponse
+	36, // 55: gspot.v1.GspotService.SetDevice:output_type -> gspot.v1.SetDeviceResponse
+	38, // 56: gspot.v1.GspotService.QueueSong:output_type -> gspot.v1.QueueSongResponse
+	40, // 57: gspot.v1.GspotService.Like:output_type -> gspot.v1.LikeResponse
+	42, // 58: gspot.v1.GspotService.UnLike:output_type -> gspot.v1.UnLikeResponse
+	45, // 59: gspot.v1.GspotService.ListPlaylists:output_type -> gspot.v1.ListPlaylistsResponse
+	47, // 60: gspot.v1.GspotService.GetPlaylist:output_type -> gspot.v1.GetPlaylistResponse
+	49, // 61: gspot.v1.GspotService.PlayPlaylist:output_type -> gspot.v1.PlayPlaylistResponse
+	51, // 62: gspot.v1.GspotService.NowPlaying:output_type -> gspot.v1.NowPlayingResponse
+	53, // 63: gspot.v1.GspotService.Status:output_type -> gspot.v1.StatusResponse
+	55, // 64: gspot.v1.GspotService.ListDevices:output_type -> gspot.v1.ListDevicesResponse
+	57, // 65: gspot.v1.GspotService.GetLink:output_type -> gspot.v1.GetLinkResponse
+	59, // 66: gspot.v1.GspotService.GetLinkContext:output_type -> gspot.v1.GetLinkContextResponse
+	61, // 67: gspot.v1.GspotService.GetYoutubeLink:output_type -> gspot.v1.GetYoutubeLinkResponse
+	63, // 68: gspot.v1.GspotService.DownloadCover:output_type -> gspot.v1.DownloadCoverResponse
+	4,  // 69: gspot.v1.GspotService.Subscribe:output_type -> gspot.v1.SubscribeResponse
+	40, // [40:70] is the sub-list for method output_type
+	10, // [10:40] is the sub-list for method input_type
 	10, // [10:10] is the sub-list for extension type_name
 	10, // [10:10] is the sub-list for extension extendee
 	0,  // [0:10] is the sub-list for field type_name
@@ -3034,7 +3131,7 @@ func file_gspot_v1_gspot_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_gspot_v1_gspot_proto_rawDesc), len(file_gspot_v1_gspot_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   62,
+			NumMessages:   64,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

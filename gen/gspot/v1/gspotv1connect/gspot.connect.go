@@ -53,6 +53,8 @@ const (
 	// GspotServiceChangeVolumeProcedure is the fully-qualified name of the GspotService's ChangeVolume
 	// RPC.
 	GspotServiceChangeVolumeProcedure = "/gspot.v1.GspotService/ChangeVolume"
+	// GspotServiceSetVolumeProcedure is the fully-qualified name of the GspotService's SetVolume RPC.
+	GspotServiceSetVolumeProcedure = "/gspot.v1.GspotService/SetVolume"
 	// GspotServiceMuteProcedure is the fully-qualified name of the GspotService's Mute RPC.
 	GspotServiceMuteProcedure = "/gspot.v1.GspotService/Mute"
 	// GspotServiceUnMuteProcedure is the fully-qualified name of the GspotService's UnMute RPC.
@@ -114,6 +116,7 @@ type GspotServiceClient interface {
 	Seek(context.Context, *connect.Request[v1.SeekRequest]) (*connect.Response[v1.SeekResponse], error)
 	SetPosition(context.Context, *connect.Request[v1.SetPositionRequest]) (*connect.Response[v1.SetPositionResponse], error)
 	ChangeVolume(context.Context, *connect.Request[v1.ChangeVolumeRequest]) (*connect.Response[v1.ChangeVolumeResponse], error)
+	SetVolume(context.Context, *connect.Request[v1.SetVolumeRequest]) (*connect.Response[v1.SetVolumeResponse], error)
 	Mute(context.Context, *connect.Request[v1.MuteRequest]) (*connect.Response[v1.MuteResponse], error)
 	UnMute(context.Context, *connect.Request[v1.UnMuteRequest]) (*connect.Response[v1.UnMuteResponse], error)
 	ToggleMute(context.Context, *connect.Request[v1.ToggleMuteRequest]) (*connect.Response[v1.ToggleMuteResponse], error)
@@ -203,6 +206,12 @@ func NewGspotServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			httpClient,
 			baseURL+GspotServiceChangeVolumeProcedure,
 			connect.WithSchema(gspotServiceMethods.ByName("ChangeVolume")),
+			connect.WithClientOptions(opts...),
+		),
+		setVolume: connect.NewClient[v1.SetVolumeRequest, v1.SetVolumeResponse](
+			httpClient,
+			baseURL+GspotServiceSetVolumeProcedure,
+			connect.WithSchema(gspotServiceMethods.ByName("SetVolume")),
 			connect.WithClientOptions(opts...),
 		),
 		mute: connect.NewClient[v1.MuteRequest, v1.MuteResponse](
@@ -339,6 +348,7 @@ type gspotServiceClient struct {
 	seek           *connect.Client[v1.SeekRequest, v1.SeekResponse]
 	setPosition    *connect.Client[v1.SetPositionRequest, v1.SetPositionResponse]
 	changeVolume   *connect.Client[v1.ChangeVolumeRequest, v1.ChangeVolumeResponse]
+	setVolume      *connect.Client[v1.SetVolumeRequest, v1.SetVolumeResponse]
 	mute           *connect.Client[v1.MuteRequest, v1.MuteResponse]
 	unMute         *connect.Client[v1.UnMuteRequest, v1.UnMuteResponse]
 	toggleMute     *connect.Client[v1.ToggleMuteRequest, v1.ToggleMuteResponse]
@@ -404,6 +414,11 @@ func (c *gspotServiceClient) SetPosition(ctx context.Context, req *connect.Reque
 // ChangeVolume calls gspot.v1.GspotService.ChangeVolume.
 func (c *gspotServiceClient) ChangeVolume(ctx context.Context, req *connect.Request[v1.ChangeVolumeRequest]) (*connect.Response[v1.ChangeVolumeResponse], error) {
 	return c.changeVolume.CallUnary(ctx, req)
+}
+
+// SetVolume calls gspot.v1.GspotService.SetVolume.
+func (c *gspotServiceClient) SetVolume(ctx context.Context, req *connect.Request[v1.SetVolumeRequest]) (*connect.Response[v1.SetVolumeResponse], error) {
+	return c.setVolume.CallUnary(ctx, req)
 }
 
 // Mute calls gspot.v1.GspotService.Mute.
@@ -518,6 +533,7 @@ type GspotServiceHandler interface {
 	Seek(context.Context, *connect.Request[v1.SeekRequest]) (*connect.Response[v1.SeekResponse], error)
 	SetPosition(context.Context, *connect.Request[v1.SetPositionRequest]) (*connect.Response[v1.SetPositionResponse], error)
 	ChangeVolume(context.Context, *connect.Request[v1.ChangeVolumeRequest]) (*connect.Response[v1.ChangeVolumeResponse], error)
+	SetVolume(context.Context, *connect.Request[v1.SetVolumeRequest]) (*connect.Response[v1.SetVolumeResponse], error)
 	Mute(context.Context, *connect.Request[v1.MuteRequest]) (*connect.Response[v1.MuteResponse], error)
 	UnMute(context.Context, *connect.Request[v1.UnMuteRequest]) (*connect.Response[v1.UnMuteResponse], error)
 	ToggleMute(context.Context, *connect.Request[v1.ToggleMuteRequest]) (*connect.Response[v1.ToggleMuteResponse], error)
@@ -603,6 +619,12 @@ func NewGspotServiceHandler(svc GspotServiceHandler, opts ...connect.HandlerOpti
 		GspotServiceChangeVolumeProcedure,
 		svc.ChangeVolume,
 		connect.WithSchema(gspotServiceMethods.ByName("ChangeVolume")),
+		connect.WithHandlerOptions(opts...),
+	)
+	gspotServiceSetVolumeHandler := connect.NewUnaryHandler(
+		GspotServiceSetVolumeProcedure,
+		svc.SetVolume,
+		connect.WithSchema(gspotServiceMethods.ByName("SetVolume")),
 		connect.WithHandlerOptions(opts...),
 	)
 	gspotServiceMuteHandler := connect.NewUnaryHandler(
@@ -745,6 +767,8 @@ func NewGspotServiceHandler(svc GspotServiceHandler, opts ...connect.HandlerOpti
 			gspotServiceSetPositionHandler.ServeHTTP(w, r)
 		case GspotServiceChangeVolumeProcedure:
 			gspotServiceChangeVolumeHandler.ServeHTTP(w, r)
+		case GspotServiceSetVolumeProcedure:
+			gspotServiceSetVolumeHandler.ServeHTTP(w, r)
 		case GspotServiceMuteProcedure:
 			gspotServiceMuteHandler.ServeHTTP(w, r)
 		case GspotServiceUnMuteProcedure:
@@ -828,6 +852,10 @@ func (UnimplementedGspotServiceHandler) SetPosition(context.Context, *connect.Re
 
 func (UnimplementedGspotServiceHandler) ChangeVolume(context.Context, *connect.Request[v1.ChangeVolumeRequest]) (*connect.Response[v1.ChangeVolumeResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.ChangeVolume is not implemented"))
+}
+
+func (UnimplementedGspotServiceHandler) SetVolume(context.Context, *connect.Request[v1.SetVolumeRequest]) (*connect.Response[v1.SetVolumeResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("gspot.v1.GspotService.SetVolume is not implemented"))
 }
 
 func (UnimplementedGspotServiceHandler) Mute(context.Context, *connect.Request[v1.MuteRequest]) (*connect.Response[v1.MuteResponse], error) {

@@ -7,7 +7,7 @@ A Spotify CLI controller and daemon built in Go. This document describes the arc
 gspot is a single binary (`cmd/gspot/main.go`) that operates in two modes:
 
 1. **CLI client** — sends commands to the daemon over a Unix socket via ConnectRPC
-2. **Daemon** (`gspot daemon run`) — long-running process that holds the Spotify auth session and serves ConnectRPC over a Unix socket with h2c (HTTP/2 cleartext)
+2. **Daemon** (`gspot daemon run`) — long-running process that holds the Spotify auth session, serves ConnectRPC over a Unix socket with h2c, and optionally runs a librespot player for local Spotify Connect playback
 
 The daemon auto-starts when a CLI command is run and no daemon is running.
 
@@ -33,13 +33,20 @@ src/cli/                        CLI layer — owns the process, constructs fx co
   library.go                    like, unlike
   playlist.go                   playlists, playlist, play-playlist
   daemon.go                     daemon start/stop/status/run/restart
+  librespot.go                  gspot librespot auth/status
 
 src/components/daemon/          Daemon internals
-  daemon.go                     Run() — serves ConnectRPC over h2c Unix socket, signal handling, PID file
-  server.go                     GspotServiceHandler implementation — delegates to Commander, maps to proto
+  daemon.go                     fx lifecycle hooks — NewPidFile(), NewHTTPServer(), serveHTTP()
+  server.go                     GspotServiceHandler — delegates to Commander or librespot, maps to proto
   lifecycle.go                  PID file management, daemon start/stop/status, auto-start logic
 
-src/components/commands/        Spotify API interaction layer (Commander)
+src/components/librespot/       Embedded Spotify Connect player (go-librespot)
+  player.go                     Player struct, fx lifecycle, event loop, dealer/AP handling, zeroconf
+  controls.go                   loadContext, loadCurrentTrack, play, pause, seek, skip, volume, etc.
+  state.go                      Spotify Connect state management (connect-state protocol)
+  logger.go                     slog → librespot.Logger adapter
+
+src/components/commands/        Spotify Web API interaction layer (Commander)
   commander.go                  Commander struct — holds Spotify client, context, logger, cache
   errors.go                     IsNoActiveError(), IsRestrictionError()
   activate_device.go            ActivateDevice() — reads saved device from config
@@ -91,13 +98,42 @@ func CmdOutput[T proto.Message](cmd *cli.Command, msg T, pretty func(io.Writer, 
 Two reusable dependency sets:
 
 - `ConfigDeps` — config + logger (used by RPC client commands)
-- `DaemonDeps` — full stack with cache, commander, managed context (used by `daemon run`)
+- `DaemonDeps` — full stack with cache, commander, librespot player, HTTP server, PID file (used by `daemon run`)
 
-`run(opts...)` builds a short-lived fx container (no lifecycle), executes Invoke functions, and returns. Used by all CLI commands except `daemon run`, which uses `fx.New(DaemonDeps, ...).Run()` for the full fx lifecycle.
+`run(opts...)` builds a short-lived fx container (no lifecycle), executes Invoke functions, and returns. Used by all CLI commands except `daemon run`, which uses `fx.New(DaemonDeps).Run()` for the full fx lifecycle.
+
+### Daemon Lifecycle (fx hooks)
+
+The daemon uses fx lifecycle hooks instead of a monolithic `Run()` function. Each component manages itself:
+
+- **PID file**: `NewPidFile()` — OnStart writes, OnStop removes
+- **HTTP server**: `NewHTTPServer()` — OnStart serves ConnectRPC, OnStop removes socket
+- **Librespot player**: `NewPlayer()` — OnStart creates session + event loop, OnStop closes
+
+fx manages startup order (respects dependency graph) and shutdown (reverse order). Signal handling is handled by `fx.App.Run()`.
 
 ### Server-Side Retry
 
 Player commands (play, pause, shuffle, etc.) are wrapped with `retryPlayer()` which uses `avast/retry-go` to retry on Spotify's transient "Restriction violated" errors at 100ms, 250ms, 500ms intervals.
+
+### Server Command Routing
+
+The ConnectRPC server holds both `*commands.Commander` (Web API) and `*librespot.Player` (local playback). For playback commands, it checks librespot first:
+
+1. If librespot is enabled and its session is ready, route through librespot (direct, low latency)
+2. If librespot fails or is not enabled, fall back to Web API
+3. If Web API returns "No active device", try librespot as last resort
+
+### Librespot Integration
+
+When `librespot.enabled: true` in config:
+
+- The daemon registers as a Spotify Connect device (visible in Spotify apps via Zeroconf)
+- Playback commands can be routed through the local audio player
+- The event loop handles dealer messages, player events, prefetch, and volume
+- Events are broadcast to `Subscribe()` streaming RPC subscribers
+
+Auth is separate from the Web API OAuth — run `gspot librespot auth` once to authenticate.
 
 ### Daemon Lifecycle
 
@@ -126,6 +162,8 @@ make tidy        # go mod tidy
 make install     # install to /usr/bin
 ```
 
+**Note**: CGo is required (libvorbis, libogg, libflac for go-librespot audio decoding).
+
 ## Config
 
 Config file: `~/.config/gspot/gspot.yml`
@@ -138,6 +176,18 @@ log_level: "info"        # debug, info, warn, error
 log_output: "stdout"
 socket_path: ""          # default: $XDG_RUNTIME_DIR/gspot/gspot.sock
 pid_file: ""             # default: $XDG_RUNTIME_DIR/gspot/gspot.pid
+
+librespot:
+  enabled: false
+  device_name: ""        # default: gspot-<hostname>
+  audio_backend: "pulseaudio"  # pulseaudio, alsa, pipe
+  audio_device: "default"
+  bitrate: 160           # 96, 160, 320
+  volume_steps: 100
+  initial_volume: 100
+  normalisation: false
+  zeroconf: true         # mDNS discovery for Spotify apps
+  autoplay: true         # auto-play related tracks when context ends
 ```
 
 ## Dependencies
@@ -146,6 +196,7 @@ Key dependencies:
 - `connectrpc.com/connect` — RPC framework (over standard net/http)
 - `google.golang.org/protobuf` — protobuf runtime
 - `github.com/zmb3/spotify/v2` — Spotify Web API client
+- `github.com/devgianlu/go-librespot` — Spotify Connect player (embedded)
 - `github.com/urfave/cli/v3` — CLI framework
 - `go.uber.org/fx` — dependency injection
 - `github.com/adrg/xdg` — XDG base directory paths
@@ -156,7 +207,10 @@ Key dependencies:
 ## Important Notes
 
 - **Generated code is committed** — no `buf` required to build, only to regenerate after proto changes
-- **Commander is a separate layer** — the ConnectRPC server wraps Commander methods, it does not expose Commander directly. Commander stays focused on Spotify API interaction.
+- **CGo is required** — go-librespot needs libvorbis/libogg/libflac for audio decoding
+- **Two auth systems** — Web API OAuth (for CLI commands) and librespot internal auth (for Connect playback). Both need separate one-time setup.
+- **Commander is a separate layer** — the ConnectRPC server wraps Commander methods, it does not expose Commander directly. Commander stays focused on Spotify Web API interaction.
+- **Librespot is optional** — the daemon works without it (CLI-only mode). Enable with `librespot.enabled: true`.
 - **No tests currently** — the codebase has zero test files
 - **YouTube link feature** uses Google API with separate OAuth (`client_secret.json`) — needs cleanup
 - **OAuth state is hardcoded** (`"abc123"` in `src/services/auth.go`) — security issue for production use
