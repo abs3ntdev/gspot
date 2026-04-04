@@ -349,17 +349,18 @@ func (s *Server) GetPlaylist(ctx context.Context, req *connect.Request[gspotv1.G
 }
 
 func (s *Server) PlayPlaylist(ctx context.Context, req *connect.Request[gspotv1.PlayPlaylistRequest]) (*connect.Response[gspotv1.PlayPlaylistResponse], error) {
-	// Route through librespot if it's active or enabled (play locally)
-	if s.librespot != nil && s.librespot.IsActive() {
-		uri := "spotify:playlist:" + req.Msg.PlaylistId
-		if err := s.librespot.LoadContext(ctx, uri, int(req.Msg.Offset)); err != nil {
-			return nil, err
+	playlistURI := "spotify:playlist:" + req.Msg.PlaylistId
+
+	// If librespot is enabled, try it first — avoids spurious Web API errors
+	if s.librespot != nil {
+		if err := s.librespot.LoadContext(ctx, playlistURI, int(req.Msg.Offset)); err == nil {
+			return connect.NewResponse(&gspotv1.PlayPlaylistResponse{}), nil
 		}
-		return connect.NewResponse(&gspotv1.PlayPlaylistResponse{}), nil
+		// If librespot fails (e.g., not connected yet), fall through to Web API
 	}
 
-	// Fall back to Web API
-	uri := spotify.URI("spotify:playlist:" + req.Msg.PlaylistId)
+	// Web API path
+	uri := spotify.URI(playlistURI)
 	opts := &spotify.PlayOptions{
 		PlaybackContext: &uri,
 	}
@@ -370,14 +371,6 @@ func (s *Server) PlayPlaylist(ctx context.Context, req *connect.Request[gspotv1.
 	err := s.commander.Client().PlayOpt(s.commander.Context, opts)
 	if err != nil {
 		if commands.IsNoActiveError(err) {
-			// No active device — try librespot if available
-			if s.librespot != nil {
-				luri := "spotify:playlist:" + req.Msg.PlaylistId
-				if err := s.librespot.LoadContext(ctx, luri, int(req.Msg.Offset)); err != nil {
-					return nil, err
-				}
-				return connect.NewResponse(&gspotv1.PlayPlaylistResponse{}), nil
-			}
 			deviceID, err := s.commander.ActivateDevice()
 			if err != nil {
 				return nil, err
