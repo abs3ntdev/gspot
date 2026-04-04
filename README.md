@@ -1,102 +1,168 @@
-This project is still under heavy development and some things might not work or not work as intended. Don't hesitate to open an issue to let me know.
+# gspot
 
----
+A Spotify CLI controller and daemon built in Go. Single binary, no TUI -- just fast commands and a background daemon communicating over ConnectRPC on a Unix socket.
 
-[![status-badge](https://ci.asdf.cafe/api/badges/abs3nt/gspot/status.svg)](https://ci.asdf.cafe/abs3nt/gspot)
+> This project is under active development. Don't hesitate to open an issue if something doesn't work as expected.
 
-# To install (with a package manager):
+## Installation
 
-## Archlinux ([AUR])
+### Arch Linux ([AUR](https://aur.archlinux.org/packages/gspot-git))
 
-`yay -S gspot-git`
-
-# To build from source by pulling and building the binary
-
-`git clone https://github.com/abs3ntdev/gspot`
-
-`cd gspot`
-
-`make build && sudo make install`
-
-[AUR]: https://aur.archlinux.org/packages/gspot-git
-
-# Configuration
-
-go here https://developer.spotify.com/dashboard/applications to make a spotify application. you will need a client ID and a client secret. Set your redirect uri like this:
-
-`http://127.0.0.1:8888/callback`
-
-add your information to ~/.config/gspot/gspot.yml like this
-
+```sh
+yay -S gspot-git
 ```
-client_id: "idgoeshere"
-client_secret: "secretgoeshere"
+
+### From source
+
+```sh
+git clone https://github.com/abs3ntdev/gspot
+cd gspot
+make build && sudo make install
+```
+
+### From releases
+
+Pre-built binaries for Linux, macOS, and Windows are available on the [releases page](https://github.com/abs3ntdev/gspot/releases).
+
+## Configuration
+
+1. Create a Spotify application at https://developer.spotify.com/dashboard/applications
+2. Set the redirect URI to `http://127.0.0.1:8888/callback`
+3. Create `~/.config/gspot/gspot.yml`:
+
+```yaml
+client_id: "your_client_id"
+client_secret: "your_client_secret"
 port: "8888"
 ```
 
-if you dont want to store your secret in the file in plaintext you can use a command to retreive it:
+If you don't want to store your secret in plaintext, use a command:
 
-```
+```yaml
 client_secret_cmd: "secret spotify_secret"
 ```
 
-you should have either client_secret or client_secret_cmd
+You should have either `client_secret` or `client_secret_cmd`, not both.
 
-you can enable debug logging by adding
+### Optional settings
 
-```
-log_level: "debug"
-log_output: "file"
-```
+```yaml
+log_level: "info"      # debug, info, warn, error
+log_output: "stdout"   # stdout or file (~/.config/gspot/gspot.log)
 
-it will log to ~/.config/gspot/gspot.log
-
-## RUNNING
-
-`gspot`
-
-you will be asked to login, you will only have to do this the first time. After login you will be asked to select your default device.
-
-helpful keybinds are shown in the bottom of the screen, hit ? to see all of them
-
-## DAEMON MODE
-
-`gspot-daemon`
-
-The daemon runs a background RPC server that allows you to control Spotify playback via a Unix socket. This is useful for integrations with other tools like the [tmux plugin](https://github.com/abs3ntdev/tmux-gspot) or custom scripts.
-
-The daemon provides control over:
-- Playback (play, pause, toggle, next, previous, seek)
-- Volume control (change volume, mute/unmute)
-- Track information (now playing, links, status)
-- Playlists and radio
-- Device management
-- Like/unlike tracks
-
-By default, the daemon listens on `/tmp/gspot.sock`. You can configure a different socket path in your config:
-
-```
-socket_path: "/path/to/your/socket.sock"
+# Override default paths (defaults use $XDG_RUNTIME_DIR/gspot/)
+socket_path: "/path/to/gspot.sock"
+pid_file: "/path/to/gspot.pid"
 ```
 
-The daemon will automatically start when needed by integrations, or you can run it manually in the background
+## Usage
 
-To use the custom radio feature:
+On first run you'll be prompted to log in to Spotify via your browser. This only happens once.
 
-`gspot radio`
+The daemon starts automatically when you run any command. You can also manage it explicitly with `gspot daemon`.
 
-or hit ctrl+r on any track in the TUI. This will start an extended radio. To replenish the current radio run `gspot refillradio` and all the songs already listened will be removed and that number of new recomendations will be added.
+### Output formats
 
-This radio uses slightly different logic than the standard spotify radio to give a longer playlist and more recomendation. With a cronjob you can schedule refill to run to have an infinite and morphing radio station.
-^^^^^^ Spotify broke this feature its not longer possible  ^^^^^^
+All commands support `--format` (`pretty`, `json`, `silent`), `--json` (shorthand for `--format=json`), and `--output <file>` to write output to a file.
 
+### Commands
 
-To view help:
+#### Playback
 
-`gspot --help`
+| Command | Aliases | Description |
+|---|---|---|
+| `gspot play` | `pl`, `start`, `s` | Resume playback |
+| `gspot playurl <url>` | `plu` | Play a Spotify URL |
+| `gspot pause` | `pa` | Pause playback |
+| `gspot toggleplay` | `t` | Toggle play/pause |
+| `gspot next [amount]` | `n`, `skip` | Skip to the next track (optionally skip multiple) |
+| `gspot previous` | `b`, `prev`, `back` | Go to the previous track |
+| `gspot repeat` | | Toggle repeat mode |
+| `gspot shuffle` | | Toggle shuffle mode |
+| `gspot setdevice <device_id>` | | Set the active playback device |
+| `gspot seek <position_ms>` | `sk` | Seek to a position (milliseconds) |
+| `gspot seek forward` | `sk f` | Seek forward |
+| `gspot seek backward` | `sk b` | Seek backward |
+| `gspot volume up <percent>` | `v up` | Increase volume |
+| `gspot volume down <percent>` | `v down`, `v dn` | Decrease volume |
+| `gspot volume mute` | `v m` | Mute |
+| `gspot volume unmute` | `v um` | Unmute |
+| `gspot volume togglemute` | `v tm` | Toggle mute |
 
-Very open to contributations feel free to open a PR
+#### Info
 
-[tmux plugin](https://github.com/abs3ntdev/tmux-gspot)
+| Command | Aliases | Description |
+|---|---|---|
+| `gspot nowplaying` | `now` | Print the current track (`--force` / `-f` to bypass cache) |
+| `gspot status` | | Print full player status |
+| `gspot devices` | `d` | List available devices |
+| `gspot download_cover [path]` | `dl` | Download the current track's cover art |
 
-[wiki](https://github.com/abs3ntdev/gspot/wiki)
+#### Sharing
+
+| Command | Aliases | Description |
+|---|---|---|
+| `gspot link` | `yy` | Print the current track's Spotify link |
+| `gspot linkcontext` | `lc` | Print the current album/playlist link |
+| `gspot youtube-link` | `yl` | Print the current track's YouTube link |
+
+#### Library
+
+| Command | Aliases | Description |
+|---|---|---|
+| `gspot like` | `l` | Like the current track |
+| `gspot unlike` | `u` | Unlike the current track |
+
+#### Playlists
+
+| Command | Aliases | Description |
+|---|---|---|
+| `gspot playlists` | `pls` | List your playlists (`--limit`, `--offset`) |
+| `gspot playlist <id>` | `pl-info` | Show tracks in a playlist |
+| `gspot play-playlist <id> [offset]` | `plp` | Play a playlist (optionally from a track offset) |
+
+#### Daemon
+
+| Command | Description |
+|---|---|
+| `gspot daemon start` | Start the daemon in the background |
+| `gspot daemon stop` | Stop the running daemon |
+| `gspot daemon status` | Check if the daemon is running |
+| `gspot daemon run` | Run the daemon in the foreground |
+| `gspot daemon restart` | Restart the daemon |
+
+## Architecture
+
+gspot is a single binary that operates in two modes:
+
+- **CLI client** -- sends commands to the daemon over a Unix socket via ConnectRPC
+- **Daemon** (`gspot daemon run`) -- long-running process that holds the Spotify auth session and serves ConnectRPC over a Unix socket with h2c
+
+The daemon auto-starts when a CLI command is run and no daemon is detected. Communication uses protocol buffers defined in `proto/gspot/v1/gspot.proto`.
+
+## Integrations
+
+- [tmux-gspot](https://github.com/abs3ntdev/tmux-gspot) -- tmux status bar plugin
+
+The daemon's Unix socket interface makes it easy to build custom integrations and scripts. Use `--json` for machine-readable output.
+
+## Build targets
+
+```sh
+make generate    # regenerate proto stubs (requires buf)
+make build       # build to dist/
+make run         # build and run
+make daemon      # build and run daemon in foreground
+make tidy        # go mod tidy
+make install     # install to /usr/bin (with shell completions)
+make uninstall   # remove from /usr/bin
+make clean       # remove dist/
+```
+
+## Contributing
+
+Contributions are welcome -- feel free to open a PR.
+
+## License
+
+[MIT](LICENSE)
