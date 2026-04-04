@@ -417,11 +417,18 @@ func deviceToProto(d spotify.PlayerDevice) *gspotv1.Device {
 
 // retryPlayer retries a player command on Spotify restriction errors.
 // These occur transiently when the player is in a transitional state.
+// Retries at 100ms, 250ms, 500ms intervals.
 func (s *Server) retryPlayer(ctx context.Context, fn func() error) error {
 	return retry.Do(
 		fn,
-		retry.Attempts(3),
-		retry.Delay(500*time.Millisecond),
+		retry.Attempts(4),
+		retry.DelayType(func(n uint, err error, config *retry.Config) time.Duration {
+			delays := []time.Duration{100 * time.Millisecond, 250 * time.Millisecond, 500 * time.Millisecond}
+			if int(n) >= len(delays) {
+				return delays[len(delays)-1]
+			}
+			return delays[n]
+		}),
 		retry.Context(ctx),
 		retry.RetryIf(commands.IsRestrictionError),
 		retry.LastErrorOnly(true),
