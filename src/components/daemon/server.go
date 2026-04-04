@@ -3,8 +3,10 @@ package daemon
 import (
 	"context"
 	"path/filepath"
+	"time"
 
 	"connectrpc.com/connect"
+	retry "github.com/avast/retry-go/v4"
 	"github.com/zmb3/spotify/v2"
 
 	gspotv1 "github.com/abs3ntdev/gspot/gen/gspot/v1"
@@ -23,28 +25,28 @@ func NewServer(c *commands.Commander) *Server {
 // Playback
 
 func (s *Server) Play(ctx context.Context, req *connect.Request[gspotv1.PlayRequest]) (*connect.Response[gspotv1.PlayResponse], error) {
-	if err := s.commander.Play(); err != nil {
+	if err := s.retryPlayer(ctx, s.commander.Play); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.PlayResponse{}), nil
 }
 
 func (s *Server) PlayURL(ctx context.Context, req *connect.Request[gspotv1.PlayURLRequest]) (*connect.Response[gspotv1.PlayURLResponse], error) {
-	if err := s.commander.PlayURL(req.Msg.Url); err != nil {
+	if err := s.retryPlayer(ctx, func() error { return s.commander.PlayURL(req.Msg.Url) }); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.PlayURLResponse{}), nil
 }
 
 func (s *Server) Pause(ctx context.Context, req *connect.Request[gspotv1.PauseRequest]) (*connect.Response[gspotv1.PauseResponse], error) {
-	if err := s.commander.Pause(); err != nil {
+	if err := s.retryPlayer(ctx, s.commander.Pause); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.PauseResponse{}), nil
 }
 
 func (s *Server) TogglePlay(ctx context.Context, req *connect.Request[gspotv1.TogglePlayRequest]) (*connect.Response[gspotv1.TogglePlayResponse], error) {
-	if err := s.commander.TogglePlay(); err != nil {
+	if err := s.retryPlayer(ctx, s.commander.TogglePlay); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.TogglePlayResponse{}), nil
@@ -55,35 +57,35 @@ func (s *Server) Next(ctx context.Context, req *connect.Request[gspotv1.NextRequ
 	if amount == 0 {
 		amount = 1
 	}
-	if err := s.commander.Next(amount, false); err != nil {
+	if err := s.retryPlayer(ctx, func() error { return s.commander.Next(amount, false) }); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.NextResponse{}), nil
 }
 
 func (s *Server) Previous(ctx context.Context, req *connect.Request[gspotv1.PreviousRequest]) (*connect.Response[gspotv1.PreviousResponse], error) {
-	if err := s.commander.Previous(); err != nil {
+	if err := s.retryPlayer(ctx, s.commander.Previous); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.PreviousResponse{}), nil
 }
 
 func (s *Server) Seek(ctx context.Context, req *connect.Request[gspotv1.SeekRequest]) (*connect.Response[gspotv1.SeekResponse], error) {
-	if err := s.commander.Seek(req.Msg.Forward); err != nil {
+	if err := s.retryPlayer(ctx, func() error { return s.commander.Seek(req.Msg.Forward) }); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.SeekResponse{}), nil
 }
 
 func (s *Server) SetPosition(ctx context.Context, req *connect.Request[gspotv1.SetPositionRequest]) (*connect.Response[gspotv1.SetPositionResponse], error) {
-	if err := s.commander.SetPosition(int(req.Msg.PositionMs)); err != nil {
+	if err := s.retryPlayer(ctx, func() error { return s.commander.SetPosition(int(req.Msg.PositionMs)) }); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.SetPositionResponse{}), nil
 }
 
 func (s *Server) ChangeVolume(ctx context.Context, req *connect.Request[gspotv1.ChangeVolumeRequest]) (*connect.Response[gspotv1.ChangeVolumeResponse], error) {
-	if err := s.commander.ChangeVolume(int(req.Msg.Amount)); err != nil {
+	if err := s.retryPlayer(ctx, func() error { return s.commander.ChangeVolume(int(req.Msg.Amount)) }); err != nil {
 		return nil, err
 	}
 	// Read back current volume.
@@ -96,28 +98,28 @@ func (s *Server) ChangeVolume(ctx context.Context, req *connect.Request[gspotv1.
 }
 
 func (s *Server) Mute(ctx context.Context, req *connect.Request[gspotv1.MuteRequest]) (*connect.Response[gspotv1.MuteResponse], error) {
-	if err := s.commander.Mute(); err != nil {
+	if err := s.retryPlayer(ctx, s.commander.Mute); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.MuteResponse{}), nil
 }
 
 func (s *Server) UnMute(ctx context.Context, req *connect.Request[gspotv1.UnMuteRequest]) (*connect.Response[gspotv1.UnMuteResponse], error) {
-	if err := s.commander.UnMute(); err != nil {
+	if err := s.retryPlayer(ctx, s.commander.UnMute); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.UnMuteResponse{}), nil
 }
 
 func (s *Server) ToggleMute(ctx context.Context, req *connect.Request[gspotv1.ToggleMuteRequest]) (*connect.Response[gspotv1.ToggleMuteResponse], error) {
-	if err := s.commander.ToggleMute(); err != nil {
+	if err := s.retryPlayer(ctx, s.commander.ToggleMute); err != nil {
 		return nil, err
 	}
 	return connect.NewResponse(&gspotv1.ToggleMuteResponse{}), nil
 }
 
 func (s *Server) Repeat(ctx context.Context, req *connect.Request[gspotv1.RepeatRequest]) (*connect.Response[gspotv1.RepeatResponse], error) {
-	if err := s.commander.Repeat(); err != nil {
+	if err := s.retryPlayer(ctx, s.commander.Repeat); err != nil {
 		return nil, err
 	}
 	// Read back repeat state.
@@ -130,7 +132,7 @@ func (s *Server) Repeat(ctx context.Context, req *connect.Request[gspotv1.Repeat
 }
 
 func (s *Server) Shuffle(ctx context.Context, req *connect.Request[gspotv1.ShuffleRequest]) (*connect.Response[gspotv1.ShuffleResponse], error) {
-	if err := s.commander.Shuffle(); err != nil {
+	if err := s.retryPlayer(ctx, s.commander.Shuffle); err != nil {
 		return nil, err
 	}
 	// Read back shuffle state.
@@ -411,4 +413,17 @@ func deviceToProto(d spotify.PlayerDevice) *gspotv1.Device {
 		VolumePercent: int32(d.Volume),
 		IsActive:      d.Active,
 	}
+}
+
+// retryPlayer retries a player command on Spotify restriction errors.
+// These occur transiently when the player is in a transitional state.
+func (s *Server) retryPlayer(ctx context.Context, fn func() error) error {
+	return retry.Do(
+		fn,
+		retry.Attempts(3),
+		retry.Delay(500*time.Millisecond),
+		retry.Context(ctx),
+		retry.RetryIf(commands.IsRestrictionError),
+		retry.LastErrorOnly(true),
+	)
 }

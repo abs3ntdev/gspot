@@ -6,6 +6,7 @@ require (
 	connectrpc.com/connect v1.19.1
 	github.com/abs3ntdev/gunner v0.0.3
 	github.com/adrg/xdg v0.5.3
+	github.com/avast/retry-go/v4 v4.7.0
 	github.com/lmittmann/tint v1.1.2
 	github.com/urfave/cli/v3 v3.3.8
 	github.com/zmb3/spotify/v2 v2.4.3
