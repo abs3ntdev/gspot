@@ -34,15 +34,3 @@ func rpcCommand(fn func(context.Context, *cli.Command, *Service) error) func(con
 		)
 	}
 }
-
-// command wraps a command handler with arbitrary fx dependencies.
-// The fn is an fx.Invoke function — it can request any deps from the container.
-// Use this for commands that don't need the RPC client (e.g., daemon lifecycle).
-func command(deps fx.Option, fn any) func(context.Context, *cli.Command) error {
-	return func(ctx context.Context, cmd *cli.Command) error {
-		return run(
-			deps,
-			fx.Invoke(fn),
-		)
-	}
-}

@@ -154,8 +154,3 @@ func formatDuration(ms int32) string {
 	}
 	return fmt.Sprintf("%d:%02d", minutes, seconds)
 }
-
-// joinArtists joins multiple artist names (future use when Track has repeated artists).
-func joinArtists(names []string) string {
-	return strings.Join(names, ", ")
-}
