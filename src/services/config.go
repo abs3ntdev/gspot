@@ -12,6 +12,7 @@ var Config = fx.Options(
 		func() *config.Config {
 			c := &config.Config{}
 			gunner.LoadApp(c, "gspot")
+			c.ResolveDefaults()
 			return c
 		},
 	),

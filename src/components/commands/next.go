@@ -19,8 +19,8 @@ func (c *Commander) Next(amt int, inqueue bool) error {
 	if amt == 1 {
 		err := c.Client().Next(c.Context)
 		if err != nil {
-			if isNoActiveError(err) {
-				deviceID, err := c.activateDevice()
+			if IsNoActiveError(err) {
+				deviceID, err := c.ActivateDevice()
 				if err != nil {
 					return err
 				}

@@ -17,22 +17,7 @@ builds:
       - goos: windows
         goarch: "386"
     ldflags:
-      - -s -w -X github.com/abs3ntdev/gspot/src/components/cli.Version={{.Version}}
-
-  - id: gspot-daemon
-    main: ./cmd/gspot-daemon
-    binary: gspot-daemon
-    env:
-      - CGO_ENABLED=0
-    goos:
-      - linux
-      - windows
-      - darwin
-    ignore:
-      - goos: windows
-        goarch: "386"
-    ldflags:
-      - -s -w -X github.com/abs3ntdev/gspot/src/components/cli.Version={{.Version}}
+      - -s -w -X github.com/abs3ntdev/gspot/src/cli.Version={{.Version}}
 
 archives:
   - formats: [ 'tar.gz' ]

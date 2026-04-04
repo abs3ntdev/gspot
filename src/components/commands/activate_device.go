@@ -9,7 +9,7 @@ import (
 	"github.com/zmb3/spotify/v2"
 )
 
-func (c *Commander) activateDevice() (spotify.ID, error) {
+func (c *Commander) ActivateDevice() (spotify.ID, error) {
 	var device *spotify.PlayerDevice
 	configDir, _ := os.UserConfigDir()
 	if _, err := os.Stat(filepath.Join(configDir, "gspot/device.json")); err == nil {
